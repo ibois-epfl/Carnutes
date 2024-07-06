@@ -1,11 +1,12 @@
 # Carnutes🌳
 🪵 Where druids experiment in the forest 🪵
 
-as part of the studio Weinand, The architecture studio of Prof. Weinand, Assist. Agathe Mignon at the Ecole Polytechnique Fédérale de Lausanne (EPFL), Switzerland.
+as part of the studio IBOIS, The architecture studio of Prof. Weinand, Assist. Agathe Mignon at IBOIS, EPFL (Switzerland).
 
-This code is also a preparation to the research package 3 of Damien Gilliard's PhD thesis. It aims at finding out what the needs are in the context of roundwood architecture design, through the practice. By collaborating closely with the students through  a series of workshops, design needs will be identified, and the code will be improved and adapted accordingly.
+This code is also a preparation to the research package 3 of Damien Gilliard's PhD thesis. This preparation work aims at finding out what the needs are in the context of roundwood architecture design, through the practice. By collaborating closely with the students through  a series of workshops, design needs will be identified, and the code will be improved and adapted accordingly.
 
-Lastly, this repository is a quick python experiment, has been swiftly developed, and is not meant as a final product. It is made public for transparency and sharing purposes.
+Lastly, this repository is a quick python experiment, has been swiftly developed, and is not meant as a final product. It is made public for transparency purposes.
+
 ## Goal
 
  The goal of this project is to provide a tool to help druids to experiment with their magic in the forest. 
