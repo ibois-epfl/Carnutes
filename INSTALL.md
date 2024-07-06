@@ -6,7 +6,7 @@ To use this tool (we avoid the term plugin, as it isn't a proper plugin), you ne
 
 MacOS:
 ```
-/Users/<your_username>/Library/Application support/McNeel/Rhinoceros/Scripts
+/Users/<your_username>/Library/Application support/McNeel/Rhinoceros/8.0/scripts
 ```
 
 NB: The naming of "Library" varies in function of the system language. For example if our OS is in French, replace "Library" with "Bibliothèque"...
