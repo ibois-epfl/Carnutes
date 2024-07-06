@@ -15,6 +15,9 @@ More precisely, the tool must enable the druids to:
 - manipulate tree trunk geometries easily given their : translation and rotation.
 - match the tree trunk geometries with an 3D sketch of an architectural design.
 
+# Install and use
+See the [INSTALL.md](./INSTALL.md) for installation instructions, and the [CONTRIBUTING.md](./CONTRIBUTING.md) for minimal contribution guidelines
+
 # 5 workshops will be held:
 
 
