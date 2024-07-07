@@ -12,11 +12,26 @@ Lastly, this repository is a quick python experiment, has been swiftly developed
  The goal of this project is to provide a tool to help druids to experiment with their magic in the forest. 
 
 More precisely, the tool must enable the druids to:
-- dispose of a database of simple tree trunks geometries
-- manipulate tree trunk geometries easily given their : translation and rotation.
-- match the tree trunk geometries with an 3D sketch of an architectural design.
+- Dispose of a database of simple tree trunks geometries
+- Match the tree trunk geometries with an 3D sketch of an architectural design.
+- Generate architectural drawings with the tree trunk geometries.
 
+For this, the following functions are planned:
+
+- Practical:
+    - Select trees automatically and orient given cylinder model
+    - Select trees automatically and orient given wireframe model
+    - Select trees manually and orient given cylinder model
+    - Select trees manually and orient given wireframe model
+
+- Graphical:
+    - Draw connectivity Graphs of 3D models
+    - Joint mapping (must be clarified)
+    - Highlight difference between initial model and model with tree trunks (once the right tree trunks are selected):
+        - using wireframe data (must be clarified)
+        - using cylinder data
 # Install and use
+This tool is intended to be used in Rhino 8.
 See the [INSTALL.md](./INSTALL.md) for installation instructions, and the [CONTRIBUTING.md](./CONTRIBUTING.md) for minimal contribution guidelines
 
 # 5 workshops will be held:
