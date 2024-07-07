@@ -66,11 +66,11 @@ gantt
     title Development TimeTable
     dateFormat  YYYY-MM-DD
     section development
-    Database of simple tree trunks      : 2024-08-05, 5d
-    Graphs for connectivity of 3D models: 2024-07-08, 5d
-    Wireframe tree matching             : 2024-07-15, 5d
-    Cylinder tree matching              : 2024-07-22, 5d
-    Joint mapping and joinery           : 2024-07-29, 5d
+    Database of simple tree trunks      : 2024-07-08, 5d
+    Graphs for connectivity of 3D models: 2024-07-15, 5d
+    Wireframe tree matching             : 2024-07-22, 5d
+    Cylinder tree matching              : 2024-07-29, 5d
+    Joint mapping and joinery           : 2024-08-05, 5d
     Integration in Rhino UI             : 2024-08-12, 5d
 ```
 
