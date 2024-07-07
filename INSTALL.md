@@ -9,7 +9,7 @@ MacOS:
 /Users/<your_username>/Library/Application support/McNeel/Rhinoceros/8.0/scripts
 ```
 
-NB: The naming of "Library" varies in function of the system language. For example if our OS is in French, replace "Library" with "Bibliothèque"...
+NB: For unexplicable reasons, in the GUI, Apple changes the naming of "Library" in function of the system language, but not on the terminal. For example if our OS is in French and you want to find the folder using the "Finder", replace "Library" with "Bibliothèque"...
 
 Windows:
 
