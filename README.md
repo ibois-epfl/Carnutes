@@ -47,12 +47,14 @@ See the [INSTALL.md](./INSTALL.md) for installation instructions, and the [CONTR
 ### 🌲S3: Intro to the tools 
 Manipulate tree trunk geometries: introduction to the tools offered, first anticipatory feed-back of students. Improved code given to students for the next workshop.
 
--> The students learn to manipulate tree trunk geometries easily: translation and rotation. To start with, a simple 3D sketch is provided to the students. The students learn the basics of the proposed tools.
+-> The students learn to manipulate tree trunk geometries easily using a 3D sketch. To start with, a simple 3D sketch is provided to the students so they can learn the basics of the proposed tools.
 
 ### 🌲S4: Presentation, feed-back and improvement. 
-Small presentation of each student (1 screen shot of the work done), feed-back. Improvement of the tools are asked to Damien. Improved code given to students for the next workshop.
+Small presentation of each student (1 screen shot of the work done) of the application of the tool presented the week before to their own 3D sketch, + feed-back. Improvement of the tools are asked to Damien. Improved code given to students for the next workshop.
 
--> The students present the application of the tool presented the week before to their own 3D sketch, which they have to create. The students receive feed-back on their work. The students learn to critically analyse their needs and formulate the need for improvement.
+Additionally the graphical representation tools are presented, and the students give anticipatory feed-back.
+
+-> The students learn to critically analyse their needs and formulate the need for improvement. They also learn new graphical representation tools
 
 ### 🌲S5: Presentation, feed-back and improvement.
 Small presentation of each student (1 screen shot of the work done), feed-back. Improvement of the tools are asked to Damien. Improved code given to students for the next week.
