@@ -17,7 +17,7 @@ Windows:
 C:\Users\<your_username>\AppData\Roaming\McNeel\Rhinoceros\8.0\scripts
 ```
 
-2) Drag-and-drop the .rhc container file. This file contains the metadata that creates the "Carnutes" toolbar tab with all the buttons calling the different scripts.
+2) Drag-and-drop the .rhc container file in Rhino. This file contains the metadata that creates the "Carnutes" toolbar tab with all the buttons calling the different scripts.
 
 This solution is inelegant but corresponds to the developement time allocated to this project. If you know a better way, create an issue and tell me how to improve it 😇. The main issues are that a proper version tracking is inexistant, and installation is not super user friendly.
 
