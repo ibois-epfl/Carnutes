@@ -17,7 +17,7 @@ Windows:
 C:\Users\<your_username>\AppData\Roaming\McNeel\Rhinoceros\8.0\scripts
 ```
 
-2) Drag-and-drop the .rhc container file. This file contains the metadata that creates the "Carnutes" toolbar tab with all the buttons calling the different scripts.
+2) Drag-and-drop the .rhc container file ( [Download link](./Carnutes.rhc) ). This file contains the metadata that creates the "Carnutes" toolbar tab with all the buttons calling the different scripts.
 
 This solution is inelegant but corresponds to the developement time allocated to this project. If you know a better way, create an issue and tell me how to improve it 😇. The main issues are that a proper version tracking is inexistant, and installation is not super user friendly.
 
@@ -38,3 +38,19 @@ code using the igraph library
 The dependencies are nevertheless listed here: 
 
 - [i-graph](https://igraph.org/) for connectivity of elements
+
+# Create your own database
+To create your own database with another dataset, you can activate the conda environment (assuming you have [Conda](https://docs.conda.io/projects/conda/en/latest/index.html) installed on your computer), by running the following commands from the Carnutes root directory:
+
+```bash
+conda env create -f environment.yml
+conda activate database_creation
+```
+
+And run the python script with: 
+
+MacOS:
+
+```bash
+/Users/<your_username>/anaconda3/envs/database_creation/bin/python Carnutes/database_creator.py
+```
