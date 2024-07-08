@@ -22,7 +22,7 @@ C:\Users\<your_username>\AppData\Roaming\McNeel\Rhinoceros\8.0\scripts
 This solution is inelegant but corresponds to the developement time allocated to this project. If you know a better way, create an issue and tell me how to improve it 😇. The main issues are that a proper version tracking is inexistant, and installation is not super user friendly.
 
 # DEPS
-There is no need to install dependencies (in this case pip packages) yourself, as they are all included as requirement at the beginning of the .py files. For example, for [i-graph](https://igraph.org/) :
+There is no need to install dependencies (in this case pip packages) yourself, as they are all included as requirement at the beginning of the .py files. This means that the python version shipped with Rhino will install the pip package automatically. For example, for [i-graph](https://igraph.org/) :
 
 ```python
 #! python 3
