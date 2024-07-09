@@ -53,7 +53,7 @@ NO DIGITAL WORKSHOP, but the students come up with their own 3D sketches model o
 ### 🌲S4: Presentation, feed-back and improvement. 
 Small presentation of each student (1 screen shot of the work done), feed-back. Improvement of the tools are asked to Damien. Improved code (within time constrains) given to students for the next workshop. Some choices might be necessary, 
 
--> The students present the application of the tool presented the week before to their own 3D sketch, which they have to create. The students receive feed-back on their work. The students learn to critically analyse their needs and formulate the need for improvement.
+-> The students learn to critically analyse their needs and formulate the need for improvement. They also learn new graphical representation tools
 
 ### 🌲S5: Presentation, feed-back and improvement.
 Small presentation of each student (1 screen shot of the work done), feed-back. Improvement of the tools are asked to Damien. Improved code (within time constrains) given to students for the next week.
