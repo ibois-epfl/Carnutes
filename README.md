@@ -1,6 +1,3 @@
-# 
-Workshop content for Ba3-Ma1 architecture studio
-
 # Carnutes🌳
 
 🪵 In Asterix & Obelix, the Carnutes forest is where druids present their latest crazy inventions to their peers 🪵
@@ -25,6 +22,7 @@ For this, the following functions are planned:
     - Select trees automatically and orient given wireframe model
     - Select trees manually and orient given cylinder model
     - Select trees manually and orient given wireframe model
+    - create locally oriented bounding box of overlap to assist students to experiment with their own joinery
 
 - Graphical:
     - Draw connectivity Graphs of 3D models
