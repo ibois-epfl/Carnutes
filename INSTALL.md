@@ -38,3 +38,20 @@ code using the igraph library
 The dependencies are nevertheless listed here: 
 
 - [i-graph](https://igraph.org/) for connectivity of elements
+
+
+# Create your own database
+To create your own database with another dataset, you can activate the conda environment (assuming you have [Conda](https://docs.conda.io/projects/conda/en/latest/index.html) installed on your computer), by running the following commands from the Carnutes root directory:
+
+```bash
+conda env create -f environment.yml
+conda activate database_creation
+```
+
+And run the python script with: 
+
+MacOS:
+
+```bash
+/Users/<your_username>/anaconda3/envs/database_creation/bin/python database_creator.py
+```
