@@ -2,7 +2,7 @@ To use this tool (we avoid the term plugin, as it isn't a proper plugin), you ne
 
 # 2-step install:
 
-1)  Add the content of the Carnutes folder with the codes to the "scripts" folder of Rhino. (At every new release, the old files must be deleted)
+1)  Add the content of the src folder with the codes to the "scripts" folder of Rhino. (At every new release, the old files must be deleted)
 
 MacOS:
 ```
@@ -17,7 +17,7 @@ Windows:
 C:\Users\<your_username>\AppData\Roaming\McNeel\Rhinoceros\8.0\scripts
 ```
 
-2) Drag-and-drop the .rhc container file. This file contains the metadata that creates the "Carnutes" toolbar tab with all the buttons calling the different scripts.
+2) Drag-and-drop the .rhc container file ( [Download link](./Carnutes.rhc) ). This file contains the metadata that creates the "Carnutes" toolbar tab with all the buttons calling the different scripts.
 
 This solution is inelegant but corresponds to the developement time allocated to this project. If you know a better way, create an issue and tell me how to improve it 😇. The main issues are that a proper version tracking is inexistant, and installation is not super user friendly.
 
