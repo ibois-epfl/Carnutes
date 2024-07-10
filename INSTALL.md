@@ -48,6 +48,12 @@ conda env create -f environment.yml
 conda activate database_creation
 ```
 
+Navigate to the src directory: 
+
+```bash
+cd src
+```
+
 And run the python script with: 
 
 MacOS:
