@@ -1,10 +1,11 @@
+# 
 Workshop content for Ba3-Ma1 architecture studio
 
 # Carnutes🌳
 
 🪵 In Asterix & Obelix, the Carnutes forest is where druids present their latest crazy inventions to their peers 🪵
 
-This repo contains the code produced as part of the studio Weinand, the architecture studio directed by Prof. Weinand, and Assist. Dr. Agathe Mignon at IBOIS, EPFL (Switzerland), taught to 3rd bachelor and 1st master students.
+This repo contains the code produced as part of the studio Weinand, the architecture studio directed by Prof. Yves Weinand, and Assist. Dr. Agathe Mignon at IBOIS, EPFL (Switzerland), taught to 3rd bachelor and 1st master students.
 
 This code is also a preparation to the research package 3 of Damien Gilliard's PhD thesis. This preparation work aims at finding out what the needs are in the context of roundwood architecture design, through the practice. By collaborating closely with the students through  a series of workshops, design needs will be identified, and the code will be improved and adapted accordingly.
 
@@ -12,9 +13,7 @@ Lastly, this repository is a quick python experiment, has been swiftly developed
 
 ## Goal
 
- The goal of this project is to provide a tool to help druids to experiment with their magic in the forest. 
-
-More precisely, the tool must enable the students to:
+ This project must enable the students to:
 - Dispose of a database of simple tree trunks geometries
 - Match the tree trunk geometries with an 3D sketch of an architectural design.
 - Generate architectural drawings with the tree trunk geometries.
@@ -63,14 +62,16 @@ NO DIGITAL WORKSHOP, but the students come up with their own 3D sketches model o
 
 
 ### 🌲S4: Presentation, feed-back and improvement. 
-Small presentation of each student (1 screen shot of the work done), feed-back. Improvement of the tools are asked to Damien. Improved code (within time constrains) given to students for the next workshop. Concerning the improvements, some choices might be necessary.
+Small presentation of each student (1 screen shot of the work done) of the geometries and joinery, on which feed-back is given. Improvement of the tools are asked to Damien. Improved code (within time constrains) given to students for the next workshop. Concerning the improvements, some choices might be necessary.
 
--> The students learn to critically analyse their needs and formulate the need for improvement. They also learn new graphical representation tools
+Presentation of the graphical representation tools, and emphasis on joinery.
+
+-> The students learn to critically analyse their needs and formulate the need for improvement. They also learn new graphical representation tools and roundwood joinery techniques
 
 -> deliverable: one nice drawing from each student using the introduced functions, and individual feed-back on the structure the students developed.
 
 ### 🌲S5: Presentation, feed-back and improvement.
-Small presentation of each student (1 screen shot of the work done), feed-back. Improvement of the tools are asked to Damien. Improved code (within time constrains) given to students for the next week.
+Small presentation of each student (1 screen shot of the work done) of the geometries and joinery, on which feed-back is given. Improvement of the tools are asked to Damien. Improved code (within time constrains) given to students for the next week.
 
 -> The students present the new applications / adaptations of the tool.
 
