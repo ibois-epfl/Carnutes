@@ -38,6 +38,9 @@ code using the igraph library
 The dependencies are nevertheless listed here: 
 
 - [i-graph](https://igraph.org/) for connectivity of elements
+- [open3d](https://www.open3d.org/) for basic point cloud IO
+- [ZODB](https://zodb.org/en/latest/) for the database of tree trunks
+- [pc_skeletor](https://github.com/meyerls/pc-skeletor/tree/main) for skeleton computation (FOR DATABASE CREATION ONLY, see the environment.yml)
 
 
 # Create your own database
