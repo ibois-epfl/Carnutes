@@ -6,3 +6,4 @@ dependencies:
   - pip:
     - ZODB
     - open3d
+    - pc_skeletor
