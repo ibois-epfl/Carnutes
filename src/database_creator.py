@@ -1,4 +1,5 @@
 #! python3
+
 import ZODB
 import open3d as o3d
 import ZODB.FileStorage
@@ -10,8 +11,13 @@ import BTrees.OOBTree
 
 import utils.tree as tree
 
-def create_database():
-    
+def create_database(voxel_size=0.05):
+    """
+    Create a database of trees from the point cloud dataset.
+
+    :param voxel_size: float, optional
+        The size of the voxel grid used for downsampling the point cloud. The default is 0.05.
+    """
     database_folder = 'database'
     if not os.path.exists(database_folder):
         os.makedirs(database_folder)
@@ -20,20 +26,38 @@ def create_database():
     db = ZODB.DB(storage)
     connection = db.open()
     root = connection.root
-
-    tree_pc = o3d.io.read_point_cloud("dataset/test_file.ply")
-    tree_pc = tree_pc.voxel_down_sample(voxel_size=1)
-    tree_list = []
-    for i in range(len(tree_pc.points)):
-        tree_list.append([float(tree_pc.points[i][0]), float(tree_pc.points[i][1]), float(tree_pc.points[i][2])])
-    tree1 = tree.Tree(1, "Tree 1", tree_list)
-
-
     root.trees = BTrees.OOBTree.BTree()
-    root.trees[tree1.tree_id] = tree1
+
+    for pc_file in os.listdir("dataset"):
+        i = 0
+        if pc_file.endswith(".ply"):
+            print(f"Processing {pc_file}")
+            pc = o3d.io.read_point_cloud(f"dataset/{pc_file}")
+            pc = pc.voxel_down_sample(voxel_size)
+
+            tree_pc_as_pt_list = []
+            
+            for i in range(len(pc.points)):
+                tree_pc_as_pt_list.append([float(pc.points[i][0]), 
+                                           float(pc.points[i][1]), 
+                                           float(pc.points[i][2])])
+                
+            tree_for_db = tree.Tree(len(root.trees), i, tree_pc_as_pt_list)
+            tree_for_db.compute_skeleton(voxel_size)
+
+            root.trees[tree_for_db.tree_id] = tree_for_db
+            i += 1
+
+    root.n_trees = len(root.trees)
 
     transaction.commit()
     connection.close()
 
+def augment_database():
+    """
+    Augment the database with new trees. To be implemented.
+    """
+    pass
+
 if __name__ == '__main__':
-    create_database()
+    create_database(voxel_size=0.1)
