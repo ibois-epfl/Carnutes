@@ -1,0 +1,9 @@
+name: database_creation
+dependencies:
+  - python=3.9
+  - pip
+  - numpy
+  - pip:
+    - ZODB
+    - open3d
+    # - pc_skeletor
