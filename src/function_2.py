@@ -2,8 +2,8 @@
 This is a dummy function, to test out the bones of the project.
 """
 #! python3
-# r: pc_skeletor
 # r: igraph
+# r: ZODB
 
 import os
 import copy
@@ -28,7 +28,7 @@ def main():
         rh_skeleton = Rhino.Geometry.PointCloud()
         skeleton_polyline_list = []
 
-        for j in range(len(tree.point_cloud)):
+        for j in range(len(tree.point_cloud.points)):
             rh_pointcloud.Add(Rhino.Geometry.Point3d(tree.point_cloud.points[j][0],
                                                      tree.point_cloud.points[j][1],
                                                      tree.point_cloud.points[j][2]),
@@ -36,13 +36,13 @@ def main():
                                                             int(tree.point_cloud.colors[j][0]*255),
                                                             int(tree.point_cloud.colors[j][1]*255),
                                                             int(tree.point_cloud.colors[j][2]*255)))
-        for point in tree.tree_skeleton:
-            rh_skeleton.Add(Rhino.Geometry.Point3d(point[0],point[1], point[2]))
-            skeleton_polyline_list.append(Rhino.Geometry.Point3d(point[0],point[1], point[2]))
+        # for point in tree.tree_skeleton:
+        #     rh_skeleton.Add(Rhino.Geometry.Point3d(point[0],point[1], point[2]))
+        #     skeleton_polyline_list.append(Rhino.Geometry.Point3d(point[0],point[1], point[2]))
 
-        skeleton_polyline_list.sort(key=lambda x: x[2])
-        polyline = Rhino.Geometry.Polyline(skeleton_polyline_list)
-        sc.doc.Objects.AddPolyline(polyline)
+        # skeleton_polyline_list.sort(key=lambda x: x[2])
+        # polyline = Rhino.Geometry.Polyline(skeleton_polyline_list)
+        # sc.doc.Objects.AddPolyline(polyline)
         sc.doc.Objects.AddPointCloud(rh_pointcloud)
         sc.doc.Objects.AddPointCloud(rh_skeleton)
         print(tree)
@@ -51,3 +51,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+    print("Done")

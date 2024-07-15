@@ -2,12 +2,11 @@
 Module storing the Tree class and the geometry classes
 """
 #! python3
-# r: pc_skeletor
 import persistent
 
 import open3d as o3d
-from pc_skeletor import *
-from pc_skeletor import LBC
+# from pc_skeletor import *
+# from pc_skeletor import LBC
 
 class Pointcloud:
     """
@@ -67,24 +66,24 @@ class Tree(persistent.Persistent):
         o3d_pc = o3d.geometry.PointCloud()
         o3d_pc.points = o3d.utility.Vector3dVector(self.point_cloud.points)
     
-        lbc = LBC(o3d_pc, voxel_size)
-        lbc.extract_skeleton()
-        downsampled_skeleton = lbc.contracted_point_cloud.voxel_down_sample(2*voxel_size)
+        # lbc = LBC(o3d_pc, voxel_size)
+        # lbc.extract_skeleton()
+        # downsampled_skeleton = lbc.contracted_point_cloud.voxel_down_sample(2*voxel_size)
 
-        # it was observed that running the outlier removal multiple times improves the skeleton in the case of tree point clouds
-        downsampled_skeleton = downsampled_skeleton.remove_statistical_outlier(nb_neighbors=20, std_ratio = 1)[0]
-        downsampled_skeleton = downsampled_skeleton.remove_statistical_outlier(nb_neighbors=20, std_ratio = 1)[0]
-        downsampled_skeleton = downsampled_skeleton.remove_statistical_outlier(nb_neighbors=20, std_ratio = 1)[0]
+        # # it was observed that running the outlier removal multiple times improves the skeleton in the case of tree point clouds
+        # downsampled_skeleton = downsampled_skeleton.remove_statistical_outlier(nb_neighbors=20, std_ratio = 1)[0]
+        # downsampled_skeleton = downsampled_skeleton.remove_statistical_outlier(nb_neighbors=20, std_ratio = 1)[0]
+        # downsampled_skeleton = downsampled_skeleton.remove_statistical_outlier(nb_neighbors=20, std_ratio = 1)[0]
 
-        for point in downsampled_skeleton.points:
-            skeleton_as_list.append([point[0], 
-                                     point[1], 
-                                     point[2]])
+        # for point in downsampled_skeleton.points:
+        #     skeleton_as_list.append([point[0], 
+        #                              point[1], 
+        #                              point[2]])
 
-        self.skeleton = Pointcloud(skeleton_as_list)
+        self.skeleton = None # Pointcloud(skeleton_as_list)
 
-        print("Skeleton computed, n° points = ", len(self.skeleton.points))
+        # print("Skeleton computed, n° points = ", len(self.skeleton.points))
         return self.skeleton
 
     def __str__(self):
-        return f"Tree {self.tree_id} - {self.tree_name}"
+        return f"Tree {self.id} - {self.name}"

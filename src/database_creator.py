@@ -48,7 +48,7 @@ def create_database(voxel_size=0.05):
                 
                 
             tree_for_db = tree.Tree(len(root.trees), i, tree.Pointcloud(tree_pc_as_pt_list, tree_colors_as_list))
-            tree_for_db.compute_skeleton(voxel_size)
+            # tree_for_db.compute_skeleton(voxel_size)
 
             root.trees[tree_for_db.id] = tree_for_db
             i += 1
