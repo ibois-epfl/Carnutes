@@ -5,10 +5,10 @@ import Rhino
 import igraph as ig
 
 class ConnectivityGraph(object):
-    '''
+    """
     Connectivity graph of the structure.
     Handles PolylineCurves and Breps
-    '''
+    """
     def __init__(self,model):
         self.model = model
         if  len(model) < 2:
@@ -21,9 +21,9 @@ class ConnectivityGraph(object):
             raise ValueError("Geometries must be Breps or PolylineCurves.")
 
     def compute_brep_connectivity_graph(self):
-        '''
+        """
         Compute the connectivity graph of the brep.
-        '''
+        """
         n_vertices = len(self.model)
         edges = []
         for i in range(n_vertices):
@@ -35,7 +35,7 @@ class ConnectivityGraph(object):
         self.graph = g
     
     def compute_polyline_connectivity_graph(self):
-        '''
+        """
         Compute the connectivity graph of the polyline.
-        '''
+        """
         self.graph = ig.Graph()
