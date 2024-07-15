@@ -1,4 +1,5 @@
 #! python 3
+# r: igraph
 import Rhino
 from utils import graphs
     
