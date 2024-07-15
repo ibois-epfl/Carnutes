@@ -64,3 +64,9 @@ MacOS:
 ```bash
 /Users/<your_username>/anaconda3/envs/database_creation/bin/python database_creator.py
 ```
+
+Windows: 
+
+```bash
+C:\Users\<your_username>\anaconda3\envs\database_creation\python.exe .\database_creator.py
+```
