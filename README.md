@@ -30,6 +30,9 @@ For this, the following functions are planned:
     - Highlight difference between initial model and model with tree trunks (once the right tree trunks are selected):
         - using wireframe data (must be clarified)
         - using cylinder data
+
+<img src="./assets/images/Capture%20d’écran%202024-07-15%20à%2020.52.48.gif" width="200" height="200" />
+
 # Install and use
 This tool is intended to be used in Rhino 8.
 See the [INSTALL.md](./INSTALL.md) for installation instructions, and the [CONTRIBUTING.md](./CONTRIBUTING.md) for minimal contribution guidelines
