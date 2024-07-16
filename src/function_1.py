@@ -36,6 +36,16 @@ def get_geometries():
 def main():
     # Get the geometries from the Rhino scene
     geometries = get_geometries()
+    if len(geometries) < 2:
+        print("At least two geometries are needed to create a graph.")
+        return
+    
+    if isinstance(geometries[0], Rhino.Geometry.LineCurve):
+        geometries = [geo.ToNurbsCurve() for geo in geometries]
+        print("LineCurves converted to NurbsCurves")
+    elif isinstance(geometries[0], Rhino.Geometry.Line):
+        geometries = [geo.ToNurbsCurve() for geo in geometries]
+        print("Lines converted to NurbsCurves")
 
     # Create the model
     abstract_model = Model(geometries)
