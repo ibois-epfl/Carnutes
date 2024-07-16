@@ -10,7 +10,7 @@ import System.Drawing
 import Rhino
 import scriptcontext as sc
 
-from utils import model
+from utils.model import Model
 
 # Create a new layer into which we output the graph
 layer_name = "Layer_for_connectivity_graph"
@@ -38,7 +38,7 @@ def main():
     geometries = get_geometries()
 
     # Create the model
-    abstract_model = model.Model(geometries)
+    abstract_model = Model(geometries)
     for edge in abstract_model.connectivity_graph.graph.get_edgelist():
         sc.doc.Objects.AddLine(abstract_model.elements[edge[0]].GetBoundingBox(False).Center, abstract_model.elements[edge[1]].GetBoundingBox(False).Center, attributes)
 
