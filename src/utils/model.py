@@ -18,3 +18,8 @@ class Model(object):
     def __init__(self, elements):
         self.elements = elements
         self.connectivity_graph = graphs.ConnectivityGraph(self.elements)
+        type_of_model = type(self.elements[0])
+        for element in self.elements:
+            if type(element) != type_of_model:
+                raise ValueError("All elements in the model should be of the same type.")
+            
