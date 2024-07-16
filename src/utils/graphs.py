@@ -28,10 +28,10 @@ class ConnectivityGraph(object):
             raise ValueError("At least two geometries are needed to create a graph.")
         elif type(elements[0]) == Rhino.Geometry.Brep:
             self.compute_brep_connectivity_graph(elements)
-        elif type(elements[0]) == Rhino.Geometry.PolylineCurve:
-            self.compute_polyline_connectivity_graph(elements)
+        elif type(elements[0]) == Rhino.Geometry.NurbsCurve:
+            self.compute_nurbs_curve_connectivity_graph(elements)
         else:
-            raise ValueError("Geometries must be Breps or PolylineCurves.")
+            raise ValueError("Geometries must be Breps or Curves.")
 
     def compute_brep_connectivity_graph(self, elements):
         """
@@ -57,8 +57,24 @@ class ConnectivityGraph(object):
         self.graph = g
         return centers
     
-    def compute_polyline_connectivity_graph(self, elements):
+    def compute_nurbs_curve_connectivity_graph(self, elements):
         """
-        Compute the connectivity graph of the polyline.
+        Compute the connectivity graph of the Nurbs Curves.
+        returns: list[Point3d]
+            the intersection points
         """
-        self.graph = ig.Graph()
+        n_vertices = len(elements)
+        edges = []
+        centers = []
+        for i in range(n_vertices):
+            for j in range(i+1,n_vertices):
+                result = Rhino.Geometry.Intersect.Intersection.CurveCurve(elements[i], elements[j], ABS_TOL, ABS_TOL)
+                if result is not None and len(result) > 0:
+                    edges.append([i,j])
+                    for intersection in result:
+                        centers.append(intersection.PointA)
+                else:
+                    continue
+        g = ig.Graph(n_vertices, edges)
+        self.graph = g
+        return centers
