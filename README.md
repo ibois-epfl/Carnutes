@@ -32,7 +32,7 @@ For this, the following functions are planned:
         - using cylinder data
 # Install and use
 This tool is intended to be used in Rhino 8.
-See the [INSTALL.md](./INSTALL.md) for installation instructions, and the [CONTRIBUTING.md](./CONTRIBUTING.md) for minimal contribution guidelines
+See the [INSTALL.md](./INSTALL.md) for installation instructions, and the [CONTRIBUTING.md](./CONTRIBUTING.md) for minimal contribution guidelines. This repo contains a small .3dm to easily test Carnutes.
 
 # 4 workshops will be held within the Studio:
 
