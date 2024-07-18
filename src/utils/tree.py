@@ -3,7 +3,9 @@ Module storing the Tree class and the geometry classes
 """
 #! python3
 import persistent
+from collections import defaultdict
 
+import numpy as np
 import open3d as o3d
 # from pc_skeletor import *
 # from pc_skeletor import LBC
@@ -53,34 +55,43 @@ class Tree(persistent.Persistent):
         self.point_cloud = point_cloud
         self.skeleton = skeleton
 
-    def compute_skeleton(self, voxel_size=0.01):
+    def compute_skeleton(self):
         """
         Compute the skeleton of the point cloud.
+        For now it is done in a rather sloppy way. this is because pc_skeletor is currently causing issues
+
+        To Do: make this actually professional
 
         :param voxel_size: float, optional
             The size of the voxel grid used for downsampling the point cloud. The default is 0.01.
         """
         skeleton_as_list = []
 
-        # pc_skeletor needs an open3d point cloud but ZODB doesn't support it, hence this workaround
         o3d_pc = o3d.geometry.PointCloud()
         o3d_pc.points = o3d.utility.Vector3dVector(self.point_cloud.points)
     
-        # lbc = LBC(o3d_pc, voxel_size)
-        # lbc.extract_skeleton()
-        # downsampled_skeleton = lbc.contracted_point_cloud.voxel_down_sample(2*voxel_size)
+        oriented_bounding_box = o3d_pc.get_oriented_bounding_box()
+        min_bound = oriented_bounding_box.get_min_bound()[2]
+        pc_height = oriented_bounding_box.get_max_bound()[2] - min_bound
+        print("height of the point cloud is ", pc_height)
+        segments = defaultdict(list)
+        for point in np.asarray(o3d_pc.points):
+            relative_height = point[2] - min_bound
+            # We create 10 indexes along the height of the point cloud (we assume the tree upwards)
+            index = int(round(10 * relative_height/pc_height))
+            if index not in segments:
+                segments[index] = [point]
+            else:
+                segments[index].append(point)
+        for i in range(11):
+            i_th_segment = segments[i]
+            center_point = i_th_segment[0]
+            for j in range(len(i_th_segment) - 1):
+                center_point += i_th_segment[i + 1]
+            center_point /= len(i_th_segment)
+            skeleton_as_list.append(center_point)
 
-        # # it was observed that running the outlier removal multiple times improves the skeleton in the case of tree point clouds
-        # downsampled_skeleton = downsampled_skeleton.remove_statistical_outlier(nb_neighbors=20, std_ratio = 1)[0]
-        # downsampled_skeleton = downsampled_skeleton.remove_statistical_outlier(nb_neighbors=20, std_ratio = 1)[0]
-        # downsampled_skeleton = downsampled_skeleton.remove_statistical_outlier(nb_neighbors=20, std_ratio = 1)[0]
-
-        # for point in downsampled_skeleton.points:
-        #     skeleton_as_list.append([point[0], 
-        #                              point[1], 
-        #                              point[2]])
-
-        self.skeleton = None # Pointcloud(skeleton_as_list)
+        self.skeleton = skeleton_as_list
 
         # print("Skeleton computed, n° points = ", len(self.skeleton.points))
         return self.skeleton
