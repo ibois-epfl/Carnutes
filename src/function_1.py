@@ -46,6 +46,9 @@ def main():
     elif isinstance(geometries[0], Rhino.Geometry.Line):
         geometries = [geo.ToNurbsCurve() for geo in geometries]
         print("Lines converted to NurbsCurves")
+    elif isinstance(geometries[0], Rhino.Geometry.Curve):
+        geometries = [geo.ToNurbsCurve() for geo in geometries]
+        print("Curves converted to NurbsCurve")
 
     # Create the model
     abstract_model = Model(geometries)

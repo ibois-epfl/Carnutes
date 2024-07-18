@@ -36,13 +36,13 @@ def main():
                                                             int(tree.point_cloud.colors[j][0]*255),
                                                             int(tree.point_cloud.colors[j][1]*255),
                                                             int(tree.point_cloud.colors[j][2]*255)))
-        # for point in tree.tree_skeleton:
-        #     rh_skeleton.Add(Rhino.Geometry.Point3d(point[0],point[1], point[2]))
-        #     skeleton_polyline_list.append(Rhino.Geometry.Point3d(point[0],point[1], point[2]))
+        for point in tree.skeleton:
+            rh_skeleton.Add(Rhino.Geometry.Point3d(point[0],point[1], point[2]))
+            skeleton_polyline_list.append(Rhino.Geometry.Point3d(point[0],point[1], point[2]))
 
-        # skeleton_polyline_list.sort(key=lambda x: x[2])
-        # polyline = Rhino.Geometry.Polyline(skeleton_polyline_list)
-        # sc.doc.Objects.AddPolyline(polyline)
+        skeleton_polyline_list.sort(key=lambda x: x[2])
+        polyline = Rhino.Geometry.Polyline(skeleton_polyline_list)
+        sc.doc.Objects.AddPolyline(polyline)
         sc.doc.Objects.AddPointCloud(rh_pointcloud)
         sc.doc.Objects.AddPointCloud(rh_skeleton)
         print(tree)
