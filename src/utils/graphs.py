@@ -11,6 +11,7 @@ import Rhino
 import numpy as np
 import igraph as ig
 
+
 ABS_TOL = Rhino.RhinoDoc.ActiveDoc.ModelAbsoluteTolerance
 
 class ConnectivityGraph(object):
@@ -26,12 +27,12 @@ class ConnectivityGraph(object):
     def __init__(self,elements):
         if  len(elements) < 2:
             raise ValueError("At least two geometries are needed to create a graph.")
-        elif type(elements[0]) == Rhino.Geometry.Brep:
+        elif isinstance(elements[0], Rhino.Geometry.Brep):
             self.compute_brep_connectivity_graph(elements)
-        elif type(elements[0]) == Rhino.Geometry.NurbsCurve:
+        elif isinstance(elements[0], Rhino.Geometry.NurbsCurve):
             self.compute_nurbs_curve_connectivity_graph(elements)
         else:
-            raise ValueError("Geometries must be Breps or Curves.")
+            raise ValueError("Geometries must be Breps or NurbsCurve.")
 
     def compute_brep_connectivity_graph(self, elements):
         """
