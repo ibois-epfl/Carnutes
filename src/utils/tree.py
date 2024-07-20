@@ -4,30 +4,15 @@ Module storing the Tree class and the geometry classes
 #! python3
 import persistent
 from collections import defaultdict
+import copy
+
+from utils.geometry import Pointcloud
 
 import numpy as np
 import open3d as o3d
+from open3d import pipelines
 # from pc_skeletor import *
 # from pc_skeletor import LBC
-
-class Pointcloud:
-    """
-    Pointcloud class to store point cloud data.
-    The point cloud is stored as a list of points
-    :param point_cloud
-        The point cloud as a list of lists of 3 coordinates
-    :param point_cloud_colors
-        The colors of the point cloud as a list of lists of 3 colors. None by default.
-    """
-    def __init__(self,
-                 points : list, 
-                 colors : list = None):
-        self.points = points
-        self.colors = colors
-
-    def __str__(self):
-        return f"Point cloud {self.point_cloud_id} - {self.point_cloud_name}"
-
 
 
 class Tree(persistent.Persistent):
@@ -91,10 +76,48 @@ class Tree(persistent.Persistent):
             center_point /= len(i_th_segment)
             skeleton_as_list.append(center_point)
 
-        self.skeleton = skeleton_as_list
+        self.skeleton = Pointcloud(skeleton_as_list)
 
-        # print("Skeleton computed, n° points = ", len(self.skeleton.points))
+        print("Skeleton computed, n° points = ", len(self.skeleton.points))
         return self.skeleton
 
+    def align_to_skeleton(self, reference_skeleton):
+        """
+        Align the tree to a reference skeleton using ICP
+        :param reference_skeleton: Pointcloud
+            The reference skeleton to align to
+        """
+        tree_pc = o3d.geometry.PointCloud()
+        tree_pc.points = o3d.utility.Vector3dVector(np.array(self.point_cloud.points))
+        skeleton_pc = o3d.geometry.PointCloud()
+        skeleton_pc.points = o3d.utility.Vector3dVector(np.array(self.skeleton.points))
+        skeleton_pc.estimate_normals()
+        reference_pc = o3d.geometry.PointCloud()
+        reference_pc.points = o3d.utility.Vector3dVector(np.array(reference_skeleton.points))
+        reference_pc.estimate_normals()
+
+        
+
+        initial_translation = np.identity(4)
+        initial_translation[0, 3] = reference_pc.points[0][0] - skeleton_pc.points[0][0]
+        initial_translation[1, 3] = reference_pc.points[0][1] - skeleton_pc.points[0][1]
+        initial_translation[2, 3] = reference_pc.points[0][2] - skeleton_pc.points[0][2]
+
+        result = o3d.pipelines.registration.registration_icp(skeleton_pc, 
+                                                             reference_pc,
+                                                             10.0,
+                                                             initial_translation)
+
+        transformation = result.transformation
+        tree_pc = copy.deepcopy(tree_pc)
+        print("Type of transformation matrix: ", type(transformation))
+        print("Shape of transformation matrix: ", transformation.shape)
+        print("Transformation matrix\n", float(transformation[0, 3]))
+
+        tree_pc.transform(transformation)
+        # self.point_cloud = Pointcloud(np.asarray(tree_pc.points))
+        # skeleton_pc.transform(transformation)
+        # self.skeleton = Pointcloud(np.asarray(skeleton_pc.points))
+        
     def __str__(self):
         return f"Tree {self.id} - {self.name}"
