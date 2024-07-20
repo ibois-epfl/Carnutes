@@ -2,6 +2,9 @@
 Main module for reading the database, containing the DatabaseReader class.
 """
 #! python3
+
+# r: ZODB
+
 import ZODB
 import ZODB.FileStorage
 
