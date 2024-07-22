@@ -31,7 +31,10 @@ For this, the following functions are planned:
         - using wireframe data (must be clarified)
         - using cylinder data
 
-<img src="./assets/images/Capture%20d’écran%202024-07-15%20à%2020.52.48.gif" width="300" height="400" img src="./assets/images/tree_trunks_from_wireframe.gif" width="300" height="400" />
+<div style="display: flex;">
+    <img src="./assets/images/Capture%20d’écran%202024-07-15%20à%2020.52.48.gif" width="300" height="400" />
+    <img src="./assets/images/tree_trunks_from_wireframe.gif" width="300" height="400" />
+</div>
 
 
 
