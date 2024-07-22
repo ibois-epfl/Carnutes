@@ -98,19 +98,16 @@ class Tree(persistent.Persistent):
         reference_pc.estimate_normals()
 
         initial_translation = np.identity(4)
-        initial_translation[:3, 3] = np.mean(np.asarray(tree_pc.points), axis=0) - np.mean(np.asarray(reference_pc.points), axis=0)
+        initial_translation[:3, 3] =  np.mean(np.asarray(reference_pc.points), axis=0) - np.mean(np.asarray(tree_pc.points), axis=0)
         tree_pc.transform(initial_translation)
-        print("Initial translation matrix\n", initial_translation)
-
+        
         result = o3d.pipelines.registration.registration_icp(skeleton_pc, 
                                                              reference_pc,
-                                                             100.0)
+                                                             100.0,
+                                                             initial_translation)
 
         transformation = result.transformation
         tree_pc = copy.deepcopy(tree_pc)
-        print("Type of transformation matrix: ", type(transformation))
-        print("Shape of transformation matrix: ", transformation.shape)
-        print("Transformation matrix\n", transformation)
 
         # Assuming an affine transformation
         rotation = transformation[:3, :3]
