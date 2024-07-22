@@ -32,6 +32,9 @@ For this, the following functions are planned:
         - using cylinder data
 
 <img src="./assets/images/Capture%20d’écran%202024-07-15%20à%2020.52.48.gif" width="300" height="400" />
+<img src="./assets/images/tree_trunks_from_wireframe.gif" width="300" height="400" />
+
+
 
 # Install and use
 This tool is intended to be used in Rhino 8.
