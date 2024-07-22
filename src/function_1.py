@@ -12,7 +12,7 @@ import platform
 
 # Thanks to https://discourse.mcneel.com/t/rhinocode-scripeditor-for-development-of-libraries/175228/22
 
-CONDA_ENV = r'/Users/admin/anaconda3/envs/database_creation'
+CONDA_ENV = r'/Users/admin/anaconda3/envs/Carnutes'
 
 if platform.system() == 'Windows':
     sys.path.append(os.path.join(CONDA_ENV, r'Lib\site-packages'))
