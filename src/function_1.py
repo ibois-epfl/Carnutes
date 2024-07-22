@@ -3,7 +3,25 @@ dummy function to test the bones of the project
 this one creates a graph from the selected breps or lines and draws a graph of the connected elements in the rhino scene
 """
 #! python 3
-# r: igraph
+
+import os
+import sys
+import copy
+import System
+import platform
+
+# Thanks to https://discourse.mcneel.com/t/rhinocode-scripeditor-for-development-of-libraries/175228/22
+
+CONDA_ENV = r'/Users/admin/anaconda3/envs/database_creation'
+
+if platform.system() == 'Windows':
+    sys.path.append(os.path.join(CONDA_ENV, r'Lib\site-packages'))
+    os.add_dll_directory(os.path.join(CONDA_ENV, r'Library/bin'))
+
+elif platform.system() == 'Darwin':  # Darwin stands for macOS
+    sys.path.append(os.path.join(CONDA_ENV, r'lib/python3.9/site-packages'))
+    os.environ["DYLD_LIBRARY_PATH"] = os.path.join(CONDA_ENV, r'bin')
+
 
 import System.Drawing
 

@@ -4,11 +4,26 @@ This is a dummy function, to test out the bones of the project.
 #! python3
 
 import os
+import sys
 import copy
+import System
+import platform
 
+# Thanks to https://discourse.mcneel.com/t/rhinocode-scripeditor-for-development-of-libraries/175228/22
+
+CONDA_ENV = r'/Users/admin/anaconda3/envs/database_creation'
+
+if platform.system() == 'Windows':
+    sys.path.append(os.path.join(CONDA_ENV, r'Lib\site-packages'))
+    os.add_dll_directory(os.path.join(CONDA_ENV, r'Library/bin'))
+
+elif platform.system() == 'Darwin':  # Darwin stands for macOS
+    sys.path.append(os.path.join(CONDA_ENV, r'lib/python3.9/site-packages'))
+    os.environ["DYLD_LIBRARY_PATH"] = os.path.join(CONDA_ENV, r'bin')
+
+import numpy as np
 import Rhino
 import scriptcontext
-import numpy as np
 
 from utils import database_reader, model, tree, geometry
 from utils.tree import Tree
@@ -84,13 +99,25 @@ def main():
     tree_id = np.random.randint(0, n_tree)
     my_tree = reader.get_tree(tree_id)
     my_tree = copy.deepcopy(my_tree)
-    print(my_tree)
-    reader.close()
+    
 
     # Align it using o3d's ransac, then crop it to the bounding box of the element
     target_skeleton = geometry.Pointcloud(reference_pc_as_list)
     my_tree.align_to_skeleton(target_skeleton)
 
+    # Create the point cloud
+    my_tree_pc_rh = Rhino.Geometry.PointCloud()
+    for j in range(len(my_tree.point_cloud.points)):
+            my_tree_pc_rh.Add(Rhino.Geometry.Point3d(my_tree.point_cloud.points[j][0],
+                                                     my_tree.point_cloud.points[j][1],
+                                                     my_tree.point_cloud.points[j][2]),
+                              System.Drawing.Color.FromArgb(255,
+                                                            int(my_tree.point_cloud.colors[j][0] * 255),
+                                                            int(my_tree.point_cloud.colors[j][1] * 255),
+                                                            int(my_tree.point_cloud.colors[j][2] * 255)))
+    reader.close()
+    scriptcontext.doc.Objects.AddPointCloud(my_tree_pc_rh)
+    print("Point cloud added to the model.")
 if __name__ == "__main__":
     main()
     print("Done")
