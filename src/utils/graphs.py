@@ -3,8 +3,6 @@ Module for creating graphs from geometries.
 """
 
 #! python 3
-#r: igraph
-#r: numpy
 
 import Rhino
 
