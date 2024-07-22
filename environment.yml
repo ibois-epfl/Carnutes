@@ -6,4 +6,5 @@ dependencies:
   - pip:
     - ZODB
     - open3d
+    - igraph
     # - pc_skeletor
