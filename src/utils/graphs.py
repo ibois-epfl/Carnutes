@@ -74,3 +74,19 @@ class ConnectivityGraph(object):
                     continue
         g = ig.Graph(n_vertices, edges, edge_attrs={"location": locations} )
         self.graph = g
+
+    def get_connectivity_of_vertex(self, vertex):
+        """
+        Get the connectivity of a vertex.
+
+        ::param vertex: int
+            The vertex for which we want to get the connectivity.
+
+        ::return: list
+            The list of vertices connected to the vertex.
+
+        """
+        return self.graph.incident(vertex)
+
+    def __str__(self):
+        return "Connectivity graph with {} vertices and {} edges".format(self.graph.vcount(), self.graph.ecount())
