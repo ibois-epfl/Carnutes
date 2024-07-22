@@ -20,7 +20,7 @@ class ConnectivityGraph(object):
     Attributes:
     ----------
     graph: igraph.Graph
-        the connectivity graph of the structure
+        the connectivity graph of the structure. This igraph.Graph as as edge attibutes the locations of the intersections.
     """
     def __init__(self,elements):
         if  len(elements) < 2:
@@ -35,12 +35,11 @@ class ConnectivityGraph(object):
     def compute_brep_connectivity_graph(self, elements):
         """
         Compute the connectivity graph of the brep and stores the graph in self.graph.
-        returns: list[Point3d] 
-            the centers of the bounding boxes of the intersections
         """
         n_vertices = len(elements)
         edges = []
-        centers = []
+        # igraph stores edge attributes in a dictionary. We want to store the locations of the intersections that the edge ij represents
+        locations = []
         for i in range(n_vertices):
             for j in range(i+1,n_vertices):
                 result = Rhino.Geometry.Brep.CreateBooleanIntersection(elements[i], elements[j], ABS_TOL, False)
@@ -48,32 +47,30 @@ class ConnectivityGraph(object):
                     edges.append([i,j])
                     for brep in result:
                         bounding_box = brep.GetBoundingBox(False)
-                        centers.append(bounding_box.Center)
+                        locations.append(bounding_box.Center.X, bounding_box.Center.Y, bounding_box.Center.Z)
                 else:
                     continue
 
-        g = ig.Graph(n_vertices, edges)
+        g = ig.Graph(n_vertices, edges, edge_attrs={"location": locations} )
         self.graph = g
-        return centers
+
     
     def compute_nurbs_curve_connectivity_graph(self, elements):
         """
         Compute the connectivity graph of the Nurbs Curves.
-        returns: list[Point3d]
-            the intersection points
         """
         n_vertices = len(elements)
         edges = []
+        # igraph stores edge attributes in a dictionary. We want to store the locations of the intersections that the edge ij represents
+        locations = []
         centers = []
         for i in range(n_vertices):
             for j in range(i+1,n_vertices):
                 result = Rhino.Geometry.Intersect.Intersection.CurveCurve(elements[i], elements[j], ABS_TOL, ABS_TOL)
                 if result is not None and len(result) > 0:
                     edges.append([i,j])
-                    for intersection in result:
-                        centers.append(intersection.PointA)
+                    locations.append([result[0].PointA.X, result[0].PointA.Y, result[0].PointA.Z])
                 else:
                     continue
-        g = ig.Graph(n_vertices, edges)
+        g = ig.Graph(n_vertices, edges, edge_attrs={"location": locations} )
         self.graph = g
-        return centers

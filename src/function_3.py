@@ -63,6 +63,13 @@ def main():
 
     elements = [model.Element(geometries[i], go.Object(i).ObjectId) for i in range(go.ObjectCount)]
     current_model = model.Model(elements)
+
+    # small test to show all the connections of the element 10 of the model
+    connections = current_model.connectivity_graph.graph.incident(10)
+    for connection in connections:
+        connection_location = current_model.connectivity_graph.graph.es[connection]['location']
+        sphere = Rhino.Geometry.Sphere(Rhino.Geometry.Point3d(connection_location[0], connection_location[1], connection_location[2]), 1)
+        scriptcontext.doc.Objects.AddSphere(sphere)
     
     # Ask user which element (s)he wants to replace with a point cloud
     go = Rhino.Input.Custom.GetObject()
@@ -87,8 +94,6 @@ def main():
             reference_pc_as_list.append([target.geometry.PointAt(crv_parameters[i]).X,
                                          target.geometry.PointAt(crv_parameters[i]).Y,
                                          target.geometry.PointAt(crv_parameters[i]).Z])
-    
-    print("Element selected: {}".format(element_guid))
 
     
     # Retrieve 1 random point cloud from the database
@@ -117,6 +122,7 @@ def main():
                                                             int(my_tree.point_cloud.colors[j][2] * 255)))
     reader.close()
     scriptcontext.doc.Objects.AddPointCloud(my_tree_pc_rh)
+
     print("Point cloud added to the model.")
 if __name__ == "__main__":
     main()
