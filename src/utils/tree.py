@@ -9,6 +9,7 @@ import copy
 from utils.geometry import Pointcloud
 
 import numpy as np
+np.set_printoptions(formatter={"float": "{:.5f}".format})
 import open3d as o3d
 from open3d import pipelines
 # from pc_skeletor import *
@@ -96,25 +97,45 @@ class Tree(persistent.Persistent):
         reference_pc.points = o3d.utility.Vector3dVector(np.array(reference_skeleton.points))
         reference_pc.estimate_normals()
 
-        
-
         initial_translation = np.identity(4)
-        initial_translation[0, 3] = reference_pc.points[0][0] - skeleton_pc.points[0][0]
-        initial_translation[1, 3] = reference_pc.points[0][1] - skeleton_pc.points[0][1]
-        initial_translation[2, 3] = reference_pc.points[0][2] - skeleton_pc.points[0][2]
+        initial_translation[:3, 3] = np.mean(np.asarray(tree_pc.points), axis=0) - np.mean(np.asarray(reference_pc.points), axis=0)
+        tree_pc.transform(initial_translation)
+        print("Initial translation matrix\n", initial_translation)
 
         result = o3d.pipelines.registration.registration_icp(skeleton_pc, 
                                                              reference_pc,
-                                                             10.0,
-                                                             initial_translation)
+                                                             100.0)
 
         transformation = result.transformation
         tree_pc = copy.deepcopy(tree_pc)
         print("Type of transformation matrix: ", type(transformation))
         print("Shape of transformation matrix: ", transformation.shape)
-        print("Transformation matrix\n", float(transformation[0, 3]))
+        print("Transformation matrix\n", transformation)
 
-        tree_pc.transform(transformation)
+        # Assuming an affine transformation
+        rotation = transformation[:3, :3]
+        translation = transformation[:3, 3]
+
+        new_pointcloud = []
+        new_skeleton = []
+
+        for point in self.point_cloud.points:
+            point = np.dot(rotation, point) + translation
+            new_pointcloud.append(point)
+
+        self.point_cloud = Pointcloud(new_pointcloud, self.point_cloud.colors)
+
+        for point in self.skeleton.points:
+            point = np.dot(rotation, point) + translation
+            new_skeleton.append(point)
+        
+        self.skeleton = Pointcloud(new_skeleton)
+            
+        # tree_pc.transform(transformation)
+        # self.point_cloud = Pointcloud(np.asarray(tree_pc.points))
+        # skeleton_pc.transform(transformation)
+        # self.skeleton = Pointcloud(np.asarray(skeleton_pc.points))
+        
         # self.point_cloud = Pointcloud(np.asarray(tree_pc.points))
         # skeleton_pc.transform(transformation)
         # self.skeleton = Pointcloud(np.asarray(skeleton_pc.points))
