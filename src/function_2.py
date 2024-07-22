@@ -2,11 +2,25 @@
 This is a dummy function, to test out the bones of the project.
 """
 #! python3
-# r: igraph
-# r: ZODB
 
 import os
+import sys
 import copy
+import System
+import platform
+
+# Thanks to https://discourse.mcneel.com/t/rhinocode-scripeditor-for-development-of-libraries/175228/22
+
+CONDA_ENV = r'/Users/admin/anaconda3/envs/database_creation'
+
+if platform.system() == 'Windows':
+    sys.path.append(os.path.join(CONDA_ENV, r'Lib\site-packages'))
+    os.add_dll_directory(os.path.join(CONDA_ENV, r'Library/bin'))
+
+elif platform.system() == 'Darwin':  # Darwin stands for macOS
+    sys.path.append(os.path.join(CONDA_ENV, r'lib/python3.9/site-packages'))
+    os.environ["DYLD_LIBRARY_PATH"] = os.path.join(CONDA_ENV, r'bin')
+
 
 import utils.database_reader as db_reader
 from utils.tree import Tree
@@ -36,13 +50,13 @@ def main():
                                                             int(tree.point_cloud.colors[j][0]*255),
                                                             int(tree.point_cloud.colors[j][1]*255),
                                                             int(tree.point_cloud.colors[j][2]*255)))
-        # for point in tree.tree_skeleton:
-        #     rh_skeleton.Add(Rhino.Geometry.Point3d(point[0],point[1], point[2]))
-        #     skeleton_polyline_list.append(Rhino.Geometry.Point3d(point[0],point[1], point[2]))
+        for point in tree.skeleton.points:
+            rh_skeleton.Add(Rhino.Geometry.Point3d(point[0],point[1], point[2]))
+            skeleton_polyline_list.append(Rhino.Geometry.Point3d(point[0],point[1], point[2]))
 
-        # skeleton_polyline_list.sort(key=lambda x: x[2])
-        # polyline = Rhino.Geometry.Polyline(skeleton_polyline_list)
-        # sc.doc.Objects.AddPolyline(polyline)
+        skeleton_polyline_list.sort(key=lambda x: x[2])
+        polyline = Rhino.Geometry.Polyline(skeleton_polyline_list)
+        sc.doc.Objects.AddPolyline(polyline)
         sc.doc.Objects.AddPointCloud(rh_pointcloud)
         sc.doc.Objects.AddPointCloud(rh_skeleton)
         print(tree)
