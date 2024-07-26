@@ -47,7 +47,7 @@ class ConnectivityGraph(object):
                     edges.append([i,j])
                     for brep in result:
                         bounding_box = brep.GetBoundingBox(False)
-                        locations.append(bounding_box.Center.X, bounding_box.Center.Y, bounding_box.Center.Z)
+                        locations.append([bounding_box.Center.X, bounding_box.Center.Y, bounding_box.Center.Z])
                 else:
                     continue
 

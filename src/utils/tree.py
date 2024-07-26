@@ -2,6 +2,7 @@
 Module storing the Tree class and the geometry classes
 """
 #! python3
+
 import persistent
 from collections import defaultdict
 import copy
@@ -9,7 +10,7 @@ import copy
 from utils.geometry import Pointcloud
 
 import numpy as np
-np.set_printoptions(formatter={"float": "{:.5f}".format})
+
 import open3d as o3d
 from open3d import pipelines
 # from pc_skeletor import *
