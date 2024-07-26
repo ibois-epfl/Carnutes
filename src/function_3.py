@@ -2,26 +2,17 @@
 This is a dummy function, to test out the bones of the project.
 """
 #! python3
+# r: numpy==1.26.4
+# r: open3d==0.18.0
+# r: ZODB==6.0
+# r: igraph==0.11.6
 
 import os
-import sys
 import copy
 import System
-import platform
-
-# Thanks to https://discourse.mcneel.com/t/rhinocode-scripeditor-for-development-of-libraries/175228/22
-
-CONDA_ENV = r'/Users/admin/anaconda3/envs/Carnutes'
-
-if platform.system() == 'Windows':
-    sys.path.append(os.path.join(CONDA_ENV, r'Lib\site-packages'))
-    os.add_dll_directory(os.path.join(CONDA_ENV, r'Library/bin'))
-
-elif platform.system() == 'Darwin':  # Darwin stands for macOS
-    sys.path.append(os.path.join(CONDA_ENV, r'lib/python3.9/site-packages'))
-    os.environ["DYLD_LIBRARY_PATH"] = os.path.join(CONDA_ENV, r'bin')
 
 import numpy as np
+
 import Rhino
 import scriptcontext
 
@@ -65,11 +56,11 @@ def main():
     current_model = model.Model(elements)
 
     # small test to show all the connections of the element 10 of the model
-    connections = current_model.connectivity_graph.graph.incident(10)
-    for connection in connections:
-        connection_location = current_model.connectivity_graph.graph.es[connection]['location']
-        sphere = Rhino.Geometry.Sphere(Rhino.Geometry.Point3d(connection_location[0], connection_location[1], connection_location[2]), 1)
-        scriptcontext.doc.Objects.AddSphere(sphere)
+    # connections = current_model.connectivity_graph.graph.incident(10)
+    # for connection in connections:
+    #     connection_location = current_model.connectivity_graph.graph.es[connection]['location']
+    #     sphere = Rhino.Geometry.Sphere(Rhino.Geometry.Point3d(connection_location[0], connection_location[1], connection_location[2]), 1)
+    #     scriptcontext.doc.Objects.AddSphere(sphere)
     
     # Ask user which element (s)he wants to replace with a point cloud
     go = Rhino.Input.Custom.GetObject()
@@ -121,10 +112,20 @@ def main():
                                                             int(my_tree.point_cloud.colors[j][1] * 255),
                                                             int(my_tree.point_cloud.colors[j][2] * 255)))
     reader.close()
+
+    # crop the point cloud to a cylinder around the element
+    cylinder = Rhino.Geometry.Brep.CreatePipe(target.geometry, 1, True, Rhino.Geometry.PipeCapMode.Flat, True, 0.01, 0.01)[0]
+    indexes_to_remove = []
+    for i in range(my_tree_pc_rh.Count):
+        point = my_tree_pc_rh[i]
+        if not cylinder.IsPointInside(point.Location, 0.01, True):
+            indexes_to_remove.append(i)
+    
+    my_tree_pc_rh.RemoveRange(indexes_to_remove)
+
     scriptcontext.doc.Objects.AddPointCloud(my_tree_pc_rh)
 
     print("Point cloud added to the model.")
 if __name__ == "__main__":
     main()
     print("Done")
-
