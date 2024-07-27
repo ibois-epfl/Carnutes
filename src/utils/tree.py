@@ -7,7 +7,7 @@ import persistent
 from collections import defaultdict
 import copy
 
-from utils.geometry import Pointcloud
+from utils.geometry import Pointcloud, Mesh
 
 import numpy as np
 
@@ -128,15 +128,6 @@ class Tree(persistent.Persistent):
             new_skeleton.append(point)
         
         self.skeleton = Pointcloud(new_skeleton)
-            
-        # tree_pc.transform(transformation)
-        # self.point_cloud = Pointcloud(np.asarray(tree_pc.points))
-        # skeleton_pc.transform(transformation)
-        # self.skeleton = Pointcloud(np.asarray(skeleton_pc.points))
-        
-        # self.point_cloud = Pointcloud(np.asarray(tree_pc.points))
-        # skeleton_pc.transform(transformation)
-        # self.skeleton = Pointcloud(np.asarray(skeleton_pc.points))
         
     def __str__(self):
         return f"Tree {self.id} - {self.name}"

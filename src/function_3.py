@@ -95,7 +95,7 @@ def main():
     tree_id = np.random.randint(0, n_tree)
     my_tree = reader.get_tree(tree_id)
     my_tree = copy.deepcopy(my_tree)
-    
+    reader.close()
 
     # Align it using o3d's ransac, then crop it to the bounding box of the element
     target_skeleton = geometry.Pointcloud(reference_pc_as_list)
@@ -111,7 +111,6 @@ def main():
                                                             int(my_tree.point_cloud.colors[j][0] * 255),
                                                             int(my_tree.point_cloud.colors[j][1] * 255),
                                                             int(my_tree.point_cloud.colors[j][2] * 255)))
-    reader.close()
 
     # crop the point cloud to a cylinder around the element
     cylinder = Rhino.Geometry.Brep.CreatePipe(target.geometry, 1, True, Rhino.Geometry.PipeCapMode.Flat, True, 0.01, 0.01)[0]

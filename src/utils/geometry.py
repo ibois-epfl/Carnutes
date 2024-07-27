@@ -19,3 +19,21 @@ class Pointcloud:
 
     def __str__(self):
         return "Pointcloud with {} points".format(len(self.points))
+
+class Mesh:
+    """
+    Mesh class to store mesh data.
+    The mesh is stored as a list of vertices and a list of faces
+    :param vertices
+        The vertices of the mesh as a list of lists of 3 coordinates
+    :param faces
+        The faces of the mesh as a list of lists of 3 indices
+    """
+    def __init__(self,
+                 vertices : list,
+                 faces : list):
+        self.vertices = vertices
+        self.faces = faces
+
+    def __str__(self):
+        return "Mesh with {} vertices and {} faces".format(len(self.vertices), len(self.faces))
