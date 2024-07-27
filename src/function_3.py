@@ -100,7 +100,15 @@ def main():
     # Align it using o3d's ransac, then crop it to the bounding box of the element
     target_skeleton = geometry.Pointcloud(reference_pc_as_list)
     my_tree.align_to_skeleton(target_skeleton)
+    my_tree.create_mesh()
 
+    tree_mesh = Rhino.Geometry.Mesh()
+    for i in range(len(my_tree.mesh.vertices)):
+        tree_mesh.Vertices.Add(my_tree.mesh.vertices[i][0], my_tree.mesh.vertices[i][1], my_tree.mesh.vertices[i][2])
+    for i in range(len(my_tree.mesh.faces)):
+        tree_mesh.Faces.AddFace(int(my_tree.mesh.faces[i][0]), int(my_tree.mesh.faces[i][1]),int(my_tree.mesh.faces[i][2]))
+    scriptcontext.doc.Objects.AddMesh(tree_mesh)
+    
     # Create the point cloud
     my_tree_pc_rh = Rhino.Geometry.PointCloud()
     for j in range(len(my_tree.point_cloud.points)):
