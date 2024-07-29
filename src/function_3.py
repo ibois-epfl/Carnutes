@@ -85,6 +85,26 @@ def main():
             reference_pc_as_list.append([target.geometry.PointAt(crv_parameters[i]).X,
                                          target.geometry.PointAt(crv_parameters[i]).Y,
                                          target.geometry.PointAt(crv_parameters[i]).Z])
+    elif isinstance(target.geometry, Rhino.Geometry.Brep):
+        end_centers = []
+        # We assume a pipe or cylinder: 3 faces of which two circular, and one rectangular wrapped around the two circular faces
+        for edge in target.geometry.Edges:
+            if not edge.IsClosed:
+                reference_crv_for_brep = edge.ToNurbsCurve()
+            elif edge.IsClosed:
+                nurbs_version = edge.ToNurbsCurve()
+                if nurbs_version.IsCircle():
+                    circle = nurbs_version.TryGetCircle()[1]
+                    center = circle.Center
+                    end_centers.append(center)
+        translation_vector =( (end_centers[1] - reference_crv_for_brep.PointAtEnd) + (end_centers[0] - reference_crv_for_brep.PointAtStart) )/ 2
+        reference_crv_for_brep.Translate(translation_vector)
+        crv_parameters = reference_crv_for_brep.DivideByCount(30, True)
+        for i in range(len(crv_parameters)):
+            reference_pc_as_list.append([reference_crv_for_brep.PointAt(crv_parameters[i]).X,
+                                         reference_crv_for_brep.PointAt(crv_parameters[i]).Y,
+                                         reference_crv_for_brep.PointAt(crv_parameters[i]).Z])
+
 
     
     # Retrieve 1 random point cloud from the database
@@ -113,7 +133,10 @@ def main():
                                                             int(my_tree.point_cloud.colors[j][2] * 255)))
 
     # crop the point cloud to a cylinder around the element
-    cylinder = Rhino.Geometry.Brep.CreatePipe(target.geometry, 1, True, Rhino.Geometry.PipeCapMode.Flat, True, 0.01, 0.01)[0]
+    if isinstance(target.geometry, Rhino.Geometry.NurbsCurve):
+        cylinder = Rhino.Geometry.Brep.CreatePipe(target.geometry, 1, True, Rhino.Geometry.PipeCapMode.Flat, True, 0.01, 0.01)[0]
+    else:
+        cylinder = Rhino.Geometry.Brep.CreatePipe(reference_crv_for_brep, 1, True, Rhino.Geometry.PipeCapMode.Flat, True, 0.01, 0.01)[0]
     indexes_to_remove = []
     for i in range(my_tree_pc_rh.Count):
         point = my_tree_pc_rh[i]
