@@ -10,9 +10,9 @@ import copy
 from utils.geometry import Pointcloud, Mesh
 
 import numpy as np
-
 import open3d as o3d
-from open3d import pipelines
+
+import Rhino
 # from pc_skeletor import *
 # from pc_skeletor import LBC
 
@@ -145,20 +145,21 @@ class Tree(persistent.Persistent):
         
         vertices = np.asarray(mesh.vertices)
         faces = np.asarray(mesh.triangles)
-        self.mesh = Mesh(vertices, faces)
+        colors = np.asarray(mesh.vertex_colors)
+        self.mesh = Mesh(vertices, faces, colors)
 
         print("Mesh created, n° vertices = ", len(self.mesh.vertices), "n° faces = ", len(self.mesh.faces))
 
     def crop(self, bounding_box):
         """
-        Crop the tree to a bounding box
-        :param bounding_box: BoundingBox
-            The bounding box to crop the tree to
+        Crop the tree to a bounding volume
+        :param bounding_volume: closed Brep
+            The bounding Brep to crop the tree to
         """
         indexes_to_remove = []
         for i in range(len(self.point_cloud.points)):
             point = self.point_cloud.points[i]
-            if not bounding_box.Contains(Rhino.Geometry.Point3d(point[0], point[1], point[2])):
+            if not bounding_box.IsPointInside(Rhino.Geometry.Point3d(point[0], point[1], point[2]), 0.01, True):
                 indexes_to_remove.append(i)
         self.point_cloud.points = [point for i, point in enumerate(self.point_cloud.points) if i not in indexes_to_remove]
         self.point_cloud.colors = [color for i, color in enumerate(self.point_cloud.colors) if i not in indexes_to_remove]
