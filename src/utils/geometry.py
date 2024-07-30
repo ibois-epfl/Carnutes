@@ -31,9 +31,11 @@ class Mesh:
     """
     def __init__(self,
                  vertices : list,
-                 faces : list):
+                 faces : list,
+                 colors : list = None):
         self.vertices = vertices
         self.faces = faces
+        self.colors = colors
 
     def __str__(self):
         return "Mesh with {} vertices and {} faces".format(len(self.vertices), len(self.faces))

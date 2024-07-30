@@ -10,9 +10,9 @@ import copy
 from utils.geometry import Pointcloud, Mesh
 
 import numpy as np
-
 import open3d as o3d
-from open3d import pipelines
+
+import Rhino
 # from pc_skeletor import *
 # from pc_skeletor import LBC
 
@@ -128,6 +128,41 @@ class Tree(persistent.Persistent):
             new_skeleton.append(point)
         
         self.skeleton = Pointcloud(new_skeleton)
+
+    def create_mesh(self, radius = 0.25):
+        """
+        Create a mesh from the point cloud and adds it to the tree instance
+
+        :param radius: float, optional. The radius of the ball pivoting algorithm. The default is 0.25.
+        """
+        pcd = o3d.geometry.PointCloud()
+        pcd.points = o3d.utility.Vector3dVector(self.point_cloud.points)
+        pcd.estimate_normals()
+        # mesh = o3d.geometry.TriangleMesh.create_from_point_cloud_ball_pivoting(pcd, o3d.utility.DoubleVector([radius, radius * 2]))
+        mesh = o3d.geometry.TriangleMesh.create_from_point_cloud_alpha_shape(pcd, 2)
+        mesh.compute_vertex_normals()
+        mesh.compute_triangle_normals()
         
+        vertices = np.asarray(mesh.vertices)
+        faces = np.asarray(mesh.triangles)
+        colors = np.asarray(mesh.vertex_colors)
+        self.mesh = Mesh(vertices, faces, colors)
+
+        print("Mesh created, n° vertices = ", len(self.mesh.vertices), "n° faces = ", len(self.mesh.faces))
+
+    def crop(self, bounding_box):
+        """
+        Crop the tree to a bounding volume
+        :param bounding_volume: closed Brep
+            The bounding Brep to crop the tree to
+        """
+        indexes_to_remove = []
+        for i in range(len(self.point_cloud.points)):
+            point = self.point_cloud.points[i]
+            if not bounding_box.IsPointInside(Rhino.Geometry.Point3d(point[0], point[1], point[2]), 0.01, True):
+                indexes_to_remove.append(i)
+        self.point_cloud.points = [point for i, point in enumerate(self.point_cloud.points) if i not in indexes_to_remove]
+        self.point_cloud.colors = [color for i, color in enumerate(self.point_cloud.colors) if i not in indexes_to_remove]
+
     def __str__(self):
         return f"Tree {self.id} - {self.name}"

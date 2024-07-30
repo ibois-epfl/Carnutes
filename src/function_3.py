@@ -121,6 +121,22 @@ def main():
     target_skeleton = geometry.Pointcloud(reference_pc_as_list)
     my_tree.align_to_skeleton(target_skeleton)
 
+    # Brep to crop the point cloud
+    cylinder = Rhino.Geometry.Brep.CreatePipe(target.geometry, 1, True, Rhino.Geometry.PipeCapMode.Flat, True, 0.01, 0.01)[0]
+    my_tree.crop(cylinder)
+    my_tree.create_mesh()
+
+    tree_mesh = Rhino.Geometry.Mesh()
+    for i in range(len(my_tree.mesh.vertices)):
+        tree_mesh.Vertices.Add(my_tree.mesh.vertices[i][0], my_tree.mesh.vertices[i][1], my_tree.mesh.vertices[i][2])
+    for i in range(len(my_tree.mesh.faces)):
+        tree_mesh.Faces.AddFace(int(my_tree.mesh.faces[i][0]), int(my_tree.mesh.faces[i][1]),int(my_tree.mesh.faces[i][2]))
+    for i in range(len(my_tree.mesh.colors)):
+        tree_mesh.VertexColors.Add(System.Drawing.Color.FromArgb(int(my_tree.mesh.colors[i][0]*255),
+                                                                  int(my_tree.mesh.colors[i][1]*255),
+                                                                  int(my_tree.mesh.colors[i][2]*255)))
+    scriptcontext.doc.Objects.AddMesh(tree_mesh)
+
     # Create the point cloud
     my_tree_pc_rh = Rhino.Geometry.PointCloud()
     for j in range(len(my_tree.point_cloud.points)):
@@ -131,6 +147,7 @@ def main():
                                                             int(my_tree.point_cloud.colors[j][0] * 255),
                                                             int(my_tree.point_cloud.colors[j][1] * 255),
                                                             int(my_tree.point_cloud.colors[j][2] * 255)))
+
 
     # crop the point cloud to a cylinder around the element
     if isinstance(target.geometry, Rhino.Geometry.NurbsCurve):
