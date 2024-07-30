@@ -31,16 +31,20 @@ For this, the following functions are planned:
         - using wireframe data (must be clarified)
         - using cylinder data
 
-<div style="display: flex;">
-    <img src="./assets/images/Capture%20d’écran%202024-07-15%20à%2020.52.48.gif" width="300" height="400" />
-    <img src="./assets/images/tree_trunks_from_wireframe.gif" width="300" height="400" />
-</div>
+<p align="center">
+    <img src="./assets/images/Capture%20d’écran%202024-07-15%20à%2020.52.48.gif" height="400" />
+    <img src="./assets/images/tree_trunks_from_wireframe.gif" height="400" />
+
 
 
 
 # Install and use
 This tool is intended to be used in Rhino 8.
 See the [INSTALL.md](./INSTALL.md) for installation instructions, and the [CONTRIBUTING.md](./CONTRIBUTING.md) for minimal contribution guidelines. This repo contains a small .3dm to easily test Carnutes.
+
+
+<p align="center"> <img src="./assets/images/Carnutes_repo_structure.png" width="400"/> 
+
 
 # 4 workshops will be held within the Studio:
 
