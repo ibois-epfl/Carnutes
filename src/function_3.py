@@ -122,7 +122,12 @@ def main():
     my_tree.align_to_skeleton(target_skeleton)
 
     # Brep to crop the point cloud
-    cylinder = Rhino.Geometry.Brep.CreatePipe(target.geometry, 1, True, Rhino.Geometry.PipeCapMode.Flat, True, 0.01, 0.01)[0]
+    if isinstance(target.geometry, Rhino.Geometry.NurbsCurve):
+        cylinder = Rhino.Geometry.Brep.CreatePipe(target.geometry, 1, True, Rhino.Geometry.PipeCapMode.Flat, True, 0.01, 0.01)[0]
+    elif isinstance(target.geometry, Rhino.Geometry.Brep):
+        cylinder = Rhino.Geometry.Brep.CreatePipe(reference_crv_for_brep, 1, True, Rhino.Geometry.PipeCapMode.Flat, True, 0.01, 0.01)[0]
+    else:
+        raise ValueError("The geometry of the target element is not supported.")
     my_tree.crop(cylinder)
     my_tree.create_mesh()
 
