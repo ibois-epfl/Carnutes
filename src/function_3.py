@@ -11,13 +11,13 @@ import os
 import copy
 import System
 
-import numpy as np
-
-import Rhino
-import scriptcontext
-
 from utils import database_reader, model, tree, geometry
 from utils.tree import Tree
+from packing import tree_packing
+
+import numpy as np
+import Rhino
+import scriptcontext
 
 def main():
     """
@@ -107,19 +107,14 @@ def main():
 
 
     
-    # Retrieve 1 random point cloud from the database
+    # Retrieve the best fitting tree from the database
+    reference_skeleton = geometry.Pointcloud(reference_pc_as_list)
     current_dir = os.path.dirname(os.path.realpath(__file__))
     database_path = os.path.join(current_dir, 'database', 'tree_database.fs')
-    reader = database_reader.DatabaseReader(database_path)
-    n_tree = reader.get_num_trees()
-    tree_id = np.random.randint(0, n_tree)
-    my_tree = reader.get_tree(tree_id)
-    my_tree = copy.deepcopy(my_tree)
-    reader.close()
+    my_tree = tree_packing.find_best_tree(reference_skeleton, 100.0, database_path)
 
     # Align it using o3d's ransac, then crop it to the bounding box of the element
-    target_skeleton = geometry.Pointcloud(reference_pc_as_list)
-    my_tree.align_to_skeleton(target_skeleton)
+    my_tree.align_to_skeleton(reference_skeleton)
 
     # Brep to crop the point cloud
     cylinder = Rhino.Geometry.Brep.CreatePipe(target.geometry, 1, True, Rhino.Geometry.PipeCapMode.Flat, True, 0.01, 0.01)[0]
@@ -147,21 +142,6 @@ def main():
                                                             int(my_tree.point_cloud.colors[j][0] * 255),
                                                             int(my_tree.point_cloud.colors[j][1] * 255),
                                                             int(my_tree.point_cloud.colors[j][2] * 255)))
-
-
-    # crop the point cloud to a cylinder around the element
-    if isinstance(target.geometry, Rhino.Geometry.NurbsCurve):
-        cylinder = Rhino.Geometry.Brep.CreatePipe(target.geometry, 1, True, Rhino.Geometry.PipeCapMode.Flat, True, 0.01, 0.01)[0]
-    else:
-        cylinder = Rhino.Geometry.Brep.CreatePipe(reference_crv_for_brep, 1, True, Rhino.Geometry.PipeCapMode.Flat, True, 0.01, 0.01)[0]
-    indexes_to_remove = []
-    for i in range(my_tree_pc_rh.Count):
-        point = my_tree_pc_rh[i]
-        if not cylinder.IsPointInside(point.Location, 0.01, True):
-            indexes_to_remove.append(i)
-    
-    my_tree_pc_rh.RemoveRange(indexes_to_remove)
-
     scriptcontext.doc.Objects.AddPointCloud(my_tree_pc_rh)
 
     print("Point cloud added to the model.")
