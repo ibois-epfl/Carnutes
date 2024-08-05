@@ -6,6 +6,7 @@ import copy
 
 import utils.database_reader as db_reader
 import utils.geometry
+import utils.tree
 
 import open3d as o3d
 import numpy as np
@@ -20,7 +21,7 @@ def match_skeletons(reference_skeleton: utils.geometry.Pointcloud, target_skelet
         The reference skeleton to match to
 
     :param target_skeleton: Pointcloud
-        The target skeleton to modify so it matches the reference skeleton
+        The target tree skeleton to modify so it matches the reference skeleton
 
     :return: adapted_target_skeleton: Pointcloud
         The adapted target skeleton
@@ -40,18 +41,22 @@ def match_skeletons(reference_skeleton: utils.geometry.Pointcloud, target_skelet
     for i in range(len(reference_skeleton.points)-1):
         dist = np.linalg.norm(np.array(reference_skeleton.points[i]) - np.array(reference_skeleton.points[i+1]))
         list_of_reference_distances.append(dist)
+    print("list of reference distances", list_of_reference_distances)
     list_of_target_distances = []
     for i in range(len(target_skeleton.points)-1):
         dist = np.linalg.norm(np.array(target_skeleton.points[i]) - np.array(target_skeleton.points[i+1]))
         list_of_target_distances.append(dist)
-    new_target_skeleton = [target_skeleton.points[0]]
-    
+    new_target_skeleton = [[target_skeleton.points[0][0],
+                           target_skeleton.points[0][1],
+                           target_skeleton.points[0][2]]]
+
     if np.sum(list_of_target_distances) < np.sum(list_of_reference_distances):
-        raise ValueError("The target skeleton is too short to be adapted to the reference skeleton, returning None")
+        print("The target skeleton is too short to be adapted to the reference skeleton, returning None")
+        return None
         
     else:
         for i in range(len(list_of_reference_distances)):
-            reference_cummulative_distance = np.sum(list_of_target_distances[:i+1])
+            reference_cummulative_distance = np.sum(list_of_reference_distances[:i+1])
             for j in range(len(list_of_target_distances)):
                 target_cummulative_distance = np.sum(list_of_target_distances[:j+1])
                 if reference_cummulative_distance < target_cummulative_distance:
@@ -61,17 +66,18 @@ def match_skeletons(reference_skeleton: utils.geometry.Pointcloud, target_skelet
                           target_skeleton.points[j][1] + ratio * (target_skeleton.points[j+1][1] - target_skeleton.points[j][1]), 
                           target_skeleton.points[j][2] + ratio * (target_skeleton.points[j+1][2] - target_skeleton.points[j][2])]
             new_target_skeleton.append(new_point)
-        # print("The target skeleton has been adapted to the reference skeleton", new_target_skeleton)
+        print("The target skeleton has been adapted to the reference skeleton", new_target_skeleton)
+        print("length of the new_target_skeleton is ", len(new_target_skeleton))
+        print("length of the target skeleton is ", len(target_skeleton.points))
         return utils.geometry.Pointcloud(new_target_skeleton)
 
-def perform_icp_registration(source_skeleton, target_skeleton, threshold):
+def perform_icp_registration(target_skeleton, source_skeleton, threshold):
     """
     Perform an icp registration between the source and the target pointclouds
-
-    :param source_skeleton: Pointcloud
-        The source skeleton to align
     :param target_skeleton: Pointcloud
         The target skeleton to align to
+    :param source_skeleton: Pointcloud
+        The source skeleton to align
     :param threshold: float
         The threshold for the icp registration
     
@@ -126,11 +132,13 @@ def find_best_tree(reference_skeleton, reference_diameter, database_path):
             for k in range(2):
                 reference_skeleton.points = reference_skeleton.points[::-1] if k % 2 == 1 else reference_skeleton.points
                 tree_skeleton_corresponding_points = match_skeletons(reference_skeleton, tree.skeleton)
-                result = perform_icp_registration(reference_skeleton, tree_skeleton_corresponding_points, 100.0)
-
-                if result.fitness < best_score:
-                    best_score = result.fitness
-                    best_tree = tree
-                    tree.skeleton = tree_skeleton_corresponding_points # update the tree skeleton
+                if tree_skeleton_corresponding_points is not None:
+                    result = perform_icp_registration(reference_skeleton, tree_skeleton_corresponding_points, 100.0)
+                    if result.fitness < best_score:
+                        best_score = result.fitness
+                        best_tree = tree
+                        best_tree.skeleton = tree_skeleton_corresponding_points # update the tree skeleton
+                else:
+                    pass
     reader.close()
     return best_tree
