@@ -134,8 +134,8 @@ def find_best_tree(reference_skeleton, reference_diameter, database_path):
                 tree_skeleton_corresponding_points = match_skeletons(reference_skeleton, tree.skeleton)
                 if tree_skeleton_corresponding_points is not None:
                     result = perform_icp_registration(reference_skeleton, tree_skeleton_corresponding_points, 100.0)
-                    if result.fitness < best_score:
-                        best_score = result.fitness
+                    if result.inlier_rmse < best_score:
+                        best_score = result.inlier_rmse
                         best_tree = tree
                         best_tree.skeleton = tree_skeleton_corresponding_points # update the tree skeleton
                 else:
