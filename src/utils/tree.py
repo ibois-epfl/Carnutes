@@ -44,13 +44,10 @@ class Tree(persistent.Persistent):
 
     def compute_skeleton(self):
         """
-        Compute the skeleton of the point cloud.
+        Compute the skeleton of the point cloud .
         For now it is done in a rather sloppy way. this is because pc_skeletor is currently causing issues
 
         To Do: make this actually professional
-
-        :param voxel_size: float, optional
-            The size of the voxel grid used for downsampling the point cloud. The default is 0.01.
         """
         skeleton_as_list = []
 
@@ -119,13 +116,13 @@ class Tree(persistent.Persistent):
 
         for point in self.point_cloud.points:
             point = np.dot(rotation, point) + translation
-            new_pointcloud.append(point)
+            new_pointcloud.append([point[0], point[1], point[2]])
 
         self.point_cloud = Pointcloud(new_pointcloud, self.point_cloud.colors)
 
         for point in self.skeleton.points:
             point = np.dot(rotation, point) + translation
-            new_skeleton.append(point)
+            new_skeleton.append([point[0], point[1], point[2]])
         
         self.skeleton = Pointcloud(new_skeleton)
 
