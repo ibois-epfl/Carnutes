@@ -80,7 +80,7 @@ def main():
     
     reference_pc_as_list = []
     if isinstance(target.geometry, Rhino.Geometry.NurbsCurve):
-        crv_parameters = target.geometry.DivideByCount(30, True)
+        crv_parameters = target.geometry.DivideByCount(10, True)
         for i in range(len(crv_parameters)):
             reference_pc_as_list.append([target.geometry.PointAt(crv_parameters[i]).X,
                                          target.geometry.PointAt(crv_parameters[i]).Y,
@@ -99,7 +99,7 @@ def main():
                     end_centers.append(center)
         translation_vector =( (end_centers[1] - reference_crv_for_brep.PointAtEnd) + (end_centers[0] - reference_crv_for_brep.PointAtStart) )/ 2
         reference_crv_for_brep.Translate(translation_vector)
-        crv_parameters = reference_crv_for_brep.DivideByCount(30, True)
+        crv_parameters = reference_crv_for_brep.DivideByCount(10, True)
         for i in range(len(crv_parameters)):
             reference_pc_as_list.append([reference_crv_for_brep.PointAt(crv_parameters[i]).X,
                                          reference_crv_for_brep.PointAt(crv_parameters[i]).Y,
@@ -143,6 +143,11 @@ def main():
                                                             int(my_tree.point_cloud.colors[j][1] * 255),
                                                             int(my_tree.point_cloud.colors[j][2] * 255)))
     scriptcontext.doc.Objects.AddPointCloud(my_tree_pc_rh)
+
+    my_tree_skeleton_rh = Rhino.Geometry.PointCloud()
+    for point in my_tree.skeleton.points:
+        my_tree_skeleton_rh.Add(Rhino.Geometry.Point3d(point[0],point[1], point[2]))
+    scriptcontext.doc.Objects.AddPointCloud(my_tree_skeleton_rh)
 
     print("Point cloud added to the model.")
 if __name__ == "__main__":
