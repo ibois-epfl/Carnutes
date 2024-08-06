@@ -33,7 +33,7 @@ For this, the following functions are planned:
 
 <p align="center">
     <img src="./assets/images/Capture%20d’écran%202024-07-15%20à%2020.52.48.gif" height="400" />
-    <img src="./assets/images/tree_trunks_from_wireframe.gif" height="400" />
+    <img src="./assets/images/fit_trees.gif" height="400" />
 
 
 
