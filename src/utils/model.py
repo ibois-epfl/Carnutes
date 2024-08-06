@@ -2,8 +2,11 @@
 This module contains the class representing the abstract 3D model we want to realize with round wood.
 """
 
+from dataclasses import dataclass
+
 from utils import graphs
 
+@dataclass
 class Model(object):
     """
     Class representing the abstract 3D model we want to realize with round wood.
@@ -27,6 +30,7 @@ class Model(object):
     def __str__(self):
         return "Model with {} elements".format(len(self.elements))
     
+@dataclass
 class Element(object):
     """
     Class representing an element in the model.

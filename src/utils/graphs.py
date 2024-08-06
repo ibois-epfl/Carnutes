@@ -4,6 +4,7 @@ Module for creating graphs from geometries.
 
 #! python 3
 
+import typing
 import Rhino
 
 import numpy as np
@@ -55,9 +56,12 @@ class ConnectivityGraph(object):
         self.graph = g
 
     
-    def compute_nurbs_curve_connectivity_graph(self, elements):
+    def compute_nurbs_curve_connectivity_graph(self, elements: typing.List[Rhino.Geometry.NurbsCurve]):
         """
         Compute the connectivity graph of the Nurbs Curves.
+
+        ::param elements: list of Rhino.Geometry.NurbsCurve
+            List of Nurbs Curves.
         """
         n_vertices = len(elements)
         edges = []

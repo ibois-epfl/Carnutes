@@ -1,7 +1,10 @@
 """
 module for geometry classes
 """
+from dataclasses import dataclass
+import typing
 
+@dataclass
 class Pointcloud:
     """
     Pointcloud class to store point cloud data.
@@ -12,14 +15,15 @@ class Pointcloud:
         The colors of the point cloud as a list of lists of 3 colors. None by default.
     """
     def __init__(self,
-                 points : list, 
-                 colors : list = None):
+                 points : typing.List[typing.List[float]], 
+                 colors : typing.List[typing.List[int]] = None):
         self.points = points
         self.colors = colors
 
     def __str__(self):
         return "Pointcloud with {} points".format(len(self.points))
 
+@dataclass
 class Mesh:
     """
     Mesh class to store mesh data.
