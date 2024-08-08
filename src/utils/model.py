@@ -3,8 +3,9 @@ This module contains the class representing the abstract 3D model we want to rea
 """
 
 from dataclasses import dataclass
+import typing
 
-from utils import graphs
+from utils import graphs, element
 
 @dataclass
 class Model(object):
@@ -18,7 +19,7 @@ class Model(object):
     graph: graphs.ConnectivityGraph
         The connectivity graph of the model. Object of the ConnectivityGraph class.
     """
-    def __init__(self, elements):
+    def __init__(self, elements: typing.List[element.Element]):
         self.elements = elements
         self.connectivity_graph = graphs.ConnectivityGraph(elements)
         type_of_model = type(self.elements[0].geometry)
@@ -29,22 +30,3 @@ class Model(object):
     def __str__(self):
         return "Model with {} elements".format(len(self.elements))
     
-@dataclass
-class Element(object):
-    """
-    Class representing an element in the model.
-
-    Attributes:
-    -----------
-    geometry: Rhino.Geometry.GeometryBase
-        The geometry of the element.
-    guid: str
-        The GUID of the element in the ActiveDoc.
-    """
-    def __init__(self, geometry, guid):
-        self.geometry = geometry
-        self.GUID = guid
-        
-
-    
-            

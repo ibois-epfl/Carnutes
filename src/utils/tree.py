@@ -98,11 +98,13 @@ class Tree(persistent.Persistent):
         initial_translation = np.identity(4)
         initial_translation[:3, 3] =  np.mean(np.asarray(reference_pc.points), axis=0) - np.mean(np.asarray(tree_pc.points), axis=0)
         tree_pc.transform(initial_translation)
+
+        convergence_criteria = o3d.pipelines.registration.ICPConvergenceCriteria(max_iteration = 40)
         
-        result = o3d.pipelines.registration.registration_icp(skeleton_pc, 
-                                                             reference_pc,
-                                                             100.0,
-                                                             initial_translation)
+        result = o3d.pipelines.registration.registration_icp(source=skeleton_pc, 
+                                                             target=reference_pc,
+                                                             init=initial_translation,
+                                                             max_correspondence_distance=10.0)
 
         transformation = result.transformation
         tree_pc = copy.deepcopy(tree_pc)

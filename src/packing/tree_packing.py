@@ -66,15 +66,15 @@ def match_skeletons(reference_skeleton: utils.geometry.Pointcloud, target_skelet
             new_target_skeleton.append(new_point)
         return utils.geometry.Pointcloud(new_target_skeleton)
 
-def perform_icp_registration(target_skeleton, source_skeleton, threshold):
+def perform_icp_registration(target_skeleton, source_skeleton, max_correspondence_distance):
     """
     Perform an icp registration between the source and the target pointclouds
     :param target_skeleton: Pointcloud
         The target skeleton to align to
     :param source_skeleton: Pointcloud
         The source skeleton to align
-    :param threshold: float
-        The threshold for the icp registration
+    :param max_correspondence_distance: float
+        The max correspondence distance for the icp registration
     
     :return: result: o3d.pipelines.registration.RegistrationResult
         The result of the icp registration
@@ -89,15 +89,21 @@ def perform_icp_registration(target_skeleton, source_skeleton, threshold):
 
     # initial translation
     initial_translation = np.identity(4)
-    initial_translation[:3, 3] = np.mean(np.asarray(target_pc.points), axis=0) - np.mean(np.asarray(source_pc.points), axis=0)
+    translation_vector = np.mean(target_skeleton.points, axis=0) - np.mean(source_skeleton.points, axis=0)
+    initial_translation[0, 3] = translation_vector[0]
+    initial_translation[1, 3] = translation_vector[1]
+    initial_translation[2, 3] = translation_vector[2]
 
-    result = o3d.pipelines.registration.registration_icp(source_pc,
-                                                         target_pc,
-                                                         threshold,
-                                                         initial_translation)
+    convergence_criteria = o3d.pipelines.registration.ICPConvergenceCriteria(max_iteration = 40)
+
+    result = o3d.pipelines.registration.registration_icp(source=source_pc,
+                                                         target=target_pc,
+                                                         max_correspondence_distance=max_correspondence_distance,
+                                                         init=initial_translation,
+                                                         criteria=convergence_criteria)
     return result
 
-def find_best_tree(reference_skeleton, reference_diameter, database_path):
+def find_best_tree(reference_skeleton: utils.geometry.Pointcloud, reference_diameter: float, database_path : str) -> utils.tree.Tree:
     """
     performs icp registrations bewteen the reference skeleton and the list of targets,
     while checking that the diameter is within 10% of the reference value. The skeleton with the best fit is returned.
@@ -128,7 +134,7 @@ def find_best_tree(reference_skeleton, reference_diameter, database_path):
                 reference_skeleton.points = reference_skeleton.points[::-1] if k % 2 == 1 else reference_skeleton.points
                 tree_skeleton_corresponding_points = match_skeletons(reference_skeleton, tree.skeleton)
                 if tree_skeleton_corresponding_points is not None:
-                    result = perform_icp_registration(reference_skeleton, tree_skeleton_corresponding_points, 100.0)
+                    result = perform_icp_registration(reference_skeleton, tree_skeleton_corresponding_points, 20.0)
                     if result.inlier_rmse < best_score:
                         best_score = result.inlier_rmse
                         best_tree = tree

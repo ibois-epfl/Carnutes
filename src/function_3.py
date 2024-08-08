@@ -11,7 +11,8 @@ import os
 import copy
 import System
 
-from utils import database_reader, model, tree, geometry
+from utils import model, tree, geometry
+from utils import element as elem
 from utils.tree import Tree
 from packing import tree_packing
 
@@ -52,7 +53,7 @@ def main():
         geometries = [geo.ToNurbsCurve() for geo in geometries]
         print("Curves converted to NurbsCurve")
 
-    elements = [model.Element(geometries[i], go.Object(i).ObjectId) for i in range(go.ObjectCount)]
+    elements = [elem.Element(geometries[i], go.Object(i).ObjectId) for i in range(go.ObjectCount)]
     current_model = model.Model(elements)
 
     # Ask user which element (s)he wants to replace with a point cloud
@@ -77,7 +78,6 @@ def main():
         if vertex["guid"] == target.GUID:
             incident_edges = vertex.all_edges()
             for edge in incident_edges:
-                print(edge["location"])
                 reference_pc_as_list.append(edge["location"])
             break
     # at this point the reference_pc_as_list should contain the points, but they are not ordered. We need to order them.
@@ -97,27 +97,6 @@ def main():
         reference_pc_as_list = sorted(reference_pc_as_list, key=lambda x: x[1])
     elif delta_z > delta_x and delta_z > delta_y:
         reference_pc_as_list = sorted(reference_pc_as_list, key=lambda x: x[2])
-
-    # elif isinstance(target.geometry, Rhino.Geometry.Brep):
-    #     end_centers = []
-    #     # We assume a pipe or cylinder: 3 faces of which two circular, and one rectangular wrapped around the two circular faces
-    #     for edge in target.geometry.Edges:
-    #         if not edge.IsClosed:
-    #             reference_crv_for_brep = edge.ToNurbsCurve()
-    #         elif edge.IsClosed:
-    #             nurbs_version = edge.ToNurbsCurve()
-    #             if nurbs_version.IsCircle():
-    #                 circle = nurbs_version.TryGetCircle()[1]
-    #                 center = circle.Center
-    #                 end_centers.append(center)
-    #     translation_vector =( (end_centers[1] - reference_crv_for_brep.PointAtEnd) + (end_centers[0] - reference_crv_for_brep.PointAtStart) )/ 2
-    #     reference_crv_for_brep.Translate(translation_vector)
-    #     crv_parameters = reference_crv_for_brep.DivideByCount(10, True)
-    #     for i in range(len(crv_parameters)):
-    #         reference_pc_as_list.append([reference_crv_for_brep.PointAt(crv_parameters[i]).X,
-    #                                      reference_crv_for_brep.PointAt(crv_parameters[i]).Y,
-    #                                      reference_crv_for_brep.PointAt(crv_parameters[i]).Z])
-    
     # Retrieve the best fitting tree from the database
     reference_skeleton = geometry.Pointcloud(reference_pc_as_list)
     current_dir = os.path.dirname(os.path.realpath(__file__))
@@ -164,7 +143,5 @@ def main():
         my_tree_skeleton_rh.Add(Rhino.Geometry.Point3d(point[0],point[1], point[2]))
     scriptcontext.doc.Objects.AddPointCloud(my_tree_skeleton_rh)
 
-    print("Point cloud added to the model.")
 if __name__ == "__main__":
     main()
-    print("Done")

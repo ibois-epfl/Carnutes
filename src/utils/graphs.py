@@ -6,7 +6,7 @@ Module for creating graphs from geometries.
 
 import typing
 
-import utils.model as model
+import utils.element as element
 
 import Rhino
 import numpy as np
@@ -35,7 +35,7 @@ class ConnectivityGraph(object):
         else:
             raise ValueError("Geometries must be Breps or NurbsCurve.")
 
-    def compute_brep_connectivity_graph(self, elements: typing.List[model.Element]):
+    def compute_brep_connectivity_graph(self, elements: typing.List[element.Element]):
         """
         Compute the connectivity graph of the brep and stores the graph in self.graph.
         """
@@ -60,7 +60,7 @@ class ConnectivityGraph(object):
         self.graph = g
 
     
-    def compute_nurbs_curve_connectivity_graph(self, elements: typing.List[model.Element]):
+    def compute_nurbs_curve_connectivity_graph(self, elements: typing.List[element.Element]):
         """
         Compute the connectivity graph of the Nurbs Curves.
 
