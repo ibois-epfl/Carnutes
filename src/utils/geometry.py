@@ -2,6 +2,8 @@
 module for geometry classes
 """
 
+import typing
+
 class Pointcloud:
     """
     Pointcloud class to store point cloud data.
@@ -30,9 +32,9 @@ class Mesh:
         The faces of the mesh as a list of lists of 3 indices
     """
     def __init__(self,
-                 vertices : list,
-                 faces : list,
-                 colors : list = None):
+                 vertices : typing.List[typing.List[float]],
+                 faces : typing.List[typing.List[int]],
+                 colors : typing.List[typing.List[int]] = None):
         self.vertices = vertices
         self.faces = faces
         self.colors = colors
