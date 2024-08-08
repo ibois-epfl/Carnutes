@@ -1,0 +1,30 @@
+name: tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up conda environment
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          activate-environment: Carnutes
+          environment-file: environment.yml
+        
+      - name: activate conda environment
+        run: conda activate Carnutes
+
+      - name: run tests
+        run: pytest tests/test_geometry_basics.py
+
