@@ -128,7 +128,7 @@ def main():
         cylinder = Rhino.Geometry.Brep.CreatePipe(reference_crv_for_brep, 1, True, Rhino.Geometry.PipeCapMode.Flat, True, 0.01, 0.01)[0]
     else:
         raise ValueError("The geometry of the target element is not supported.")
-    my_tree.crop(cylinder)
+    # my_tree.crop(cylinder)
     my_tree.create_mesh()
 
     tree_mesh = Rhino.Geometry.Mesh()
