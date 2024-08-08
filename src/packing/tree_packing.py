@@ -41,7 +41,6 @@ def match_skeletons(reference_skeleton: utils.geometry.Pointcloud, target_skelet
     for i in range(len(reference_skeleton.points)-1):
         dist = np.linalg.norm(np.array(reference_skeleton.points[i]) - np.array(reference_skeleton.points[i+1]))
         list_of_reference_distances.append(dist)
-    print("list of reference distances", list_of_reference_distances)
     list_of_target_distances = []
     for i in range(len(target_skeleton.points)-1):
         dist = np.linalg.norm(np.array(target_skeleton.points[i]) - np.array(target_skeleton.points[i+1]))
@@ -51,7 +50,6 @@ def match_skeletons(reference_skeleton: utils.geometry.Pointcloud, target_skelet
                            target_skeleton.points[0][2]]]
 
     if np.sum(list_of_target_distances) < np.sum(list_of_reference_distances):
-        print("The target skeleton is too short to be adapted to the reference skeleton, returning None")
         return None
         
     else:
@@ -66,9 +64,6 @@ def match_skeletons(reference_skeleton: utils.geometry.Pointcloud, target_skelet
                           target_skeleton.points[j][1] + ratio * (target_skeleton.points[j+1][1] - target_skeleton.points[j][1]), 
                           target_skeleton.points[j][2] + ratio * (target_skeleton.points[j+1][2] - target_skeleton.points[j][2])]
             new_target_skeleton.append(new_point)
-        print("The target skeleton has been adapted to the reference skeleton", new_target_skeleton)
-        print("length of the new_target_skeleton is ", len(new_target_skeleton))
-        print("length of the target skeleton is ", len(target_skeleton.points))
         return utils.geometry.Pointcloud(new_target_skeleton)
 
 def perform_icp_registration(target_skeleton, source_skeleton, threshold):

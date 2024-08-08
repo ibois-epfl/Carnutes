@@ -55,13 +55,6 @@ def main():
     elements = [model.Element(geometries[i], go.Object(i).ObjectId) for i in range(go.ObjectCount)]
     current_model = model.Model(elements)
 
-    # small test to show all the connections of the element 10 of the model
-    # connections = current_model.connectivity_graph.graph.incident(10)
-    # for connection in connections:
-    #     connection_location = current_model.connectivity_graph.graph.es[connection]['location']
-    #     sphere = Rhino.Geometry.Sphere(Rhino.Geometry.Point3d(connection_location[0], connection_location[1], connection_location[2]), 1)
-    #     scriptcontext.doc.Objects.AddSphere(sphere)
-    
     # Ask user which element (s)he wants to replace with a point cloud
     go = Rhino.Input.Custom.GetObject()
     go.SetCommandPrompt("Select the element to replace with a point cloud")
@@ -79,33 +72,51 @@ def main():
             break
     
     reference_pc_as_list = []
-    if isinstance(target.geometry, Rhino.Geometry.NurbsCurve):
-        crv_parameters = target.geometry.DivideByCount(10, True)
-        for i in range(len(crv_parameters)):
-            reference_pc_as_list.append([target.geometry.PointAt(crv_parameters[i]).X,
-                                         target.geometry.PointAt(crv_parameters[i]).Y,
-                                         target.geometry.PointAt(crv_parameters[i]).Z])
-    elif isinstance(target.geometry, Rhino.Geometry.Brep):
-        end_centers = []
-        # We assume a pipe or cylinder: 3 faces of which two circular, and one rectangular wrapped around the two circular faces
-        for edge in target.geometry.Edges:
-            if not edge.IsClosed:
-                reference_crv_for_brep = edge.ToNurbsCurve()
-            elif edge.IsClosed:
-                nurbs_version = edge.ToNurbsCurve()
-                if nurbs_version.IsCircle():
-                    circle = nurbs_version.TryGetCircle()[1]
-                    center = circle.Center
-                    end_centers.append(center)
-        translation_vector =( (end_centers[1] - reference_crv_for_brep.PointAtEnd) + (end_centers[0] - reference_crv_for_brep.PointAtStart) )/ 2
-        reference_crv_for_brep.Translate(translation_vector)
-        crv_parameters = reference_crv_for_brep.DivideByCount(10, True)
-        for i in range(len(crv_parameters)):
-            reference_pc_as_list.append([reference_crv_for_brep.PointAt(crv_parameters[i]).X,
-                                         reference_crv_for_brep.PointAt(crv_parameters[i]).Y,
-                                         reference_crv_for_brep.PointAt(crv_parameters[i]).Z])
+    # if isinstance(target.geometry, Rhino.Geometry.NurbsCurve):
+    for vertex in current_model.connectivity_graph.graph.vs:
+        if vertex["guid"] == target.GUID:
+            incident_edges = vertex.all_edges()
+            for edge in incident_edges:
+                print(edge["location"])
+                reference_pc_as_list.append(edge["location"])
+            break
+    # at this point the reference_pc_as_list should contain the points, but they are not ordered. We need to order them.
+    # for this we assume that an element in the model has a principal direction:
+    x_max_bounds = max([point[0] for point in reference_pc_as_list])
+    x_min_bounds = min([point[0] for point in reference_pc_as_list])
+    delta_x = x_max_bounds - x_min_bounds
+    y_max_bounds = max([point[1] for point in reference_pc_as_list])
+    y_min_bounds = min([point[1] for point in reference_pc_as_list])
+    delta_y = y_max_bounds - y_min_bounds
+    z_max_bounds = max([point[2] for point in reference_pc_as_list])
+    z_min_bounds = min([point[2] for point in reference_pc_as_list])
+    delta_z = z_max_bounds - z_min_bounds
+    if delta_x > delta_y and delta_x > delta_z:
+        reference_pc_as_list = sorted(reference_pc_as_list, key=lambda x: x[0])
+    elif delta_y > delta_x and delta_y > delta_z:
+        reference_pc_as_list = sorted(reference_pc_as_list, key=lambda x: x[1])
+    elif delta_z > delta_x and delta_z > delta_y:
+        reference_pc_as_list = sorted(reference_pc_as_list, key=lambda x: x[2])
 
-
+    # elif isinstance(target.geometry, Rhino.Geometry.Brep):
+    #     end_centers = []
+    #     # We assume a pipe or cylinder: 3 faces of which two circular, and one rectangular wrapped around the two circular faces
+    #     for edge in target.geometry.Edges:
+    #         if not edge.IsClosed:
+    #             reference_crv_for_brep = edge.ToNurbsCurve()
+    #         elif edge.IsClosed:
+    #             nurbs_version = edge.ToNurbsCurve()
+    #             if nurbs_version.IsCircle():
+    #                 circle = nurbs_version.TryGetCircle()[1]
+    #                 center = circle.Center
+    #                 end_centers.append(center)
+    #     translation_vector =( (end_centers[1] - reference_crv_for_brep.PointAtEnd) + (end_centers[0] - reference_crv_for_brep.PointAtStart) )/ 2
+    #     reference_crv_for_brep.Translate(translation_vector)
+    #     crv_parameters = reference_crv_for_brep.DivideByCount(10, True)
+    #     for i in range(len(crv_parameters)):
+    #         reference_pc_as_list.append([reference_crv_for_brep.PointAt(crv_parameters[i]).X,
+    #                                      reference_crv_for_brep.PointAt(crv_parameters[i]).Y,
+    #                                      reference_crv_for_brep.PointAt(crv_parameters[i]).Z])
     
     # Retrieve the best fitting tree from the database
     reference_skeleton = geometry.Pointcloud(reference_pc_as_list)
@@ -117,7 +128,11 @@ def main():
     my_tree.align_to_skeleton(reference_skeleton)
 
     # Brep to crop the point cloud
-    cylinder = Rhino.Geometry.Brep.CreatePipe(target.geometry, 1, True, Rhino.Geometry.PipeCapMode.Flat, True, 0.01, 0.01)[0]
+    if isinstance(target.geometry, Rhino.Geometry.NurbsCurve):
+        cylinder = Rhino.Geometry.Brep.CreatePipe(target.geometry, 1, True, Rhino.Geometry.PipeCapMode.Flat, True, 0.01, 0.01)[0]
+    elif isinstance(target.geometry, Rhino.Geometry.Brep):
+        edges = [target.geometry.Edges[i] for i in range(target.geometry.Edges.Count) if not target.geometry.Edges[i].IsClosed]
+        cylinder = Rhino.Geometry.Brep.CreatePipe(edges[0], 1, True, Rhino.Geometry.PipeCapMode.Flat, True, 0.01, 0.01)[0]
     my_tree.crop(cylinder)
     my_tree.create_mesh()
 

@@ -5,8 +5,10 @@ Module for creating graphs from geometries.
 #! python 3
 
 import typing
-import Rhino
 
+import utils.model as model
+
+import Rhino
 import numpy as np
 import igraph as ig
 
@@ -26,14 +28,14 @@ class ConnectivityGraph(object):
     def __init__(self,elements):
         if  len(elements) < 2:
             raise ValueError("At least two geometries are needed to create a graph.")
-        elif isinstance(elements[0], Rhino.Geometry.Brep):
+        elif isinstance(elements[0].geometry , Rhino.Geometry.Brep):
             self.compute_brep_connectivity_graph(elements)
-        elif isinstance(elements[0], Rhino.Geometry.NurbsCurve):
+        elif isinstance(elements[0].geometry , Rhino.Geometry.NurbsCurve):
             self.compute_nurbs_curve_connectivity_graph(elements)
         else:
             raise ValueError("Geometries must be Breps or NurbsCurve.")
 
-    def compute_brep_connectivity_graph(self, elements):
+    def compute_brep_connectivity_graph(self, elements: typing.List[model.Element]):
         """
         Compute the connectivity graph of the brep and stores the graph in self.graph.
         """
@@ -41,9 +43,11 @@ class ConnectivityGraph(object):
         edges = []
         # igraph stores edge attributes in a dictionary. We want to store the locations of the intersections that the edge ij represents
         locations = []
+        guids = []
         for i in range(n_vertices):
+            guids.append(elements[i].GUID)
             for j in range(i+1,n_vertices):
-                result = Rhino.Geometry.Brep.CreateBooleanIntersection(elements[i], elements[j], ABS_TOL, False)
+                result = Rhino.Geometry.Brep.CreateBooleanIntersection(elements[i].geometry, elements[j].geometry, ABS_TOL, False)
                 if result is not None and len(result) > 0:    
                     edges.append([i,j])
                     for brep in result:
@@ -52,11 +56,11 @@ class ConnectivityGraph(object):
                 else:
                     continue
 
-        g = ig.Graph(n_vertices, edges, edge_attrs={"location": locations} )
+        g = ig.Graph(n_vertices, edges, edge_attrs={"location": locations}, vertex_attrs={"guid": guids})
         self.graph = g
 
     
-    def compute_nurbs_curve_connectivity_graph(self, elements: typing.List[Rhino.Geometry.NurbsCurve]):
+    def compute_nurbs_curve_connectivity_graph(self, elements: typing.List[model.Element]):
         """
         Compute the connectivity graph of the Nurbs Curves.
 
@@ -67,16 +71,17 @@ class ConnectivityGraph(object):
         edges = []
         # igraph stores edge attributes in a dictionary. We want to store the locations of the intersections that the edge ij represents
         locations = []
-        centers = []
+        guids = []
         for i in range(n_vertices):
+            guids.append(elements[i].GUID)
             for j in range(i+1,n_vertices):
-                result = Rhino.Geometry.Intersect.Intersection.CurveCurve(elements[i], elements[j], ABS_TOL, ABS_TOL)
+                result = Rhino.Geometry.Intersect.Intersection.CurveCurve(elements[i].geometry, elements[j].geometry, ABS_TOL, ABS_TOL)
                 if result is not None and len(result) > 0:
                     edges.append([i,j])
                     locations.append([result[0].PointA.X, result[0].PointA.Y, result[0].PointA.Z])
                 else:
                     continue
-        g = ig.Graph(n_vertices, edges, edge_attrs={"location": locations} )
+        g = ig.Graph(n_vertices, edges, edge_attrs={"location": locations}, vertex_attrs={"guid": guids})
         self.graph = g
 
     def get_connectivity_of_vertex(self, vertex):

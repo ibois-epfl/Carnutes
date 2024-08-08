@@ -20,11 +20,10 @@ class Model(object):
     """
     def __init__(self, elements):
         self.elements = elements
-        geo_elements = [element.geometry for element in elements]
-        self.connectivity_graph = graphs.ConnectivityGraph(geo_elements)
-        type_of_model = type(self.elements[0])
+        self.connectivity_graph = graphs.ConnectivityGraph(elements)
+        type_of_model = type(self.elements[0].geometry)
         for element in self.elements:
-            if type(element) != type_of_model:
+            if type(element.geometry) != type_of_model:
                 raise ValueError("All elements in the model should be of the same type.")
     
     def __str__(self):
