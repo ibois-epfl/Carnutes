@@ -38,16 +38,16 @@ def create_database(voxel_size=0.05):
             tree_pc_as_pt_list = []
             tree_colors_as_list = []
             
-            for i in range(len(pc.points)):
-                tree_pc_as_pt_list.append([float(pc.points[i][0]), 
-                                           float(pc.points[i][1]), 
-                                           float(pc.points[i][2])])
-                tree_colors_as_list.append([float(pc.colors[i][0]),
-                                            float(pc.colors[i][1]),
-                                            float(pc.colors[i][2])])
+            for j in range(len(pc.points)):
+                tree_pc_as_pt_list.append([float(pc.points[j][0]), 
+                                           float(pc.points[j][1]), 
+                                           float(pc.points[j][2])])
+                tree_colors_as_list.append([float(pc.colors[j][0]),
+                                            float(pc.colors[j][1]),
+                                            float(pc.colors[j][2])])
                 
                 
-            tree_for_db = tree.Tree(len(root.trees), i, tree.Pointcloud(tree_pc_as_pt_list, tree_colors_as_list))
+            tree_for_db = tree.Tree(len(root.trees), f"tree_{i}", tree.Pointcloud(tree_pc_as_pt_list, tree_colors_as_list))
             tree_for_db.compute_skeleton()
 
             root.trees[tree_for_db.id] = tree_for_db
