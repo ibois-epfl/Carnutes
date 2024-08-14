@@ -75,7 +75,7 @@ class ConnectivityGraph(object):
         for i in range(n_vertices):
             guids.append(elements[i].GUID)
             for j in range(i+1,n_vertices):
-                result = Rhino.Geometry.Intersect.Intersection.CurveCurve(elements[i].geometry, elements[j].geometry, ABS_TOL, ABS_TOL)
+                result = Rhino.Geometry.Intersect.Intersection.CurveCurve(elements[i].geometry, elements[j].geometry, 5*ABS_TOL, ABS_TOL)
                 if result is not None and len(result) > 0:
                     edges.append([i,j])
                     locations.append([result[0].PointA.X, result[0].PointA.Y, result[0].PointA.Z])
