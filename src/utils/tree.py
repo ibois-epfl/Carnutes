@@ -16,6 +16,7 @@ import Rhino
 # from pc_skeletor import *
 # from pc_skeletor import LBC
 
+print("version of numpy is ", np.__version__)
 
 class Tree(persistent.Persistent):
     """
@@ -93,20 +94,32 @@ class Tree(persistent.Persistent):
         skeleton_pc.estimate_normals()
         reference_pc = o3d.geometry.PointCloud()
         reference_pc.points = o3d.utility.Vector3dVector(np.array(reference_skeleton.points))
-        reference_pc.estimate_normals()
+
+        print("Aligning tree to skeleton using as reference: ", reference_pc, "with points:")
+        all_points_ref = np.asarray(reference_pc.points)
+        for i in range(len(all_points_ref)):
+            print(np.asarray(all_points_ref[i]))
+        print("And using as skeleton: ", skeleton_pc, "with points:")
+        all_points_skel = np.asarray(skeleton_pc.points)
+        for i in range(len(all_points_skel)):
+            print(np.asarray(all_points_skel[i]))
 
         initial_translation = np.identity(4)
-        initial_translation[:3, 3] =  np.mean(np.asarray(reference_pc.points), axis=0) - np.mean(np.asarray(tree_pc.points), axis=0)
+        initial_translation[:3, 3] =  np.mean(np.asarray(reference_pc.points), axis=0) - np.mean(np.asarray(skeleton_pc.points), axis=0)
         tree_pc.transform(initial_translation)
 
-        convergence_criteria = o3d.pipelines.registration.ICPConvergenceCriteria(max_iteration = 40)
+        convergence_criteria = o3d.pipelines.registration.ICPConvergenceCriteria(relative_fitness=1.000000e-03, 
+                                                                                 max_iteration = 40,
+                                                                                 relative_rmse=1.000000e-03)
         
         result = o3d.pipelines.registration.registration_icp(source=skeleton_pc, 
                                                              target=reference_pc,
                                                              init=initial_translation,
-                                                             max_correspondence_distance=10.0)
+                                                             max_correspondence_distance=10.0,
+                                                             criteria=convergence_criteria)
 
         transformation = result.transformation
+        print("Transformation matrix is ", transformation)
         tree_pc = copy.deepcopy(tree_pc)
 
         # Assuming an affine transformation
