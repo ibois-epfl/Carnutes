@@ -20,7 +20,7 @@ import System.Drawing
 import Rhino
 import scriptcontext as sc
 
-from utils.model import Model, Element
+from utils.model import Model, element
 
 # Create a new layer into which we output the graph
 layer_name = "Layer_for_connectivity_graph"
@@ -61,7 +61,7 @@ def main():
         print("Curves converted to NurbsCurve")
 
     # Create the model
-    elements = [Element(geometries[i], i) for i in range(len(geometries))]
+    elements = [element.Element(geometries[i], i) for i in range(len(geometries))]
     abstract_model = Model(elements)
     for edge in abstract_model.connectivity_graph.graph.get_edgelist():
         sc.doc.Objects.AddLine(abstract_model.elements[edge[0]].geometry.GetBoundingBox(False).Center, abstract_model.elements[edge[1]].geometry.GetBoundingBox(False).Center, attributes)
