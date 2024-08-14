@@ -1,6 +1,7 @@
 import sys
 import os
 import copy
+
 import pytest
 
 current_dir = os.path.dirname(os.path.realpath(__file__))
@@ -14,6 +15,12 @@ from src.utils import tree
 @pytest.fixture
 def get_skeleton_length():
     yield tree.SKELETON_LENGTH
+
+@pytest.fixture
+def get_database():
+    reader = database_reader.DatabaseReader(current_dir + "/../src/database/tree_database.fs")
+    yield reader
+    reader.close()
 
 def test_Pointcloud():
     point_cloud = geo.Pointcloud([[1, 2, 3], [4, 5, 6]])
@@ -34,8 +41,17 @@ def test_Mesh():
     assert len(mesh.faces) == 2
     assert mesh.colors == None
 
-def test_point_cloud(get_skeleton_length):
-    reader = database_reader.DatabaseReader(current_dir + "/../src/database/tree_database.fs")
+def test_database_reader(get_database):
+    reader = get_database
+    tree_id = 0
+    my_tree = reader.get_tree(tree_id)
+    my_tree = copy.deepcopy(my_tree)
+    reader.close()
+    assert my_tree.id == 0
+    assert my_tree.name == "tree_0"
+
+def test_point_cloud(get_skeleton_length, get_database):
+    reader = get_database
     tree_id = 0
     my_tree = reader.get_tree(tree_id)
     my_tree = copy.deepcopy(my_tree)
