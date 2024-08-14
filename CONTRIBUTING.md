@@ -17,6 +17,13 @@ git commit -m "REFACTOR:<description>"    <--- for refactored code
 git commit -m "MERGE:<description>"       <--- for merging operations
 ```
 
+The description of the pull request should ideally contain: 
+- An explicit name. e.g. "improvement of registration of tree skeleton using pcl ICP registration" , and not "registration icp pcl"
+- A description in a few lines of the changes made.
+- A check if a test was adapted or created
+- If it is linked to an issue, mark it as such in the Developmement section of the PR.
+- As long as it is under development, mark it as Draft
+
 # Naming convention
 All code is in python
 [usual python naming convention](https://peps.python.org/pep-0008/#naming-conventions)
