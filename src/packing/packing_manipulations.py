@@ -1,5 +1,5 @@
 """
-This module contains the packing code for tree matching
+This module contains the tree manipulation code for tree combinatorics.
 """
 import os
 import copy
@@ -28,9 +28,9 @@ def match_skeletons(reference_skeleton: utils.geometry.Pointcloud, target_skelet
     ```
     ref:           target:      adapted_target:
      p                p              p
-      \               |              |
-       p              |              p
-       |              p              |
+      \               or             |
+       p              or             p
+       or             p              |
        p             /               p
       /             /               /
      /             /               /
@@ -66,7 +66,7 @@ def match_skeletons(reference_skeleton: utils.geometry.Pointcloud, target_skelet
             new_target_skeleton.append(new_point)
         return utils.geometry.Pointcloud(new_target_skeleton)
 
-def perform_icp_registration(target_skeleton, source_skeleton, max_correspondence_distance):
+def perform_icp_registration(target_skeleton : utils.geometry.Pointcloud, source_skeleton : utils.geometry.Pointcloud, max_correspondence_distance : float) -> o3d.pipelines.registration.RegistrationResult:
     """
     Perform an icp registration between the source and the target pointclouds
     :param target_skeleton: Pointcloud
@@ -103,43 +103,55 @@ def perform_icp_registration(target_skeleton, source_skeleton, max_correspondenc
                                                          criteria=convergence_criteria)
     return result
 
-def find_best_tree(reference_skeleton: utils.geometry.Pointcloud, reference_diameter: float, database_path : str) -> utils.tree.Tree:
+def trim_tree(tree_to_trim : utils.tree.Tree, skeleton : utils.geometry.Pointcloud) -> utils.tree.Tree:
     """
-    performs icp registrations bewteen the reference skeleton and the list of targets,
-    while checking that the diameter is within 10% of the reference value. The skeleton with the best fit is returned.
-    The database is updated by removing from it the part of the best fitting skeleton.
-
-    :param reference_skeleton: Pointcloud
-        The reference skeleton to align to
-    :param reference_diameter: float
-        The diameter of the reference skeleton
-    :param database_path: str
-        The path to the database. The database is updated by removing from it the part of the best fitting skeleton.
-
-    :return: best_tree: Tree
-        The best fitting tree for which the skeleton was cropped to the best fitting segment
+    Trim the tree to the bounding box of the skeleton
+    :param tree_to_trim: Tree
+        The tree to trim
+    :param skeleton: Pointcloud
+        The skeleton to trim to
+    
+    :return: trimmed_tree: Tree
+        The trimmed tree
     """
-    # unpack the database:
-    reader = db_reader.DatabaseReader(database_path)
-    n_tree = reader.get_num_trees()
-    best_tree = None
-    best_score = np.inf
-    # iterate over the trees in the database
-    for i in range(n_tree):
-        tree = copy.deepcopy(reader.get_tree(i))
+    x_max_bounds = max([point[0] for point in skeleton.points])
+    x_min_bounds = min([point[0] for point in skeleton.points])
+    delta_x = x_max_bounds - x_min_bounds
+    y_max_bounds = max([point[1] for point in skeleton.points])
+    y_min_bounds = min([point[1] for point in skeleton.points])
+    delta_y = y_max_bounds - y_min_bounds
+    z_max_bounds = max([point[2] for point in skeleton.points])
+    z_min_bounds = min([point[2] for point in skeleton.points])
+    delta_z = z_max_bounds - z_min_bounds
+    new_skeleton = []
+    new_points = []
+    new_colors = []
+    if delta_x > delta_y and delta_x > delta_z: # meaning that the main axis is x
+        for i, point in enumerate(tree_to_trim.point_cloud.points):
+            if point[0] < x_min_bounds or x_max_bounds < point[0]:
+                new_points.append(point)
+                new_colors.append(tree_to_trim.point_cloud.colors[i])
+        for point in tree_to_trim.skeleton.points:
+            if point[0] < x_min_bounds or x_max_bounds < point[0]:
+                new_skeleton.append(point)
+    elif delta_y > delta_x and delta_y > delta_z: # meaning that the main axis is y
+        for i, point in enumerate(tree_to_trim.point_cloud.points):
+            if point[1] < y_min_bounds or y_max_bounds < point[1]:
+                new_points.append(point)
+                new_colors.append(tree_to_trim.point_cloud.colors[i])
+        for point in tree_to_trim.skeleton.points:
+            if point[1] < y_min_bounds or y_max_bounds < point[1]:
+                new_skeleton.append(point)
+    elif delta_z > delta_x and delta_z > delta_y: # meaning that the main axis is z
+        for i, point in enumerate(tree_to_trim.point_cloud.points):
+            if point[2] < z_min_bounds or z_max_bounds < point[2]:
+                new_points.append(point)
+                new_colors.append(tree_to_trim.point_cloud.colors[i])
+        for point in tree_to_trim.skeleton.points:
+            if point[2] < z_min_bounds or z_max_bounds < point[2]:
+                new_skeleton.append(point)
+    tree_to_trim.point_cloud.points = new_points
+    tree_to_trim.point_cloud.colors = new_colors
+    tree_to_trim.skeleton.points = new_skeleton
 
-        for j in range(2):
-            tree.skeleton.points = tree.skeleton.points[::-1] if j % 2 == 1 else tree.skeleton.points
-            for k in range(2):
-                reference_skeleton.points = reference_skeleton.points[::-1] if k % 2 == 1 else reference_skeleton.points
-                tree_skeleton_corresponding_points = match_skeletons(reference_skeleton, tree.skeleton)
-                if tree_skeleton_corresponding_points is not None:
-                    result = perform_icp_registration(reference_skeleton, tree_skeleton_corresponding_points, 20.0)
-                    if result.inlier_rmse < best_score:
-                        best_score = result.inlier_rmse
-                        best_tree = tree
-                        best_tree.skeleton = tree_skeleton_corresponding_points # update the tree skeleton
-                else:
-                    pass
-    reader.close()
-    return best_tree
+    return tree_to_trim
