@@ -15,13 +15,13 @@ from . import packing_manipulations
 import open3d as o3d
 import numpy as np
 
-def compute_best_tree_element_matching(reference: utils.geometry.Pointcloud, target: utils.geometry.Pointcloud, minimum_rmse: float) -> Tuple[utils.geometry.Pointcloud, utils.geometry.Pointcloud]:
+def compute_best_tree_element_matching(model_element: utils.geometry.Pointcloud, skeleton: utils.geometry.Pointcloud, minimum_rmse: float) -> Tuple[utils.geometry.Pointcloud, utils.geometry.Pointcloud]:
     """
     Compute the best matching between the reference and the target point clouds.
     The target point cloud is cropped to the best fitting segment.
 
     ```	
-    ref:           target:      four possible adapted_target:
+    model element:    skeleton:     four possible skeleton_segments:
         p1               p              p1  p3      p3  p1
          \               |              |   |      /   /
           p2             |              p2  p2    p2  p2
@@ -31,36 +31,44 @@ def compute_best_tree_element_matching(reference: utils.geometry.Pointcloud, tar
                       /
                      p
     ```
-    :param reference: Pointcloud
-        The reference point cloud to align to
-    :param target: Pointcloud
-        The target point cloud to align
+    :param model_element: Pointcloud
+        The model element point cloud to align to
+    :param skeleton: Pointcloud
+        The skeleton point cloud to align
     :param minimum_rmse: float
         The minimum rmse to consider the alignment as valid
 
-    :return: best_reference: Pointcloud
-        The best fitting segment of the reference point cloud
-    :return: best_target: Pointcloud
-        The best fitting segment of the target point cloud
+    :return: best_model_element: Pointcloud
+        The best fitting order of the element point cloud
+    :return: best_skeleton: Pointcloud
+        The best fitting segment of the skeleton point cloud
     :return: best_rmse: float
         The rmse of the best fitting segment
     """
     best_rmse = minimum_rmse
-    best_reference = None
-    best_target = None
-    for i in range(2):
-        reference.points = reference.points[::-1] if i % 2 == 1 else reference.points
-        for j in range(2):
-            target.points = target.points[::-1] if j % 2 == 1 else target.points
-            print(target.points)
-            result = packing_manipulations.perform_icp_registration(reference, target, 20.0)
-            if result.inlier_rmse < best_rmse:
-                best_rmse = result.inlier_rmse
-                best_reference = reference
-                best_target = target
-    return best_reference, best_target, best_rmse
+    best_model_element = None
+    best_skeleton = None
 
-def find_best_tree(reference_skeleton: utils.geometry.Pointcloud, reference_diameter: float, database_path : str, return_rmse : bool = False) -> Tuple[utils.tree.Tree, float]:
+    for i in range(2):
+        model_element.points = model_element.points[::-1] if i % 2 == 1 else model_element.points
+        for j in range(2):
+            skeleton.points = skeleton.points[::-1] if j % 2 == 1 else skeleton.points
+            adapted_skeleton = packing_manipulations.match_skeletons(model_element, skeleton)
+            if adapted_skeleton is None:
+                continue
+            result = packing_manipulations.perform_icp_registration(model_element, adapted_skeleton, 20.0)
+            print(f"RMSE is {result.inlier_rmse}", " in compute_best_tree_element_matching")
+            if result.inlier_rmse < best_rmse:
+                print("New best rmse found, updating the best model element and skeleton. (From compute_best_tree_element_matching)")
+                best_rmse = result.inlier_rmse
+                best_model_element = model_element
+                best_skeleton = adapted_skeleton
+    if best_model_element is None:
+        print("No best model element found in compute_best_tree_element_matching, returning None, None, None")
+        return None, None, None
+    return best_model_element, best_skeleton, best_rmse
+
+def find_best_tree(reference_skeleton: utils.geometry.Pointcloud, reference_diameter: float, database_path : str, return_rmse : bool = False):
     """
     performs icp registrations bewteen the reference skeleton and the list of targets,
     while checking that the diameter is within 10% of the reference value. The skeleton with the best fit is returned.
@@ -93,23 +101,27 @@ def find_best_tree(reference_skeleton: utils.geometry.Pointcloud, reference_diam
     # iterate over the trees in the database
     for i in range(n_tree):
         tree = copy.deepcopy(reader.get_tree(i))
-        reference, target, best_tree_level_rmse = compute_best_tree_element_matching(reference_skeleton, tree.skeleton, np.inf)
-        if best_tree_level_rmse < best_db_level_rmse:
+        best_model_element, best_skeleton_segment, best_tree_level_rmse = compute_best_tree_element_matching(reference_skeleton, tree.skeleton, np.inf)
+        if best_tree_level_rmse is not None and best_tree_level_rmse < best_db_level_rmse:
             best_tree_id = i
             best_db_level_rmse = best_tree_level_rmse
             best_tree = tree
-            best_tree.skeleton = target
-            best_reference = reference
-            best_target = target
+            best_reference = best_model_element
+    
     # remove the best tree from the database
-    trimmed_tree = packing_manipulations.trim_tree(best_tree, best_target)
-    reader.root.trees[best_tree_id] = trimmed_tree
+    print(f"Best tree is {best_tree.id} with rmse {best_db_level_rmse}", "and is being trimmed")
+    best_tree.trim(best_skeleton_segment)
+
+    # update the database, as done in https://zodb.org/en/latest/articles/ZODB1.html#a-simple-example 
+    trees_in_db = reader.root.trees
+    trees_in_db[best_tree_id] = best_tree
+    reader.root.trees = trees_in_db
     transaction.commit()
 
     # close the database
     reader.close()
     if return_rmse:
-        return best_tree, best_reference, best_target, best_db_level_rmse
+        return best_tree, best_reference, best_skeleton_segment, best_db_level_rmse
     return best_tree
 
 def tree_based_iterative_matching(reference_skeletons: List[utils.geometry.Pointcloud], database_path: str):
