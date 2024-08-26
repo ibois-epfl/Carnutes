@@ -81,7 +81,7 @@ def main():
                 reference_pc_as_list.append(edge["location"])
             break
     # at this point the reference_pc_as_list should contain the points, but they are not ordered. We need to order them.
-    # for this we assume that an element in the model has a principal direction:
+    # for this we assume that an element in the model has a principal direction, and we sort the points along this direction
     x_max_bounds = max([point[0] for point in reference_pc_as_list])
     x_min_bounds = min([point[0] for point in reference_pc_as_list])
     delta_x = x_max_bounds - x_min_bounds
@@ -110,7 +110,8 @@ def main():
     if isinstance(target.geometry, Rhino.Geometry.NurbsCurve):
         cylinder = Rhino.Geometry.Brep.CreatePipe(target.geometry, 1, True, Rhino.Geometry.PipeCapMode.Flat, True, 0.01, 0.01)[0]
     elif isinstance(target.geometry, Rhino.Geometry.Brep):
-        cylinder = Rhino.Geometry.Brep.CreatePipe(reference_crv_for_brep, 1, True, Rhino.Geometry.PipeCapMode.Flat, True, 0.01, 0.01)[0]
+        # cylinder = Rhino.Geometry.Brep.CreatePipe(reference_crv_for_brep, 1, True, Rhino.Geometry.PipeCapMode.Flat, True, 0.01, 0.01)[0]
+        pass
     else:
         raise ValueError("The geometry of the target element is not supported.")
     # my_tree.crop(cylinder)
@@ -146,3 +147,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    print("Done")
