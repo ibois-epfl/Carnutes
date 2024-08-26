@@ -14,7 +14,7 @@ import System
 from utils import model, tree, geometry
 from utils import element as elem
 from utils.tree import Tree
-from packing import tree_packing
+from packing import packing_manipulations, packing_combinatorics
 
 import numpy as np
 import Rhino
@@ -101,7 +101,7 @@ def main():
     reference_skeleton = geometry.Pointcloud(reference_pc_as_list)
     current_dir = os.path.dirname(os.path.realpath(__file__))
     database_path = os.path.join(current_dir, 'database', 'tree_database.fs')
-    my_tree = tree_packing.find_best_tree(reference_skeleton, 100.0, database_path)
+    my_tree,  best_reference, best_target, best_db_level_rmse = packing_combinatorics.find_best_tree(reference_skeleton, 100.0, database_path, return_rmse=True)
 
     # Align it using o3d's ransac, then crop it to the bounding box of the element
     my_tree.align_to_skeleton(reference_skeleton)
