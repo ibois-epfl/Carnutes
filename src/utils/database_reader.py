@@ -3,6 +3,8 @@ Main module for reading the database, containing the DatabaseReader class.
 """
 #! python3
 
+import atexit
+
 import ZODB
 import ZODB.FileStorage
 
@@ -50,3 +52,7 @@ class DatabaseReader:
         self.connection.close()
         self.db.close()
         self.storage.close()
+    
+    def __del__(self):
+        self.close()
+        print("DatabaseReader object deleted automatically. \n Ideally it should be done manually asap in the code.")
