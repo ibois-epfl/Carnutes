@@ -101,6 +101,7 @@ def main():
     reference_skeleton = geometry.Pointcloud(reference_pc_as_list)
     current_dir = os.path.dirname(os.path.realpath(__file__))
     database_path = os.path.join(current_dir, 'database', 'tree_database.fs')
+    print(reference_skeleton)
     my_tree = tree_packing.find_best_tree(reference_skeleton, 100.0, database_path)
 
     # Align it using o3d's ransac, then crop it to the bounding box of the element
@@ -110,10 +111,9 @@ def main():
     if isinstance(target.geometry, Rhino.Geometry.NurbsCurve):
         cylinder = Rhino.Geometry.Brep.CreatePipe(target.geometry, 1, True, Rhino.Geometry.PipeCapMode.Flat, True, 0.01, 0.01)[0]
     elif isinstance(target.geometry, Rhino.Geometry.Brep):
-        cylinder = Rhino.Geometry.Brep.CreatePipe(reference_crv_for_brep, 1, True, Rhino.Geometry.PipeCapMode.Flat, True, 0.01, 0.01)[0]
-    else:
-        raise ValueError("The geometry of the target element is not supported.")
-    # my_tree.crop(cylinder)
+        edges = [target.geometry.Edges[i] for i in range(target.geometry.Edges.Count) if not target.geometry.Edges[i].IsClosed]
+        cylinder = Rhino.Geometry.Brep.CreatePipe(edges[0], 1, True, Rhino.Geometry.PipeCapMode.Flat, True, 0.01, 0.01)[0]
+    my_tree.crop(cylinder)
     my_tree.create_mesh()
 
     tree_mesh = Rhino.Geometry.Mesh()
