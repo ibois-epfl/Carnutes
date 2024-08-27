@@ -107,22 +107,25 @@ def find_best_tree(reference_skeleton: utils.geometry.Pointcloud, reference_diam
             best_db_level_rmse = best_tree_level_rmse
             best_tree = tree
             best_reference = best_model_element
+            best_skeleton = best_skeleton_segment
     
     # remove the best tree from the database
     print(f"Best tree is {best_tree.id} with rmse {best_db_level_rmse}", "and is being trimmed")
-    best_tree.trim(best_skeleton_segment)
+    selected_tree = copy.deepcopy(best_tree)
+    selected_tree.skeleton = best_skeleton
+    best_tree.trim(best_skeleton)
 
     # update the database, as done in https://zodb.org/en/latest/articles/ZODB1.html#a-simple-example 
     trees_in_db = reader.root.trees
     trees_in_db[best_tree_id] = best_tree
     reader.root.trees = trees_in_db
     transaction.commit()
-
+    copied_best_tree = copy.deepcopy(best_tree)
     # close the database
     reader.close()
     if return_rmse:
-        return best_tree, best_reference, best_skeleton_segment, best_db_level_rmse
-    return best_tree
+        return selected_tree, best_reference, best_skeleton_segment, best_db_level_rmse
+    return selected_tree
 
 def tree_based_iterative_matching(reference_skeletons: List[utils.geometry.Pointcloud], database_path: str):
     """

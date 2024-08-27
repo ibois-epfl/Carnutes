@@ -45,6 +45,18 @@ class Tree(persistent.Persistent):
         self.point_cloud = point_cloud
         self.skeleton = skeleton
 
+    def _p_resolveConflict(self, oldState, savedState, newState):
+        """
+        Resolve conflicts when saving the object
+        """
+        savedDiff = savedState['point_cloud'] - oldState['point_cloud']
+        newDiff = newState['point_cloud'] - oldState['point_cloud']
+
+        if savedDiff == newDiff:
+            return newState
+        else:
+            return oldState # testing this one out
+
     def compute_skeleton(self):
         """
         Compute the skeleton of the point cloud .
@@ -175,16 +187,22 @@ class Tree(persistent.Persistent):
         # First indicate that the object has been changed
         self._p_changed = 1
 
-        # Then remove the points that are within the range of the skeleton_to_remove:
+        # Then remove the points that are within the range of the skeleton_to_remove, with a 10% margin of safety:
         x_max_bounds = max([point[0] for point in skeleton_to_remove.points])
         x_min_bounds = min([point[0] for point in skeleton_to_remove.points])
         delta_x = x_max_bounds - x_min_bounds
+        x_max_bounds += 0.1*delta_x
+        x_min_bounds -= 0.1*delta_x
         y_max_bounds = max([point[1] for point in skeleton_to_remove.points])
         y_min_bounds = min([point[1] for point in skeleton_to_remove.points])
         delta_y = y_max_bounds - y_min_bounds
+        y_max_bounds += 0.1*delta_y
+        y_min_bounds -= 0.1*delta_y
         z_max_bounds = max([point[2] for point in skeleton_to_remove.points])
         z_min_bounds = min([point[2] for point in skeleton_to_remove.points])
         delta_z = z_max_bounds - z_min_bounds
+        z_max_bounds += 0.1*delta_z
+        z_min_bounds -= 0.1*delta_z
         new_skeleton = []
         new_points = []
         new_colors = []

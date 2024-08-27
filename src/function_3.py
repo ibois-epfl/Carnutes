@@ -20,6 +20,23 @@ import numpy as np
 import Rhino
 import scriptcontext
 
+def crop(tree : tree, bounding_volume : Rhino.Geometry.Brep):
+    """
+    Crop the tree to a bounding volume
+    Used to be a method of the tree class but has been moved out to make the Tree class available for testing outside of rhino.
+    
+        
+    :param bounding_volume: closed Brep
+        The bounding Brep to crop the tree to
+    """
+    indexes_to_remove = []
+    for i in range(len(tree.point_cloud.points)):
+        point = tree.point_cloud.points[i]
+        if not bounding_volume.IsPointInside(Rhino.Geometry.Point3d(point[0], point[1], point[2]), 0.01, True):
+            indexes_to_remove.append(i)
+    tree.point_cloud.points = [point for i, point in enumerate(tree.point_cloud.points) if i not in indexes_to_remove]
+    tree.point_cloud.colors = [color for i, color in enumerate(tree.point_cloud.colors) if i not in indexes_to_remove]
+
 def main():
     """
     1) create the model
@@ -114,7 +131,7 @@ def main():
         pass
     else:
         raise ValueError("The geometry of the target element is not supported.")
-    # my_tree.crop(cylinder)
+    crop(my_tree, cylinder)
     my_tree.create_mesh()
 
     tree_mesh = Rhino.Geometry.Mesh()
