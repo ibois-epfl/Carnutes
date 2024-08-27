@@ -45,6 +45,18 @@ class Tree(persistent.Persistent):
         self.point_cloud = point_cloud
         self.skeleton = skeleton
 
+    def _p_resolveConflict(self, oldState, savedState, newState):
+        """
+        Resolve conflicts when saving the object
+        """
+        savedDiff = savedState['point_cloud'] - oldState['point_cloud']
+        newDiff = newState['point_cloud'] - oldState['point_cloud']
+
+        if savedDiff == newDiff:
+            return newState
+        else:
+            return oldState # testing this one out
+
     def compute_skeleton(self):
         """
         Compute the skeleton of the point cloud .
@@ -92,6 +104,7 @@ class Tree(persistent.Persistent):
         tree_pc = o3d.geometry.PointCloud()
         tree_pc.points = o3d.utility.Vector3dVector(np.array(self.point_cloud.points))
         skeleton_pc = o3d.geometry.PointCloud()
+        print("Skeleton points are ", self.skeleton.points)
         skeleton_pc.points = o3d.utility.Vector3dVector(np.array(self.skeleton.points))
         skeleton_pc.estimate_normals()
         reference_pc = o3d.geometry.PointCloud()
@@ -128,20 +141,21 @@ class Tree(persistent.Persistent):
         rotation = transformation[:3, :3]
         translation = transformation[:3, 3]
 
-        new_pointcloud = []
-        new_skeleton = []
+        new_pointcloud_as_list = []
+        new_colors_as_list = self.point_cloud.colors
+        new_skeleton_as_list = []
 
         for point in self.point_cloud.points:
             point = np.dot(rotation, point) + translation
-            new_pointcloud.append([point[0], point[1], point[2]])
+            new_pointcloud_as_list.append([point[0], point[1], point[2]])
 
-        self.point_cloud = Pointcloud(new_pointcloud, self.point_cloud.colors)
+        self.point_cloud = Pointcloud(new_pointcloud_as_list, new_colors_as_list)
 
         for point in self.skeleton.points:
             point = np.dot(rotation, point) + translation
-            new_skeleton.append([point[0], point[1], point[2]])
+            new_skeleton_as_list.append([point[0], point[1], point[2]])
         
-        self.skeleton = Pointcloud(new_skeleton)
+        self.skeleton = Pointcloud(new_skeleton_as_list)
 
     def create_mesh(self, radius = 0.25):
         """
@@ -163,6 +177,62 @@ class Tree(persistent.Persistent):
         self.mesh = Mesh(vertices, faces, colors)
 
         print("Mesh created, n° vertices = ", len(self.mesh.vertices), "n° faces = ", len(self.mesh.faces))
+
+    def trim(self, skeleton_to_remove):
+        """
+        Trim the tree by removing all the that are within the range of the skeleton_to_remove
+        :param skeleton_to_remove: Pointcloud
+            The skeleton to remove
+        """
+        # First indicate that the object has been changed
+        self._p_changed = 1
+
+        # Then remove the points that are within the range of the skeleton_to_remove, with a 10% margin of safety:
+        x_max_bounds = max([point[0] for point in skeleton_to_remove.points])
+        x_min_bounds = min([point[0] for point in skeleton_to_remove.points])
+        delta_x = x_max_bounds - x_min_bounds
+        x_max_bounds += 0.1*delta_x
+        x_min_bounds -= 0.1*delta_x
+        y_max_bounds = max([point[1] for point in skeleton_to_remove.points])
+        y_min_bounds = min([point[1] for point in skeleton_to_remove.points])
+        delta_y = y_max_bounds - y_min_bounds
+        y_max_bounds += 0.1*delta_y
+        y_min_bounds -= 0.1*delta_y
+        z_max_bounds = max([point[2] for point in skeleton_to_remove.points])
+        z_min_bounds = min([point[2] for point in skeleton_to_remove.points])
+        delta_z = z_max_bounds - z_min_bounds
+        z_max_bounds += 0.1*delta_z
+        z_min_bounds -= 0.1*delta_z
+        new_skeleton = []
+        new_points = []
+        new_colors = []
+        if delta_x > delta_y and delta_x > delta_z: # meaning that the main axis is x
+            for i, point in enumerate(self.point_cloud.points):
+                if point[0] < x_min_bounds or x_max_bounds < point[0]:
+                    new_points.append(point)
+                    new_colors.append(self.point_cloud.colors[i])
+            for point in self.skeleton.points:
+                if point[0] < x_min_bounds or x_max_bounds < point[0]:
+                    new_skeleton.append(point)
+        elif delta_y > delta_x and delta_y > delta_z: # meaning that the main axis is y
+            for i, point in enumerate(self.point_cloud.points):
+                if point[1] < y_min_bounds or y_max_bounds < point[1]:
+                    new_points.append(point)
+                    new_colors.append(self.point_cloud.colors[i])
+            for point in self.skeleton.points:
+                if point[1] < y_min_bounds or y_max_bounds < point[1]:
+                    new_skeleton.append(point)
+        elif delta_z > delta_x and delta_z > delta_y: # meaning that the main axis is z
+            for i, point in enumerate(self.point_cloud.points):
+                if point[2] < z_min_bounds or z_max_bounds < point[2]:
+                    new_points.append(point)
+                    new_colors.append(self.point_cloud.colors[i])
+            for point in self.skeleton.points:
+                if point[2] < z_min_bounds or z_max_bounds < point[2]:
+                    new_skeleton.append(point)
+        self.point_cloud.points = new_points
+        self.point_cloud.colors = new_colors
+        self.skeleton.points = new_skeleton
 
     def __str__(self):
         return f"Tree {self.id} - {self.name}"

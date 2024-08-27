@@ -27,9 +27,9 @@ def create_database(voxel_size=0.05):
     connection = db.open()
     root = connection.root
     root.trees = BTrees.OOBTree.BTree()
-
+    i = 0
     for pc_file in os.listdir("dataset"):
-        i = 0
+        
         if pc_file.endswith(".ply"):
             print(f"Processing {pc_file}")
             pc = o3d.io.read_point_cloud(f"dataset/{pc_file}")
