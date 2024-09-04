@@ -8,6 +8,7 @@ from collections import defaultdict
 import copy
 
 from utils.geometry import Pointcloud, Mesh
+from utils.geometrical_operations import *
 
 import numpy as np
 import open3d as o3d
@@ -44,6 +45,7 @@ class Tree(persistent.Persistent):
         self.name = name
         self.point_cloud = point_cloud
         self.skeleton = skeleton
+        self.mean_diameter = None
 
     def _p_resolveConflict(self, oldState, savedState, newState):
         """
@@ -64,7 +66,8 @@ class Tree(persistent.Persistent):
 
         To Do: make this actually professional
         """
-        skeleton_as_list = []
+        skeleton_points_as_list = []
+        skeleton_circles_as_list = [] # list of tuples (center, radius)
 
         o3d_pc = o3d.geometry.PointCloud()
         o3d_pc.points = o3d.utility.Vector3dVector(self.point_cloud.points)
@@ -85,16 +88,27 @@ class Tree(persistent.Persistent):
                 segments[index].append(point)
 
         for i in range(SKELETON_LENGTH):
+            # We compute the center of the segment
             i_th_segment = segments[i]
             center_point = i_th_segment[0]
             for j in range(len(i_th_segment) - 1):
                 center_point += i_th_segment[j + 1]
             center_point /= len(i_th_segment)
-            skeleton_as_list.append(center_point)
+            skeleton_points_as_list.append(center_point)
 
-        self.skeleton = Pointcloud(skeleton_as_list)
+            # We project the segment to the plane defined by the center point and the z axis as normal
+            i_th_projected_points = project_points_to_plane(i_th_segment, center_point, [0, 0, 1])
 
-        print("Skeleton computed, n° points = ", len(self.skeleton.points))
+            # We fit a circle to the projected points
+            i_th_circle_parameters = fit_circle_with_open3d(i_th_projected_points, distance_threshold=0.01, ransac_n=3, num_iterations=1000)
+            skeleton_circles_as_list.append(i_th_circle_parameters)
+            print("Circle parameters are ", i_th_circle_parameters)
+
+        self.skeleton = Pointcloud(skeleton_points_as_list)
+        self.skeleton_circles = skeleton_circles_as_list
+        self.mean_diameter = np.mean([2*circle[1] for circle in skeleton_circles_as_list])
+
+        print("Skeleton computed, n° points = ", len(self.skeleton.points), " and mean diameter = ", self.mean_diameter)
         return self.skeleton
 
     def align_to_skeleton(self, reference_skeleton):

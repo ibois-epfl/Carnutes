@@ -34,7 +34,10 @@ def create_model_from_rhino_selection(max_elements : int = 100000):
         geometries = [geo.ToNurbsCurve() for geo in geometries]
         print("Curves converted to NurbsCurve")
 
-    elements = [model.element.Element(geometries[i], go.Object(i).ObjectId) for i in range(go.ObjectCount)]
+    layer_ids = [go.Object(i).Object().Attributes.LayerIndex for i in range(go.ObjectCount)]
+    layer_names = [Rhino.RhinoDoc.ActiveDoc.Layers[layer_id].Name for layer_id in layer_ids]
+    elements = [model.element.Element(geometries[i], go.Object(i).ObjectId, float(layer_names[i])) for i in range(go.ObjectCount)]
+
     return model.Model(elements)
 
 def select_single_element_to_replace():

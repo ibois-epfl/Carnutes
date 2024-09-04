@@ -53,6 +53,7 @@ def main():
     for element in current_model.elements:
         if element.GUID == element_guid:
             target = element
+            reference_diameter = element.diameter
             break
     
     reference_pc_as_list = []
@@ -70,8 +71,12 @@ def main():
     reference_skeleton = geometry.Pointcloud(reference_pc_as_list)
     current_dir = os.path.dirname(os.path.realpath(__file__))
     database_path = os.path.join(current_dir, 'database', 'tree_database.fs')
-    my_tree,  best_reference, best_target, best_db_level_rmse = packing_combinatorics.find_best_tree(reference_skeleton, 100.0, database_path, return_rmse=True)
+    my_tree,  best_reference, best_target, best_db_level_rmse = packing_combinatorics.find_best_tree(reference_skeleton, reference_diameter, database_path, return_rmse=True)
+    
+    if my_tree is None:
+        raise ValueError("No best tree found, mission aborted")
 
+    print("mean diameter of selected_tree = ", my_tree.mean_diameter)
     # Align it using o3d's ransac, then crop it to the bounding box of the element
     my_tree.align_to_skeleton(reference_skeleton)
 

@@ -17,9 +17,10 @@ class Element(object):
     GUID: str
         The GUID of the element in the ActiveDoc.
     """
-    def __init__(self, geometry: Rhino.Geometry.GeometryBase, GUID):
+    def __init__(self, geometry: Rhino.Geometry.GeometryBase, GUID, diameter: float = None):
         self.geometry = geometry
         self.GUID = GUID
+        self.diameter = diameter
 
     def create_bounding_cylinder(self, radius : int = 1):
         """
