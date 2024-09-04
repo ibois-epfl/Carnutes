@@ -58,6 +58,9 @@ def create_database(voxel_size=0.05):
     transaction.commit()
     connection.close()
 
+    db.close()
+    storage.close()
+
 def augment_database():
     """
     Augment the database with new trees. To be implemented.
@@ -65,4 +68,4 @@ def augment_database():
     pass
 
 if __name__ == '__main__':
-    create_database(voxel_size=0.05)
+    create_database(voxel_size=0.03)
