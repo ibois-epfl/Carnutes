@@ -73,20 +73,22 @@ class Tree(persistent.Persistent):
         min_bound = oriented_bounding_box.get_min_bound()[2]
         pc_height = oriented_bounding_box.get_max_bound()[2] - min_bound
         print("height of the point cloud is ", pc_height)
+
         segments = defaultdict(list)
         for point in np.asarray(o3d_pc.points):
             relative_height = point[2] - min_bound
             # We create 10 indexes along the height of the point cloud (we assume the tree upwards)
-            index = int(round(10 * relative_height/pc_height))
+            index = int(round((SKELETON_LENGTH-1) * relative_height/pc_height))
             if index not in segments:
                 segments[index] = [point]
             else:
                 segments[index].append(point)
+
         for i in range(SKELETON_LENGTH):
             i_th_segment = segments[i]
             center_point = i_th_segment[0]
             for j in range(len(i_th_segment) - 1):
-                center_point += i_th_segment[i + 1]
+                center_point += i_th_segment[j + 1]
             center_point /= len(i_th_segment)
             skeleton_as_list.append(center_point)
 

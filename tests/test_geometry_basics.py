@@ -3,6 +3,7 @@ import os
 import copy
 
 import pytest
+import numpy as np
 
 current_dir = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(current_dir + "/..")
@@ -11,6 +12,7 @@ sys.path.append(current_dir + "/../src")
 from src.utils import geometry as geo
 from src.utils import database_reader
 from src.utils import tree
+from utils import geometrical_operations
 
 @pytest.fixture
 def get_skeleton_length():
@@ -59,3 +61,18 @@ def test_point_cloud(get_skeleton_length, get_database):
     assert len(my_tree.skeleton.points) == get_skeleton_length
     assert len(my_tree.point_cloud.points) == 6388
     assert len(my_tree.point_cloud.colors) == len(my_tree.point_cloud.points)
+
+def test_project_points_to_plane():
+    points = [[1, 1, 1], [2, 2, 2], [3, 3, 3]]
+    plane_origin = [0, 0, 0]
+    plane_normal = [0, 0, 1]
+    projected_points = geometrical_operations.project_points_to_plane(points, plane_origin, plane_normal)
+    assert projected_points == [[1, 1, 0], [2, 2, 0], [3, 3, 0]]
+
+def test_fit_circle_with_open3d():
+    points = [[2 * (np.cos(alfa)*np.cos(np.pi/4)) + 1, 2 * np.sin(alfa) + 2 , 2 * (np.cos(alfa)*np.sin(np.pi/4)) + 3] for alfa in np.linspace(0, 2*np.pi, 100)]
+    center, radius = geometrical_operations.fit_circle_with_open3d(points)
+    assert center[0] == pytest.approx(1, abs=2e-1)
+    assert center[1] == pytest.approx(2, abs=2e-1)
+    assert center[2] == pytest.approx(3, abs=2e-1)
+    assert radius == pytest.approx(2, abs=3e-1)
