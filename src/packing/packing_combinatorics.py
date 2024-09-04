@@ -68,7 +68,7 @@ def compute_best_tree_element_matching(model_element: utils.geometry.Pointcloud,
         return None, None, None
     return best_model_element, best_skeleton, best_rmse
 
-def find_best_tree(reference_skeleton: utils.geometry.Pointcloud, reference_diameter: float, database_path : str, return_rmse : bool = False):
+def find_best_tree(model_element: utils.geometry.Pointcloud, reference_diameter: float, database_path : str, return_rmse : bool = False):
     """
     performs icp registrations bewteen the reference skeleton and the list of targets,
     while checking that the diameter is within 10% of the reference value. The skeleton with the best fit is returned.
@@ -101,7 +101,7 @@ def find_best_tree(reference_skeleton: utils.geometry.Pointcloud, reference_diam
     # iterate over the trees in the database
     for i in range(n_tree):
         tree = copy.deepcopy(reader.get_tree(i))
-        best_model_element, best_skeleton_segment, best_tree_level_rmse = compute_best_tree_element_matching(reference_skeleton, tree.skeleton, np.inf)
+        best_model_element, best_skeleton_segment, best_tree_level_rmse = compute_best_tree_element_matching(model_element, tree.skeleton, np.inf)
         if best_tree_level_rmse is not None and best_tree_level_rmse < best_db_level_rmse:
             best_tree_id = i
             best_db_level_rmse = best_tree_level_rmse
@@ -127,12 +127,12 @@ def find_best_tree(reference_skeleton: utils.geometry.Pointcloud, reference_diam
         return selected_tree, best_reference, best_skeleton_segment, best_db_level_rmse
     return selected_tree
 
-def tree_based_iterative_matching(reference_skeletons: List[utils.geometry.Pointcloud], database_path: str):
+def tree_based_iterative_matching(model_elements: List[utils.geometry.Pointcloud], database_path: str):
     """
     Iterating tree per tree, we find the best reference skeleton (element in the model) that matches the tree skeleton.
 
-    :param reference_skeletons: List[Pointcloud]
-        The list of reference skeletons to match to
+    :param model_elements: List[Pointcloud]
+        The list of elements to match to
     :param database_path: str
         The path to the database. The database is updated by removing from it the part of the best fitting skeleton.
 
@@ -141,11 +141,20 @@ def tree_based_iterative_matching(reference_skeletons: List[utils.geometry.Point
     """
     pass
 
-def element_based_iterative_matching(reference_skeletons: List[utils.geometry.Pointcloud], database_path: str):
+def element_based_iterative_matching(model_elements: List[utils.geometry.Pointcloud], database_path: str):
     """
-    Iterating element per element, we find the best tree in the database that matches the reference skeleton (element in the model).
+    Iterating element per element, we find the best tree in the database that matches the reference model_elements (element in the model).
+
+    :param model_elements: List[Element]
+        The list of elements to match to
     """
-    pass
+    list_of_rmse = []
+    list_of_best_trees = []
+    for model_element in model_elements:
+        best_tree, best_reference, best_target, rmse = find_best_tree(model_element, 100.0, database_path, return_rmse=True)
+        list_of_rmse.append(rmse)
+        list_of_best_trees.append(best_tree)
+    return list_of_best_trees, list_of_rmse
 
 def combinatorics_matching():
     """

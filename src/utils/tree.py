@@ -113,13 +113,13 @@ class Tree(persistent.Persistent):
         reference_pc.points = o3d.utility.Vector3dVector(np.array(reference_skeleton.points))
 
         print("Aligning tree to skeleton using as reference: ", reference_pc, "with points:")
-        all_points_ref = np.asarray(reference_pc.points)
-        for i in range(len(all_points_ref)):
-            print(np.asarray(all_points_ref[i]))
-        print("And using as skeleton: ", skeleton_pc, "with points:")
-        all_points_skel = np.asarray(skeleton_pc.points)
-        for i in range(len(all_points_skel)):
-            print(np.asarray(all_points_skel[i]))
+        # all_points_ref = np.asarray(reference_pc.points)
+        # for i in range(len(all_points_ref)):
+        #     print(np.asarray(all_points_ref[i]))
+        # print("And using as skeleton: ", skeleton_pc, "with points:")
+        # all_points_skel = np.asarray(skeleton_pc.points)
+        # for i in range(len(all_points_skel)):
+        #     print(np.asarray(all_points_skel[i]))
 
         initial_translation = np.identity(4)
         initial_translation[:3, 3] =  np.mean(np.asarray(reference_pc.points), axis=0) - np.mean(np.asarray(skeleton_pc.points), axis=0)
@@ -136,7 +136,7 @@ class Tree(persistent.Persistent):
                                                              criteria=convergence_criteria)
 
         transformation = result.transformation
-        print("Transformation matrix is ", transformation)
+        # print("Transformation matrix is ", transformation)
         tree_pc = copy.deepcopy(tree_pc)
 
         # Assuming an affine transformation
