@@ -7,9 +7,12 @@ import typing
 import numpy as np
 import open3d as o3d
 
-def project_points_to_plane(points: typing.List[typing.List[float]], 
-                            plane_origin: typing.List[float], 
-                            plane_normal: typing.List[float]) -> typing.List[typing.List[float]]:
+
+def project_points_to_plane(
+    points: typing.List[typing.List[float]],
+    plane_origin: typing.List[float],
+    plane_normal: typing.List[float],
+) -> typing.List[typing.List[float]]:
     """
     Project a list of points to a plane.
 
@@ -36,15 +39,20 @@ def project_points_to_plane(points: typing.List[typing.List[float]],
 
     return projected_points
 
-def fit_circle_with_open3d(points, distance_threshold=0.01, ransac_n=3, num_iterations=1000):
+
+def fit_circle_with_open3d(
+    points, distance_threshold=0.01, ransac_n=3, num_iterations=1000
+):
     # Convert points to Open3D PointCloud
     point_cloud = o3d.geometry.PointCloud()
     point_cloud.points = o3d.utility.Vector3dVector(points)
 
     # Fit a plane to the point cloud
-    plane_model, inliers = point_cloud.segment_plane(distance_threshold=distance_threshold,
-                                                     ransac_n=ransac_n,
-                                                     num_iterations=num_iterations)
+    plane_model, inliers = point_cloud.segment_plane(
+        distance_threshold=distance_threshold,
+        ransac_n=ransac_n,
+        num_iterations=num_iterations,
+    )
 
     # Extract inlier points
     inlier_cloud = point_cloud.select_by_index(inliers)
@@ -58,14 +66,18 @@ def fit_circle_with_open3d(points, distance_threshold=0.01, ransac_n=3, num_iter
     centered_points = inlier_points - centroid
     u, s, vh = np.linalg.svd(centered_points)
     normal = vh[2, :]
-    projected_points = centered_points - np.outer(np.dot(centered_points, normal), normal)
+    projected_points = centered_points - np.outer(
+        np.dot(centered_points, normal), normal
+    )
 
     # Fit a circle in 2D
-    A = np.hstack([2 * projected_points[:, :2], np.ones((projected_points.shape[0], 1))])
+    A = np.hstack(
+        [2 * projected_points[:, :2], np.ones((projected_points.shape[0], 1))]
+    )
     b = np.sum(projected_points[:, :2] ** 2, axis=1)
     x = np.linalg.lstsq(A, b, rcond=None)[0]
     center_2d = x[:2]
-    radius = np.sqrt(x[2] + np.sum(center_2d ** 2))
+    radius = np.sqrt(x[2] + np.sum(center_2d**2))
 
     # Convert the 2D center back to 3D
     center_3d = centroid + center_2d[0] * vh[0, :3] + center_2d[1] * vh[1, :3]

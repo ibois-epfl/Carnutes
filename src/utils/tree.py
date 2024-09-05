@@ -21,6 +21,7 @@ print("version of numpy is ", np.__version__)
 # The number of points of the tree skeleton
 SKELETON_LENGTH = 11
 
+
 class Tree(persistent.Persistent):
     """
     Tree class to store tree data.
@@ -36,11 +37,10 @@ class Tree(persistent.Persistent):
     :param tree_skeleton
         The skeleton of the tree as a list of lists of 3 coordinates. None by default.
     """
-    def __init__(self, 
-                 id : int,
-                 name : str,
-                 point_cloud : Pointcloud,
-                 skeleton : Pointcloud = None):
+
+    def __init__(
+        self, id: int, name: str, point_cloud: Pointcloud, skeleton: Pointcloud = None
+    ):
         self.id = id
         self.name = name
         self.point_cloud = point_cloud
@@ -51,13 +51,13 @@ class Tree(persistent.Persistent):
         """
         Resolve conflicts when saving the object
         """
-        savedDiff = savedState['point_cloud'] - oldState['point_cloud']
-        newDiff = newState['point_cloud'] - oldState['point_cloud']
+        savedDiff = savedState["point_cloud"] - oldState["point_cloud"]
+        newDiff = newState["point_cloud"] - oldState["point_cloud"]
 
         if savedDiff == newDiff:
             return newState
         else:
-            return oldState # testing this one out
+            return oldState  # testing this one out
 
     def compute_skeleton(self):
         """
@@ -67,11 +67,11 @@ class Tree(persistent.Persistent):
         To Do: make this actually professional
         """
         skeleton_points_as_list = []
-        skeleton_circles_as_list = [] # list of tuples (center, radius)
+        skeleton_circles_as_list = []  # list of tuples (center, radius)
 
         o3d_pc = o3d.geometry.PointCloud()
         o3d_pc.points = o3d.utility.Vector3dVector(self.point_cloud.points)
-    
+
         oriented_bounding_box = o3d_pc.get_oriented_bounding_box()
         min_bound = oriented_bounding_box.get_min_bound()[2]
         pc_height = oriented_bounding_box.get_max_bound()[2] - min_bound
@@ -80,7 +80,7 @@ class Tree(persistent.Persistent):
         for point in np.asarray(o3d_pc.points):
             relative_height = point[2] - min_bound
             # We create 10 indexes along the height of the point cloud (we assume the tree upwards)
-            index = int(round((SKELETON_LENGTH-1) * relative_height/pc_height))
+            index = int(round((SKELETON_LENGTH - 1) * relative_height / pc_height))
             if index not in segments:
                 segments[index] = [point]
             else:
@@ -96,15 +96,24 @@ class Tree(persistent.Persistent):
             skeleton_points_as_list.append(center_point)
 
             # We project the segment to the plane defined by the center point and the z axis as normal
-            i_th_projected_points = project_points_to_plane(i_th_segment, center_point, [0, 0, 1])
+            i_th_projected_points = project_points_to_plane(
+                i_th_segment, center_point, [0, 0, 1]
+            )
 
             # We fit a circle to the projected points
-            i_th_circle_parameters = fit_circle_with_open3d(i_th_projected_points, distance_threshold=0.01, ransac_n=3, num_iterations=1000)
+            i_th_circle_parameters = fit_circle_with_open3d(
+                i_th_projected_points,
+                distance_threshold=0.01,
+                ransac_n=3,
+                num_iterations=1000,
+            )
             skeleton_circles_as_list.append(i_th_circle_parameters)
 
         self.skeleton = Pointcloud(skeleton_points_as_list)
         self.skeleton_circles = skeleton_circles_as_list
-        self.mean_diameter = np.mean([2*circle[1] for circle in skeleton_circles_as_list])
+        self.mean_diameter = np.mean(
+            [2 * circle[1] for circle in skeleton_circles_as_list]
+        )
 
         return self.skeleton
 
@@ -121,9 +130,15 @@ class Tree(persistent.Persistent):
         skeleton_pc.points = o3d.utility.Vector3dVector(np.array(self.skeleton.points))
         skeleton_pc.estimate_normals()
         reference_pc = o3d.geometry.PointCloud()
-        reference_pc.points = o3d.utility.Vector3dVector(np.array(reference_skeleton.points))
+        reference_pc.points = o3d.utility.Vector3dVector(
+            np.array(reference_skeleton.points)
+        )
 
-        print("Aligning tree to skeleton using as reference: ", reference_pc, "with points:")
+        print(
+            "Aligning tree to skeleton using as reference: ",
+            reference_pc,
+            "with points:",
+        )
         # all_points_ref = np.asarray(reference_pc.points)
         # for i in range(len(all_points_ref)):
         #     print(np.asarray(all_points_ref[i]))
@@ -133,18 +148,22 @@ class Tree(persistent.Persistent):
         #     print(np.asarray(all_points_skel[i]))
 
         initial_translation = np.identity(4)
-        initial_translation[:3, 3] =  np.mean(np.asarray(reference_pc.points), axis=0) - np.mean(np.asarray(skeleton_pc.points), axis=0)
+        initial_translation[:3, 3] = np.mean(
+            np.asarray(reference_pc.points), axis=0
+        ) - np.mean(np.asarray(skeleton_pc.points), axis=0)
         tree_pc.transform(initial_translation)
 
-        convergence_criteria = o3d.pipelines.registration.ICPConvergenceCriteria(relative_fitness=1.000000e-03, 
-                                                                                 max_iteration = 40,
-                                                                                 relative_rmse=1.000000e-03)
-        
-        result = o3d.pipelines.registration.registration_icp(source=skeleton_pc, 
-                                                             target=reference_pc,
-                                                             init=initial_translation,
-                                                             max_correspondence_distance=10.0,
-                                                             criteria=convergence_criteria)
+        convergence_criteria = o3d.pipelines.registration.ICPConvergenceCriteria(
+            relative_fitness=1.000000e-03, max_iteration=40, relative_rmse=1.000000e-03
+        )
+
+        result = o3d.pipelines.registration.registration_icp(
+            source=skeleton_pc,
+            target=reference_pc,
+            init=initial_translation,
+            max_correspondence_distance=10.0,
+            criteria=convergence_criteria,
+        )
 
         transformation = result.transformation
         # print("Transformation matrix is ", transformation)
@@ -167,10 +186,10 @@ class Tree(persistent.Persistent):
         for point in self.skeleton.points:
             point = np.dot(rotation, point) + translation
             new_skeleton_as_list.append([point[0], point[1], point[2]])
-        
+
         self.skeleton = Pointcloud(new_skeleton_as_list)
 
-    def create_mesh(self, radius = 0.25):
+    def create_mesh(self, radius=0.25):
         """
         Create a mesh from the point cloud and adds it to the tree instance
 
@@ -183,13 +202,18 @@ class Tree(persistent.Persistent):
         mesh = o3d.geometry.TriangleMesh.create_from_point_cloud_alpha_shape(pcd, 2)
         mesh.compute_vertex_normals()
         mesh.compute_triangle_normals()
-        
+
         vertices = np.asarray(mesh.vertices)
         faces = np.asarray(mesh.triangles)
         colors = np.asarray(mesh.vertex_colors)
         self.mesh = Mesh(vertices, faces, colors)
 
-        print("Mesh created, n° vertices = ", len(self.mesh.vertices), "n° faces = ", len(self.mesh.faces))
+        print(
+            "Mesh created, n° vertices = ",
+            len(self.mesh.vertices),
+            "n° faces = ",
+            len(self.mesh.faces),
+        )
 
     def trim(self, skeleton_to_remove):
         """
@@ -204,22 +228,22 @@ class Tree(persistent.Persistent):
         x_max_bounds = max([point[0] for point in skeleton_to_remove.points])
         x_min_bounds = min([point[0] for point in skeleton_to_remove.points])
         delta_x = x_max_bounds - x_min_bounds
-        x_max_bounds += 0.1*delta_x
-        x_min_bounds -= 0.1*delta_x
+        x_max_bounds += 0.1 * delta_x
+        x_min_bounds -= 0.1 * delta_x
         y_max_bounds = max([point[1] for point in skeleton_to_remove.points])
         y_min_bounds = min([point[1] for point in skeleton_to_remove.points])
         delta_y = y_max_bounds - y_min_bounds
-        y_max_bounds += 0.1*delta_y
-        y_min_bounds -= 0.1*delta_y
+        y_max_bounds += 0.1 * delta_y
+        y_min_bounds -= 0.1 * delta_y
         z_max_bounds = max([point[2] for point in skeleton_to_remove.points])
         z_min_bounds = min([point[2] for point in skeleton_to_remove.points])
         delta_z = z_max_bounds - z_min_bounds
-        z_max_bounds += 0.1*delta_z
-        z_min_bounds -= 0.1*delta_z
+        z_max_bounds += 0.1 * delta_z
+        z_min_bounds -= 0.1 * delta_z
         new_skeleton = []
         new_points = []
         new_colors = []
-        if delta_x > delta_y and delta_x > delta_z: # meaning that the main axis is x
+        if delta_x > delta_y and delta_x > delta_z:  # meaning that the main axis is x
             for i, point in enumerate(self.point_cloud.points):
                 if point[0] < x_min_bounds or x_max_bounds < point[0]:
                     new_points.append(point)
@@ -227,7 +251,7 @@ class Tree(persistent.Persistent):
             for point in self.skeleton.points:
                 if point[0] < x_min_bounds or x_max_bounds < point[0]:
                     new_skeleton.append(point)
-        elif delta_y > delta_x and delta_y > delta_z: # meaning that the main axis is y
+        elif delta_y > delta_x and delta_y > delta_z:  # meaning that the main axis is y
             for i, point in enumerate(self.point_cloud.points):
                 if point[1] < y_min_bounds or y_max_bounds < point[1]:
                     new_points.append(point)
@@ -235,7 +259,7 @@ class Tree(persistent.Persistent):
             for point in self.skeleton.points:
                 if point[1] < y_min_bounds or y_max_bounds < point[1]:
                     new_skeleton.append(point)
-        elif delta_z > delta_x and delta_z > delta_y: # meaning that the main axis is z
+        elif delta_z > delta_x and delta_z > delta_y:  # meaning that the main axis is z
             for i, point in enumerate(self.point_cloud.points):
                 if point[2] < z_min_bounds or z_max_bounds < point[2]:
                     new_points.append(point)

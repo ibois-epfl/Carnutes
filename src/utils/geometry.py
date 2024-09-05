@@ -4,7 +4,10 @@ module for geometry classes
 from dataclasses import dataclass
 import typing
 
-def sort_points(points_as_list: typing.List[typing.List[float]]) -> typing.List[typing.List[float]]:
+
+def sort_points(
+    points_as_list: typing.List[typing.List[float]],
+) -> typing.List[typing.List[float]]:
     """
     Sort a list of points by the coordinate along which there is maximum variation.
     """
@@ -25,6 +28,7 @@ def sort_points(points_as_list: typing.List[typing.List[float]]) -> typing.List[
         points_as_list = sorted(points_as_list, key=lambda x: x[2])
     return points_as_list
 
+
 @dataclass
 class Pointcloud:
     """
@@ -35,14 +39,18 @@ class Pointcloud:
     :param point_cloud_colors
         The colors of the point cloud as a list of lists of 3 colors. None by default.
     """
-    def __init__(self,
-                 points : typing.List[typing.List[float]], 
-                 colors : typing.List[typing.List[int]] = None):
+
+    def __init__(
+        self,
+        points: typing.List[typing.List[float]],
+        colors: typing.List[typing.List[int]] = None,
+    ):
         self.points = points
         self.colors = colors
 
     def __str__(self):
         return "Pointcloud with {} points".format(len(self.points))
+
 
 @dataclass
 class Mesh:
@@ -54,13 +62,18 @@ class Mesh:
     :param faces
         The faces of the mesh as a list of lists of 3 indices
     """
-    def __init__(self,
-                 vertices : typing.List[typing.List[float]],
-                 faces : typing.List[typing.List[int]],
-                 colors : typing.List[typing.List[int]] = None):
+
+    def __init__(
+        self,
+        vertices: typing.List[typing.List[float]],
+        faces: typing.List[typing.List[int]],
+        colors: typing.List[typing.List[int]] = None,
+    ):
         self.vertices = vertices
         self.faces = faces
         self.colors = colors
 
     def __str__(self):
-        return "Mesh with {} vertices and {} faces".format(len(self.vertices), len(self.faces))
+        return "Mesh with {} vertices and {} faces".format(
+            len(self.vertices), len(self.faces)
+        )

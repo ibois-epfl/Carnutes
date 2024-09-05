@@ -1,7 +1,7 @@
 As this project is seen as an experiment in parallel to an architecture studio, this repo is not going to be maintained on the long term. Another repository will be opened when the long-term code is developped, as part of Damien Gilliard's PhD thesis. Therefore, any contribution made by outside people is welcome but keep in mind the "one shot" nature of this repository.
 
 # Contributing
-To contribute to this repo, open a new branch, create a pull request, push your modifications, and explain in the thread what you want to change / add. 
+To contribute to this repo, open a new branch, create a pull request, push your modifications, and explain in the thread what you want to change / add.
 
 The commit message guidelines are:
 ```bash
@@ -17,7 +17,7 @@ git commit -m "REFACTOR:<description>"    <--- for refactored code
 git commit -m "MERGE:<description>"       <--- for merging operations
 ```
 
-The description of the pull request should ideally contain: 
+The description of the pull request should ideally contain:
 - An explicit name. e.g. "improvement of registration of tree skeleton using pcl ICP registration" , and not "registration icp pcl"
 - A description in a few lines of the changes made.
 - A check if a test was adapted or created

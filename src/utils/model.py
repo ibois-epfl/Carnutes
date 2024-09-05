@@ -7,6 +7,7 @@ import typing
 
 from utils import graphs, element
 
+
 @dataclass
 class Model(object):
     """
@@ -19,14 +20,16 @@ class Model(object):
     graph: graphs.ConnectivityGraph
         The connectivity graph of the model. Object of the ConnectivityGraph class.
     """
+
     def __init__(self, elements: typing.List[element.Element]):
         self.elements = elements
         self.connectivity_graph = graphs.ConnectivityGraph(elements)
         type_of_model = type(self.elements[0].geometry)
         for element in self.elements:
             if type(element.geometry) != type_of_model:
-                raise ValueError("All elements in the model should be of the same type.")
-    
+                raise ValueError(
+                    "All elements in the model should be of the same type."
+                )
+
     def __str__(self):
         return "Model with {} elements".format(len(self.elements))
-    
