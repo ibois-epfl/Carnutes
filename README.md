@@ -35,7 +35,7 @@ For this, the following functions are planned:
 
 <p align="center">
     <img src="./assets/images/Capture%20d’écran%202024-07-15%20à%2020.52.48.gif" height="400" />
-    <img src="./assets/images/tree_trunks_from_wireframe.gif" height="400" />
+    <img src="./assets/images/fit_trees.gif" height="400" />
 
 
 
@@ -45,7 +45,7 @@ This tool is intended to be used in Rhino 8.
 See the [INSTALL.md](./INSTALL.md) for installation instructions, and the [CONTRIBUTING.md](./CONTRIBUTING.md) for minimal contribution guidelines. This repo contains a small .3dm to easily test Carnutes.
 
 
-<p align="center"> <img src="./assets/images/Carnutes_repo_structure.png" width="400"/> 
+<p align="center"> <img src="./assets/images/Carnutes_repo_structure.png" width="400"/>
 
 
 # 4 workshops will be held within the Studio:
@@ -55,7 +55,7 @@ template schedule:
 9h30-10h30: guided exercice with the students, individual feed-back
 10h30-10h45: wrap-up and expectations for next workshop
 
-### 🌲S1: digitalisation of the real world 
+### 🌲S1: digitalisation of the real world
 (LiDAR, photogrammetry, ...) a little bit of theory.
 
 -> The students can scan a tree and gain knowledge on how we can transfer the real world into the digital world.
@@ -69,11 +69,11 @@ Manipulate tree trunk geometries: introduction to the tools offered, first antic
 
 -> deliverable: a simple example of an architectural structure that the students have converted from 3D sketch to actual roundwood model.
 
-### 🌲S3: / 
+### 🌲S3: /
 NO DIGITAL WORKSHOP, but the students come up with their own 3D sketches model of what their design could look like. How do the small pieces fit together? What are the material constraints? What are the geometrical possibilities? How do the pieces join together ? Some or all these question are addressed by the students.
 
 
-### 🌲S4: Presentation, feed-back and improvement. 
+### 🌲S4: Presentation, feed-back and improvement.
 Small presentation of each student (1 screen shot of the work done) of the geometries and joinery, on which feed-back is given. Improvement of the tools are asked to Damien. Improved code (within time constrains) given to students for the next workshop. Concerning the improvements, some choices might be necessary.
 
 Presentation of the graphical representation tools, and emphasis on joinery.
@@ -102,4 +102,3 @@ gantt
     Joint mapping and joinery           : 2024-08-05, 5d
     Integration in Rhino UI             : 2024-08-12, 5d
 ```
-

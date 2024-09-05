@@ -21,10 +21,9 @@ jobs:
         with:
           activate-environment: Carnutes
           environment-file: environment.yml
-        
+
       - name: activate conda environment
         run: conda activate Carnutes
 
       - name: run tests
         run: pytest tests/test_geometry_basics.py
-
