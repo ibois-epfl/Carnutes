@@ -64,6 +64,14 @@ def main():
             for edge in incident_edges:
                 reference_pc_as_list.append(edge["location"])
             break
+
+    # removing duplicates
+    for i in range(len(reference_pc_as_list)):
+        for j in range(i+1, len(reference_pc_as_list)):
+            if np.allclose(reference_pc_as_list[i], reference_pc_as_list[j]):
+                reference_pc_as_list.pop(j)
+                break
+
     # at this point the reference_pc_as_list should contain the points, but they are not ordered. We need to order them.
     reference_pc_as_list = geometry.sort_points(reference_pc_as_list)
 

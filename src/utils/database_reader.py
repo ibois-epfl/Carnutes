@@ -37,7 +37,11 @@ class DatabaseReader:
         """
         Get a tree from the database, using its id.
         """
-        return self.root.trees[tree_id]
+        try:
+            return self.root.trees[tree_id]
+        except KeyError:
+            print(f"Tree with id {tree_id} not found in the database. \n I was removed in a previous query.")
+            return None
     
     def get_num_trees(self):
         """

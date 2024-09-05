@@ -50,7 +50,6 @@ def match_skeletons(model_element: utils.geometry.Pointcloud, original_skeleton:
                            original_skeleton.points[0][2]]]
 
     if np.sum(list_of_target_distances) < np.sum(list_of_reference_distances):
-        print("The target skeleton is smaller than the reference skeleton, it cannot be adapted. None is returned. (From match_skeletons method)")
         return None
         
     else:

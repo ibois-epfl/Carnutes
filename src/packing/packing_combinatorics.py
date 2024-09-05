@@ -62,7 +62,6 @@ def compute_best_tree_element_matching(model_element: utils.geometry.Pointcloud,
                 best_model_element = model_element
                 best_skeleton = adapted_skeleton
     if best_model_element is None:
-        print("No best model element found in compute_best_tree_element_matching, returning None, None, None")
         return None, None, None
     return best_model_element, best_skeleton, best_rmse
 
@@ -98,7 +97,11 @@ def find_best_tree(model_element: utils.geometry.Pointcloud, reference_diameter:
     best_db_level_rmse = np.inf 
     # iterate over the trees in the database
     for i in range(n_tree):
-        tree = copy.deepcopy(reader.get_tree(i))
+        tree = reader.get_tree(i)
+        if tree is not None:
+            tree = copy.deepcopy(tree)
+        else:
+            continue
         if tree.mean_diameter < 0.75 * reference_diameter or tree.mean_diameter > 1.25 * reference_diameter:
             continue
         best_model_element, best_skeleton_segment, best_tree_level_rmse = compute_best_tree_element_matching(model_element, tree.skeleton, np.inf)
@@ -116,11 +119,19 @@ def find_best_tree(model_element: utils.geometry.Pointcloud, reference_diameter:
         selected_tree.skeleton = best_skeleton
         best_tree.trim(best_skeleton)
 
+        # remove the tree from the database if its skeleton is a single point, or empty.
+        if len(best_tree.skeleton.points) < 2:
+            reader.root.trees.pop(best_tree_id)
+            reader.root.n_trees -= 1
+            transaction.commit()
+            reader.close()
+
         # update the database, as done in https://zodb.org/en/latest/articles/ZODB1.html#a-simple-example 
-        trees_in_db = reader.root.trees
-        trees_in_db[best_tree_id] = best_tree
-        reader.root.trees = trees_in_db
-        transaction.commit()
+        else: 
+            trees_in_db = reader.root.trees
+            trees_in_db[best_tree_id] = best_tree
+            reader.root.trees = trees_in_db
+            transaction.commit()
         # close the database
         reader.close()
         if return_rmse:

@@ -37,6 +37,7 @@ def main():
                 print(f"Processing {pc_file}")
                 pc = o3d.io.read_point_cloud(os.path.join(WORKING_DIR,f"dataset/{pc_file}"))
                 pc = pc.voxel_down_sample(VOXEL_SIZE)
+                pc, indexes = pc.remove_statistical_outlier(nb_neighbors=20, std_ratio=2.0)
     
                 tree_pc_as_pt_list = []
                 tree_colors_as_list = []
@@ -70,7 +71,7 @@ if __name__ == '__main__':
     # Get from user the voxel size
     gn = Rhino.Input.Custom.GetNumber()
     gn.SetCommandPrompt("Enter the voxel size")
-    gn.SetDefaultNumber(0.05)
+    gn.SetDefaultNumber(0.03)
     gn.Get()
 
     VOXEL_SIZE = gn.Number()
