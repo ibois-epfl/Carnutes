@@ -8,4 +8,4 @@ dependencies:
     - open3d==0.18.0
     - igraph==0.11.6
     - pytest==8.3.2
-    # - pc_skeletor
+    - pre-commit==3.8.0
