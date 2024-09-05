@@ -75,7 +75,6 @@ class Tree(persistent.Persistent):
         oriented_bounding_box = o3d_pc.get_oriented_bounding_box()
         min_bound = oriented_bounding_box.get_min_bound()[2]
         pc_height = oriented_bounding_box.get_max_bound()[2] - min_bound
-        print("height of the point cloud is ", pc_height)
 
         segments = defaultdict(list)
         for point in np.asarray(o3d_pc.points):
@@ -102,13 +101,11 @@ class Tree(persistent.Persistent):
             # We fit a circle to the projected points
             i_th_circle_parameters = fit_circle_with_open3d(i_th_projected_points, distance_threshold=0.01, ransac_n=3, num_iterations=1000)
             skeleton_circles_as_list.append(i_th_circle_parameters)
-            print("Circle parameters are ", i_th_circle_parameters)
 
         self.skeleton = Pointcloud(skeleton_points_as_list)
         self.skeleton_circles = skeleton_circles_as_list
         self.mean_diameter = np.mean([2*circle[1] for circle in skeleton_circles_as_list])
 
-        print("Skeleton computed, n° points = ", len(self.skeleton.points), " and mean diameter = ", self.mean_diameter)
         return self.skeleton
 
     def align_to_skeleton(self, reference_skeleton):
