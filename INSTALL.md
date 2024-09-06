@@ -3,8 +3,6 @@ To use this tool (we avoid the term plugin, as it isn't a proper plugin), you ne
 # 2-step install:
 1) Add the src folder with the codes to the "scripts" folder of Rhino. (At every new release, the old files must be deleted). Please note that the Library (MacOS) and AppData (Windows) folders are "hidden folders". On MacOS press command+shift+. to reveal the hidden folders. On Windows 10 or 11, [see this link](https://support.microsoft.com/en-us/windows/view-hidden-files-and-folders-in-windows-97fbc472-c603-9d90-91d0-1166d1d9f4b5#WindowsVersion=Windows_11)
 
-Note that the "script" folder in the "8.0" folder might be missing, in which case you have to create it, respecting the exact spelling.
-
 MacOS path:
 ```
 /Users/<your_username>/Library/Application support/McNeel/Rhinoceros/8.0/scripts
@@ -18,9 +16,9 @@ Windows path:
 C:\Users\<your_username>\AppData\Roaming\McNeel\Rhinoceros\8.0\scripts
 ```
 
-For each `function_<>.py`, change the `admin` by your user name. This step is particularly not elegant, but until pip packages via Rhino are not resolved, this is the way to go if you want to avoid creating a fully fledged plugin.
+_Note that the "script" folder in the "8.0" folder might be missing, in which case you have to create it, respecting the exact spelling._
 
-2) Drag-and-drop the .rhc container file ( [Download link](https://github.com/ibois-epfl/Carnutes/raw/main/Carnutes.rhc) ). This file contains the metadata that creates the "Carnutes" toolbar tab with all the buttons calling the different scripts.
+2) In Rhino, drag-and-drop the .rhc container file ( [Download link](https://github.com/ibois-epfl/Carnutes/raw/main/Carnutes.rhc) ). This file contains the metadata that creates the "Carnutes" toolbar tab with all the buttons calling the different scripts.
 
 This solution is inelegant but corresponds to the developement time allocated to this project. If you know a better way, create an issue and tell me how to improve it 😇. The main issues are that a proper version tracking is inexistant, and installation is not super user friendly.
 
@@ -35,7 +33,7 @@ The dependencies are nevertheless listed here:
 - [ZODB (6.0)](https://zodb.org/en/latest/) for the database of tree trunks
 
 
-# Create your own database
+# Change the database and add your own dataset 
 To create your own database with another dataset, you can activate the conda environment (assuming you have [Conda](https://docs.conda.io/projects/conda/en/latest/index.html) installed on your computer), by running the following commands from the Carnutes root directory:
 
 ```bash
