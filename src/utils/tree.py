@@ -46,6 +46,7 @@ class Tree(persistent.Persistent):
         self.point_cloud = point_cloud
         self.skeleton = skeleton
         self.mean_diameter = None
+        self.height = None
 
     def _p_resolveConflict(self, oldState, savedState, newState):
         """
@@ -75,7 +76,8 @@ class Tree(persistent.Persistent):
         oriented_bounding_box = o3d_pc.get_oriented_bounding_box()
         min_bound = oriented_bounding_box.get_min_bound()[2]
         pc_height = oriented_bounding_box.get_max_bound()[2] - min_bound
-
+        self.height = pc_height
+        
         segments = defaultdict(list)
         for point in np.asarray(o3d_pc.points):
             relative_height = point[2] - min_bound
