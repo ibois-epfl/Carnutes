@@ -17,6 +17,12 @@ class Element(object):
         The geometry of the element.
     GUID: str
         The GUID of the element in the ActiveDoc.
+    diameter: float
+        The (target) diameter of the element.
+    degree: int
+        The degree of connectivity of the element. (2 if only connected at the ends, 3 if connected at the ends and in the middle, ...)
+    locations: list
+        The locations of the element's connection locations in the model. duplicates have been removed.
     """
 
     def __init__(
@@ -25,6 +31,8 @@ class Element(object):
         self.geometry = geometry
         self.GUID = GUID
         self.diameter = diameter
+        self.degree = None
+        self.locations = None
 
     def create_bounding_cylinder(self, radius: int = 1):
         """

@@ -24,10 +24,10 @@ Lastly, this repository is a quick python experiment, has been swiftly developed
 For this, the following functions are planned:
 
 - Practical:
-    - Select trees automatically and orient given cylinder model
-    - Select trees automatically and orient given wireframe model
-    - Select trees manually and orient given cylinder model
-    - Select trees manually and orient given wireframe model ✅
+    - Allocate trees automatically and orient given cylinder model
+    - Allocate trees automatically and orient given wireframe model ✅
+    - Allocate trees manually and orient given cylinder model
+    - Allocate trees manually and orient given wireframe model ✅
     - Create locally oriented bounding box of overlap to assist students to experiment with their own joinery
     - reset the database to original state ✅
 

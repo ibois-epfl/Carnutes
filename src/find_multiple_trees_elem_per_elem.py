@@ -8,10 +8,10 @@ import os
 import copy
 import System
 
-from utils import model, tree, geometry, interact_with_rhino
+from utils import model, tree, geometry, interact_with_rhino, database_reader
 from utils import element as elem
 from utils.tree import Tree
-from packing import packing_manipulations
+from packing import packing_manipulations, packing_combinatorics
 
 import numpy as np
 import Rhino
@@ -49,50 +49,67 @@ def crop(tree: tree, bounding_volume: Rhino.Geometry.Brep):
 def main():
     # Create the model
     current_model = interact_with_rhino.create_model_from_rhino_selection()
-    # Ask user which element (s)he wants to replace with a point cloud
-    (
-        element_geometry,
-        element_guid,
-    ) = interact_with_rhino.select_single_element_to_replace()
 
-    for element in current_model.elements:
-        if element.GUID == element_guid:
-            target = element
-            break
+    # For each element in the model, replace it with a point cloud. Starting from the elements with the highest degree.
+    elements = current_model.elements
+    elements.sort(key=lambda x: x.degree, reverse=True)
+    for element in elements:
+        print(f"Element {element.GUID} has degree {element.degree}")
 
-    reference_pc_as_list = []
-    # if isinstance(target.geometry, Rhino.Geometry.NurbsCurve):
-    for vertex in current_model.connectivity_graph.graph.vs:
-        if vertex["guid"] == target.GUID:
-            incident_edges = vertex.all_edges()
-            for edge in incident_edges:
-                if edge.source == vertex:
-                    target_edge = edge.target
-                else:
-                    target_edge = edge.source
-                for element in current_model.elements:
-                    if element.GUID == target_edge["guid"]:
-                        reference_pc_as_list.append(element.geometry)
-    # else:
-    #     reference_pc_as_list.append(target.geometry)
-    reference_pc = geometry.Pointcloud.from_geometry_list(reference_pc_as_list)
-    reference_pc = packing_manipulations.crop_pointcloud(
-        reference_pc, target.geometry.GetBoundingBox(False)
-    )
+    db_path = os.path.dirname(os.path.realpath(__file__)) + "/database/tree_database.fs"
 
-    # Retrieve 1 random point cloud from the database
-    current_dir = os.path.dirname(os.path.realpath(__file__))
-    database_path = os.path.join(current_dir, "database", "point_cloud_database.fs")
-    reader = db_reader.DatabaseReader(database_path)
-    n_pc = reader.get_num_pointclouds()
-    random_pc = reader.get_pointcloud(np.random.randint(0, n_pc))
-    reader.close()
+    for element in elements:
+        reference_pc_as_list = []
+        element_guid = element.GUID
+        target_diameter = element.diameter
+        reference_pc_as_list = element.locations
 
-    # Align it using o3d's ransac, then crop it to the bounding box of the element
-    adapted_pc = packing_manipulations.match_pointclouds(random_pc, reference_pc)
-    adapted_pc = packing_manipulations.crop_pointcloud(
-        adapted_pc, target.geometry.GetBoundingBox(False)
-    )
+        # at this point the reference_pc_as_list should contain the points, but they are not ordered. We need to order them.
+        reference_pc_as_list = geometry.sort_points(reference_pc_as_list)
+        reference_skeleton = geometry.Pointcloud(reference_pc_as_list)
+        (
+            best_tree,
+            best_reference,
+            best_target,
+            best_rmse,
+        ) = packing_combinatorics.find_best_tree(
+            reference_skeleton, target_diameter, db_path, return_rmse=True
+        )
+        if best_tree is None:
+            raise ValueError("No best tree found, mission aborted")
+        best_tree = copy.deepcopy(best_tree)
 
-    # Replace the element with the adapted point cloud
-    current_model.replace_element(target, elem.Element(adapted_pc, target.GUID))
+        best_tree.align_to_skeleton(reference_skeleton)
+
+        # Create a bounding volume for the element
+        bounding_volume = element.create_bounding_cylinder(radius=1)
+        crop(best_tree, bounding_volume)
+        best_tree.create_mesh()
+
+        tree_mesh = Rhino.Geometry.Mesh()
+        for i in range(len(best_tree.mesh.vertices)):
+            tree_mesh.Vertices.Add(
+                best_tree.mesh.vertices[i][0],
+                best_tree.mesh.vertices[i][1],
+                best_tree.mesh.vertices[i][2],
+            )
+        for i in range(len(best_tree.mesh.faces)):
+            tree_mesh.Faces.AddFace(
+                int(best_tree.mesh.faces[i][0]),
+                int(best_tree.mesh.faces[i][1]),
+                int(best_tree.mesh.faces[i][2]),
+            )
+        for i in range(len(best_tree.mesh.colors)):
+            tree_mesh.VertexColors.Add(
+                System.Drawing.Color.FromArgb(
+                    int(best_tree.mesh.colors[i][0] * 255),
+                    int(best_tree.mesh.colors[i][1] * 255),
+                    int(best_tree.mesh.colors[i][2] * 255),
+                )
+            )
+        scriptcontext.doc.Objects.AddMesh(tree_mesh)
+
+
+if __name__ == "__main__":
+    main()
+    print("Done")
