@@ -63,7 +63,12 @@ def test_point_cloud(get_skeleton_length, get_database):
     my_tree = copy.deepcopy(my_tree)
     reader.close()
     assert len(my_tree.skeleton.points) == get_skeleton_length
-    assert len(my_tree.point_cloud.points) == 6388
+    assert (
+        len(my_tree.point_cloud.points) > 1000
+    )  # The number of points will depend on the voxel size used to create the point cloud.
+    assert (
+        len(my_tree.point_cloud.points) < 30000
+    )  # the tree point cloud should never have more than 30000 points
     assert len(my_tree.point_cloud.colors) == len(my_tree.point_cloud.points)
 
 

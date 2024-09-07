@@ -77,7 +77,7 @@ class Tree(persistent.Persistent):
         min_bound = oriented_bounding_box.get_min_bound()[2]
         pc_height = oriented_bounding_box.get_max_bound()[2] - min_bound
         self.height = pc_height
-        
+
         segments = defaultdict(list)
         for point in np.asarray(o3d_pc.points):
             relative_height = point[2] - min_bound

@@ -1,4 +1,4 @@
-from . import model, geometry, element
+from . import model, warnings, geometry, element
 import Rhino
 
 
@@ -43,13 +43,16 @@ def create_model_from_rhino_selection(max_elements: int = 100000):
     layer_names = [
         Rhino.RhinoDoc.ActiveDoc.Layers[layer_id].Name for layer_id in layer_ids
     ]
-    elements = [
-        model.element.Element(
-            geometries[i], go.Object(i).ObjectId, float(layer_names[i])
-        )
-        for i in range(go.ObjectCount)
-    ]
-
+    try:
+        elements = [
+            model.element.Element(
+                geometries[i], go.Object(i).ObjectId, float(layer_names[i])
+            )
+            for i in range(go.ObjectCount)
+        ]
+    except ValueError:
+        warnings.layer_names_not_numbers()
+        return
     return model.Model(elements)
 
 
