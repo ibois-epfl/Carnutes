@@ -39,9 +39,10 @@ For this, the following functions are planned:
         - using cylinder data
 
 <p align="center">
-    <img src="./assets/images/Capture%20d’écran%202024-07-15%20à%2020.52.48.gif" height="400" />
-    <img src="./assets/images/fit_trees.gif" height="400" />
+    <img src="./assets/images/07_09_2024_demo_Carnutes.gif" height="400" />
 
+<p align="center">
+    <img src="./assets/images/05_09_2024_Carnutes_eval.png" height="400" >
 
 
 
