@@ -139,6 +139,11 @@ def find_best_tree(
             best_reference = best_model_element
             best_skeleton = best_skeleton_segment
 
+        if (
+            best_db_level_rmse < 0.01
+        ):  # if the RMSE is under 1 cm, we can break the loop
+            break
+
     if best_tree is not None:
         # remove the best tree from the database
         print(

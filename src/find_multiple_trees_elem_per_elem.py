@@ -7,6 +7,7 @@
 import os
 import copy
 import System
+import time
 
 from utils import model, tree, geometry, interact_with_rhino, database_reader
 from utils import element as elem
@@ -58,6 +59,8 @@ def main():
 
     db_path = os.path.dirname(os.path.realpath(__file__)) + "/database/tree_database.fs"
 
+    all_rmse = []
+
     for element in elements:
         reference_pc_as_list = []
         element_guid = element.GUID
@@ -76,7 +79,10 @@ def main():
             reference_skeleton, target_diameter, db_path, return_rmse=True
         )
         if best_tree is None:
-            raise ValueError("No best tree found, mission aborted")
+            print("No tree found. Skiping this element.")
+            continue
+
+        all_rmse.append(best_rmse)
         best_tree = copy.deepcopy(best_tree)
 
         best_tree.align_to_skeleton(reference_skeleton)
@@ -109,7 +115,13 @@ def main():
             )
         scriptcontext.doc.Objects.AddMesh(tree_mesh)
 
+    return all_rmse
+
 
 if __name__ == "__main__":
-    main()
+    init_time = time.time()
+    all_rmse = main()
+    end_time = time.time()
+    print(f"Execution time: {end_time - init_time}")
+    print(f"The mean rmse fitting {len(all_rmse)} elements is {np.mean(all_rmse)}")
     print("Done")
