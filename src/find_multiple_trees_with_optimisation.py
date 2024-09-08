@@ -76,7 +76,11 @@ def main():
             best_target,
             best_rmse,
         ) = packing_combinatorics.find_best_tree_optimized(
-            reference_skeleton, target_diameter, db_path, return_rmse=True
+            reference_skeleton,
+            target_diameter,
+            db_path,
+            optimisation_basis=3,
+            return_rmse=True,
         )
         if best_tree is None:
             print("No tree found. Skiping this element.")
