@@ -44,8 +44,6 @@ For this, the following functions are planned:
 <p align="center">
     <img src="./assets/images/05_09_2024_Carnutes_eval.png" height="400" >
 
-
-
 # Install and use
 This tool is intended to be used in Rhino 8.
 See the [INSTALL.md](./INSTALL.md) for installation instructions, and the [CONTRIBUTING.md](./CONTRIBUTING.md) for minimal contribution guidelines. This repo contains a small .3dm to easily test Carnutes.

@@ -129,7 +129,8 @@ def perform_icp_registration(
     initial_translation[2, 3] = translation_vector[2]
 
     convergence_criteria = o3d.pipelines.registration.ICPConvergenceCriteria(
-        max_iteration=40
+        max_iteration=5,
+        relative_rmse=1e-3,
     )
 
     result = o3d.pipelines.registration.registration_icp(
