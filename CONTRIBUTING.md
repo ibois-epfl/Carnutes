@@ -27,6 +27,7 @@ The description of the pull request should ideally contain:
 # Naming convention
 All code is in python
 [usual python naming convention](https://peps.python.org/pep-0008/#naming-conventions)
+We recommand using [pre-commit](https://pre-commit.com/). It's easy to set up and will check the code you commit and modify it to make it cleaner, before you push it.
 
 ```python
 # variables:
@@ -60,8 +61,10 @@ class MyClass(object):
     def do_a_lot(self, with_little):
         """
         Does a lot using little
-        :param int with_little: little, with wich a lot is done
-        :return int a_lot: a lot done with little
+        :param: with_little: int
+            little, with wich a lot is done
+        :return: a_lot: int
+            a lot done with little
         """
         a_lot = 1
         return a_lot

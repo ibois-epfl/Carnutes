@@ -59,12 +59,10 @@
             </tool_bar>
             <tool_bar source_guid="00211289-60a5-460b-88dc-cc667b234dbd" modified="True">
               <tool_bar_items>
-                <tool_bar_item source_guid="08f422b0-883d-407e-9b32-0c7c2abdc566" />
-                <tool_bar_item source_guid="b7d32fef-c2b5-4e3c-be1a-1ba978a71713" />
-                <tool_bar_item />
-                <tool_bar_item />
                 <tool_bar_item />
                 <tool_bar_item source_guid="182a725e-e9b5-4f9f-aeb1-ba1101da7b30" />
+                <tool_bar_item source_guid="08f422b0-883d-407e-9b32-0c7c2abdc566" />
+                <tool_bar_item source_guid="b7d32fef-c2b5-4e3c-be1a-1ba978a71713" />
                 <tool_bar_item source_guid="e1769652-07b4-40f9-9b08-6b9679c6e479" />
                 <tool_bar_item source_guid="9058ba63-aa75-4979-898a-37958da889ab" />
                 <tool_bar_item source_guid="d3c081db-0bf3-4af3-9c43-cff6680c7625" />
@@ -76,19 +74,22 @@
                 <locale_1033>Carnutes</locale_1033>
               </text>
               <tool_bar_items>
-                <tool_bar_item guid="16f2ac30-ab7b-4a67-8c82-8f727cd5e6e1" modified="True" display_style_from_parent="False">
+                <tool_bar_item guid="16f2ac30-ab7b-4a67-8c82-8f727cd5e6e1" modified="True">
                   <left_macro guid="de61ca19-e804-4e61-8e94-3e505e8b3aff" modified="True" />
                 </tool_bar_item>
-                <tool_bar_item guid="f45f9d11-d64f-4779-9727-63b07ec8f82f" modified="True" display_style_from_parent="False">
+                <tool_bar_item guid="f45f9d11-d64f-4779-9727-63b07ec8f82f" modified="True">
                   <left_macro guid="bfac1506-2819-4cd8-87d1-5524068b3945" modified="True" />
                 </tool_bar_item>
                 <tool_bar_item guid="a7e2c1ad-9c9c-4270-b029-814203692037" modified="True" button_type="Separator" />
-                <tool_bar_item guid="8608f3aa-8f9a-4606-a28b-538a0dcee1cc" modified="True" display_style_from_parent="False">
+                <tool_bar_item guid="8608f3aa-8f9a-4606-a28b-538a0dcee1cc" modified="True">
                   <left_macro guid="56c650a8-7ad6-4ddd-8b3c-a1749276257f" modified="True" />
                   <right_macro guid="add7d4fc-9918-408c-8447-10f0b9150a9b" modified="True" />
                 </tool_bar_item>
                 <tool_bar_item guid="e2b24524-a1a3-4003-ae92-a1bc382536cd" modified="True">
                   <left_macro guid="80421b7e-2cdf-4b51-aee1-c68c81f4c43c" modified="True" />
+                </tool_bar_item>
+                <tool_bar_item guid="e6f0e860-e8e8-4af3-ba3d-762ab203ec8b" modified="True">
+                  <left_macro guid="77a8e19a-4e37-422e-bde8-53d191351a52" modified="True" />
                 </tool_bar_item>
               </tool_bar_items>
             </tool_bar>
@@ -326,6 +327,36 @@
 &lt;polyline  stroke-width="2" stroke="#00A2E8" stroke-opacity="1" fill="none" stroke-linecap="butt" points="15,3.5 14.5,3.5 14,3.5"/&gt;
 &lt;/svg&gt;</light_svg>
             </icon>
+            <icon guid="b8467b19-122f-4098-a77d-65c559e2ced9" modified="True">
+              <svg_name>7406fb84-38c2-48b8-809e-98b73bc81c66.svg</svg_name>
+              <light_svg>&lt;svg version="1.1" width="48" height="48" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"&gt;&lt;!--Rhino generated SVG--&gt;&lt;line  stroke-width="2" stroke="#FF7F27" stroke-opacity="1" fill="none" stroke-linecap="butt" x1="13.5" y1="1.5" x2="0.5" y2="1.5"/&gt;
+&lt;line  stroke-width="2" stroke="#FF7F27" stroke-opacity="1" fill="none" stroke-linecap="butt" x1="1.5" y1="2" x2="3.5" y2="14"/&gt;
+&lt;line  stroke-width="2" stroke="#FF7F27" stroke-opacity="1" fill="none" stroke-linecap="butt" x1="3.5" y1="11" x2="14.5" y2="11.5"/&gt;
+&lt;line  stroke-width="2" stroke="#FF7F27" stroke-opacity="1" fill="none" stroke-linecap="butt" x1="15" y1="11.5" x2="16.5" y2="21"/&gt;
+&lt;line  stroke-width="2" stroke="#FF7F27" stroke-opacity="1" fill="none" stroke-linecap="butt" x1="15.5" y1="21" x2="3.5" y2="21.5"/&gt;
+&lt;line  stroke-width="2" stroke="#FF7F27" stroke-opacity="1" fill="none" stroke-linecap="butt" x1="21.5" y1="4" x2="22" y2="19.5"/&gt;
+&lt;line  stroke-width="2" stroke="#FF7F27" stroke-opacity="1" fill="none" stroke-linecap="butt" x1="15.5" y1="5" x2="31.5" y2="2"/&gt;
+&lt;line  stroke-width="2" stroke="#FF7F27" stroke-opacity="1" fill="none" stroke-linecap="butt" x1="32.5" y1="3.5" x2="29" y2="17.5"/&gt;
+&lt;line  stroke-width="2" stroke="#FF7F27" stroke-opacity="1" fill="none" stroke-linecap="butt" x1="32" y1="2.5" x2="40" y2="18"/&gt;
+&lt;line  stroke-width="2" stroke="#FF7F27" stroke-opacity="1" fill="none" stroke-linecap="butt" x1="30" y1="12" x2="37.5" y2="11.5"/&gt;
+&lt;line  stroke-width="2" stroke="#FFF200" stroke-opacity="1" fill="none" stroke-linecap="butt" x1="18" y1="19" x2="28" y2="36.5"/&gt;
+&lt;line  stroke-width="2" stroke="#FFF200" stroke-opacity="1" fill="none" stroke-linecap="butt" x1="29" y1="36" x2="32" y2="19"/&gt;
+&lt;line  stroke-width="2" stroke="#FFF200" stroke-opacity="1" fill="none" stroke-linecap="butt" x1="38" y1="17.5" x2="36" y2="34"/&gt;
+&lt;line  stroke-width="2" stroke="#FFF200" stroke-opacity="1" fill="none" stroke-linecap="butt" x1="39.5" y1="17" x2="45.5" y2="37"/&gt;
+&lt;line  stroke-width="2" stroke="#FFF200" stroke-opacity="1" fill="none" stroke-linecap="butt" x1="35.5" y1="29.5" x2="44" y2="29"/&gt;
+&lt;line  stroke-width="2" stroke="#00A2E8" stroke-opacity="1" fill="none" stroke-linecap="butt" x1="16" y1="34.5" x2="30" y2="33.5"/&gt;
+&lt;line  stroke-width="2" stroke="#00A2E8" stroke-opacity="1" fill="none" stroke-linecap="butt" x1="30.5" y1="34" x2="20.5" y2="48"/&gt;
+&lt;line  stroke-width="2" stroke="#00A2E8" stroke-opacity="1" fill="none" stroke-linecap="butt" x1="22.5" y1="46.5" x2="36" y2="46.5"/&gt;
+&lt;line  stroke-width="2" stroke="#00A2E8" stroke-opacity="1" fill="none" stroke-linecap="butt" x1="45.5" y1="31.5" x2="39.5" y2="48"/&gt;
+&lt;line  stroke-width="2" stroke="#00A2E8" stroke-opacity="1" fill="none" stroke-linecap="butt" x1="45.5" y1="31.5" x2="48" y2="47.5"/&gt;
+&lt;line  stroke-width="2" stroke="#00A2E8" stroke-opacity="1" fill="none" stroke-linecap="butt" x1="42" y1="40" x2="46.5" y2="40"/&gt;
+&lt;line  stroke-width="2" stroke="#22B14C" stroke-opacity="1" fill="none" stroke-linecap="butt" x1="18" y1="19.5" x2="26" y2="32.5"/&gt;
+&lt;line  stroke-width="2" stroke="#22B14C" stroke-opacity="1" fill="none" stroke-linecap="butt" x1="32.5" y1="19.5" x2="29.5" y2="32.5"/&gt;
+&lt;line  stroke-width="2" stroke="#22B14C" stroke-opacity="1" fill="none" stroke-linecap="butt" x1="38" y1="18" x2="36" y2="33.5"/&gt;
+&lt;line  stroke-width="2" stroke="#22B14C" stroke-opacity="1" fill="none" stroke-linecap="butt" x1="39.5" y1="18" x2="44" y2="33"/&gt;
+&lt;line  stroke-width="2" stroke="#22B14C" stroke-opacity="1" fill="none" stroke-linecap="butt" x1="35" y1="29" x2="43" y2="28.5"/&gt;
+&lt;/svg&gt;</light_svg>
+            </icon>
             <icon source_guid="3af63880-438e-4c87-89c6-d3ab68bafad9" modified="True">
               <light_svg>&lt;svg height="48" viewBox="0 0 48 48" width="48" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"&gt;&lt;clipPath id="a"&gt;&lt;path clip-rule="evenodd" d="m0 0h36v36h-36z"/&gt;&lt;/clipPath&gt;&lt;clipPath id="b"&gt;&lt;path d="m4.078 4.461h23.658v18.932h-23.658z"/&gt;&lt;/clipPath&gt;&lt;linearGradient id="c" gradientTransform="matrix(-10.113 .524 -.524 -10.113 27.75 13.159)" gradientUnits="userSpaceOnUse" spreadMethod="pad" x1="0" x2="1" y1="0" y2="0"&gt;&lt;stop offset="0" stop-color="#fff" stop-opacity=".752941"/&gt;&lt;stop offset="1" stop-color="#fff" stop-opacity="0"/&gt;&lt;/linearGradient&gt;&lt;mask id="d" height="1" maskUnits="userSpaceOnUse" width="1" x="0" y="0"&gt;&lt;g clip-path="url(#b)"&gt;&lt;path d="m4.078 4.461h23.658v18.932h-23.658z" fill="url(#c)" fill-rule="evenodd"/&gt;&lt;/g&gt;&lt;/mask&gt;&lt;clipPath id="e"&gt;&lt;path d="m5.469 6.909h3.24v4.68h-3.24z"/&gt;&lt;/clipPath&gt;&lt;mask id="f" height="1" maskUnits="userSpaceOnUse" width="1" x="0" y="0"&gt;&lt;image height="1" image-rendering="optimizeSpeed" preserveAspectRatio="none" width="1" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAANCAAAAABeaxvaAAAAAXNCSVQI5gpbmQAAABFJREFUCJlj/M8ABUwMA8MCAIebARkL1xT0AAAAAElFTkSuQmCC"/&gt;&lt;/mask&gt;&lt;mask id="g" height="1" maskUnits="userSpaceOnUse" width="1" x="0" y="0"&gt;&lt;g clip-path="url(#e)"&gt;&lt;image height="1" image-rendering="optimizeSpeed" mask="url(#f)" preserveAspectRatio="none" transform="matrix(3.24 0 0 -4.68 5.469 11.589)" width="1" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAANCAYAAAB7AEQGAAAABHNCSVQICAgIfAhkiAAAAQJJREFUGJVNzzuSg1AMRNELfl9J70PizXqv9gIcuEgwgYEJpsyM4lPdreF2ux2Px4P7/c7z+eT1ejHPM9u2MY4j+74zmhm9d3rvmBk5Z2KMAOz7DsAoIrTWmKaJUsqJnHN8b4wxUkqh1oqZISLknAkh/KGcM9/KWiulFFSVlBLe+78kEaGUcsJv0olCCIQQUFWmaaL3jqoSYzy3OeccIQREhForrTVUlZwzn8+H9/uNu1wuJxIRzIzr9cq6rqzrSkqJcRgG/kMzo5SCmZ0PuG3bAPDen5XLstBaY55nlmVhPI4DAOccMUZU9dzWWkNEfjcdx8EwDHjvSSmhqpgZtVZUlR8poUCE1MWVBQAAAABJRU5ErkJggg=="/&gt;&lt;/g&gt;&lt;/mask&gt;&lt;clipPath id="h"&gt;&lt;path d="m4.833 3.077h14.313v15.272h-14.313z"/&gt;&lt;/clipPath&gt;&lt;linearGradient id="i"&gt;&lt;stop offset="0" stop-color="#fff"/&gt;&lt;stop offset="1" stop-color="#fff" stop-opacity="0"/&gt;&lt;/linearGradient&gt;&lt;linearGradient id="j" gradientTransform="matrix(4.593 -6.38 6.38 4.593 13.941 17.645)" gradientUnits="userSpaceOnUse" spreadMethod="pad" x1="0" x2="1" xlink:href="#i" y1="0" y2="0"/&gt;&lt;mask id="k" height="1" maskUnits="userSpaceOnUse" width="1" x="0" y="0"&gt;&lt;g clip-path="url(#h)"&gt;&lt;path d="m4.833 3.077h14.313v15.272h-14.313z" fill="url(#j)" fill-rule="evenodd"/&gt;&lt;/g&gt;&lt;/mask&gt;&lt;clipPath id="l"&gt;&lt;path d="m3.667 3.878h7.169v9.222h-7.169z"/&gt;&lt;/clipPath&gt;&lt;linearGradient id="m" gradientTransform="matrix(3.75 -6.413 6.413 3.75 6.237 11.152)" gradientUnits="userSpaceOnUse" spreadMethod="pad" x1="0" x2="1" xlink:href="#i" y1="0" y2="0"/&gt;&lt;mask id="n" height="1" maskUnits="userSpaceOnUse" width="1" x="0" y="0"&gt;&lt;g clip-path="url(#l)"&gt;&lt;path d="m3.667 3.878h7.169v9.222h-7.169z" fill="url(#m)" fill-rule="evenodd"/&gt;&lt;/g&gt;&lt;/mask&gt;&lt;g clip-path="url(#a)" transform="matrix(1.3333333 0 0 -1.3333333 0 48)"&gt;&lt;path d="m15.841 6.254c.788.625 1.607 1.144 2.122 2.092.484.892.64 1.927.571 2.919-.14 1.991-1.179 3.944-2.679 5.224-.795.679-1.612 1.139-2.646 1.361-1.126.243-1.891.084-2.914-.381-1.823-.83-3.644-1.664-5.462-2.502-.203-.071-.396-.158-.582-.265-.045.684-.173 2.076-.172 2.765.001.968.178 1.809.669 2.66.467.811 1.168 1.44 2.053 1.77.864.321 1.745.586 2.619.878 1.009.338 1.564.618 2.687.459.91-.13 1.821-.26 2.731-.39 1.823-.261 3.647-.521 5.47-.781-1.058-.483-2.116-.967-3.172-1.453-.058-.018-.114-.039-.17-.065-1.057-.48-1.111-1.833-.609-2.73.516-.917 1.708-1.535 2.633-.787 1.058.489.944 1.562.967 2.448.005.201-.014.393.088.588.067.126.181.152.289.206.188.095.376.189.564.284.485.244.971.49 1.457.734.121.061.243.122.364.183.06.031.12.061.181.092.032.015.061.031.092.046.073.037.118-.013.176-.032.603-.191 1.143-.465 1.662-.829 1.201-.844 2.11-2.092 2.562-3.491.326-1.007.344-1.827.264-2.862-.039-.502-.078-1.005-.116-1.508-.053-.676-.104-1.351-.157-2.027-.025-.338-.052-.676-.078-1.014-.034-.452-.031-.898-.198-1.341-.177-.474-.511-.788-.845-1.131-.231-.236-.461-.472-.692-.709-.461-.473-.917-.952-1.384-1.42-.533-.533-1.258-.784-1.999-.746-.373.018-.72.123-1.071.225-.352.103-.704.205-1.055.306-1.407.409-2.813.818-4.22 1.224z" fill="#fff" fill-rule="evenodd"/&gt;&lt;g mask="url(#d)"&gt;&lt;path d="m15.841 6.254c.788.625 1.607 1.144 2.122 2.092.484.892.64 1.927.571 2.919-.14 1.991-1.179 3.944-2.679 5.224-.795.679-1.612 1.139-2.646 1.361-1.126.243-1.891.084-2.914-.381-1.823-.83-3.644-1.664-5.462-2.502-.203-.071-.396-.158-.582-.265-.045.684-.173 2.076-.172 2.765.001.968.178 1.809.669 2.66.467.811 1.168 1.44 2.053 1.77.864.321 1.745.586 2.619.878 1.009.338 1.564.618 2.687.459.91-.13 1.821-.26 2.731-.39 1.823-.261 3.647-.521 5.47-.781-1.058-.483-2.116-.967-3.172-1.453-.058-.018-.114-.039-.17-.065-1.057-.48-1.111-1.833-.609-2.73.516-.917 1.708-1.535 2.633-.787 1.058.489.944 1.562.967 2.448.005.201-.014.393.088.588.067.126.181.152.289.206.188.095.376.189.564.284.485.244.971.49 1.457.734.121.061.243.122.364.183.06.031.12.061.181.092.032.015.061.031.092.046.073.037.118-.013.176-.032.603-.191 1.143-.465 1.662-.829 1.201-.844 2.11-2.092 2.562-3.491.326-1.007.344-1.827.264-2.862-.039-.502-.078-1.005-.116-1.508-.053-.676-.104-1.351-.157-2.027-.025-.338-.052-.676-.078-1.014-.034-.452-.031-.898-.198-1.341-.177-.474-.511-.788-.845-1.131-.231-.236-.461-.472-.692-.709-.461-.473-.917-.952-1.384-1.42-.533-.533-1.258-.784-1.999-.746-.373.018-.72.123-1.071.225-.352.103-.704.205-1.055.306-1.407.409-2.813.818-4.22 1.224z" fill="#404040" fill-rule="evenodd"/&gt;&lt;/g&gt;&lt;g fill-rule="evenodd"&gt;&lt;path d="m13.279 6.836c.051-3.825-2.967-5.726-6.352-3.948-2.668 1.403-4.638 4.647-4.68 7.666-.052 3.826 2.964 5.731 6.352 3.952 2.669-1.403 4.64-4.65 4.68-7.67zm-1.806.527c-.053 2.106-1.439 4.367-3.316 5.33-2.385 1.225-4.455-.167-4.39-2.832.051-2.108 1.438-4.372 3.317-5.334 2.387-1.223 4.454.171 4.389 2.836z" fill="#2a408c"/&gt;&lt;path d="m5.989 13.101c1.489.249 2.949-.723 3.841-1.74.941-1.071 1.607-2.542 1.643-3.998.019-.784-.149-1.62-.637-2.273-.962-.329-1.997-.049-2.819.434-.891.526-1.517 1.2-2.049 2.078-.532.879-.838 1.748-.893 2.785-.048.955.181 2.007.914 2.714z" fill="#151515"/&gt;&lt;path d="m13.279 6.836c-.029 2.198-1.069 4.428-2.532 5.999-1.379 1.481-3.714 2.896-5.914 2.132 1.103.507 2.205 1.014 3.31 1.519.485.222.971.444 1.456.666.62.282 1.207.612 1.898.738 2.498.459 4.839-1.402 5.993-3.36 1.153-1.955 1.656-4.92.005-6.872-.418-.492-1.03-.909-1.522-1.299-.431-.34-.861-.68-1.291-1.021-.954-.754-1.907-1.507-2.861-2.261 1.093.941 1.476 2.41 1.458 3.759z" fill="#2a3b73"/&gt;&lt;path d="m23.428 21.489c-.116.042-.23.081-.348.115-.075.023-.124-.013-.184-.043-.098-.05-.198-.1-.296-.149-.269-.136-.536-.27-.804-.405-.536-.27-1.071-.54-1.607-.81-.273-.137-.231-.613-.234-.824-.006-.301-.012-.602-.04-.903-.057-.625-.322-1.163-.925-1.442.74.598.738 1.689.343 2.459-.396.772-1.282 1.404-2.197 1.123 1.086.5 2.172.997 3.26 1.493.493.224 1.07.589 1.692.476.601-.109 1.09-.55 1.34-1.09z" fill="#6c7ebc"/&gt;&lt;path d="m16.966 20.545c.986.44 1.998-.263 2.407-1.139.409-.877.297-2.12-.693-2.569-.981-.445-1.999.269-2.405 1.14-.41.877-.298 2.119.691 2.568z" fill="#4533ff"/&gt;&lt;path d="m5.989 13.101c-.733-.707-.962-1.759-.914-2.714.054-1.037.361-1.906.893-2.784.53-.879 1.158-1.552 2.049-2.078.822-.484 1.857-.764 2.819-.435-.836-1.121-2.202-1.211-3.389-.73-1.155.468-2.118 1.429-2.746 2.47-.628 1.038-1.034 2.338-.916 3.583.122 1.279.829 2.457 2.204 2.688z" fill="#8099f3"/&gt;&lt;/g&gt;&lt;path d="m15.802 18.74c-.062.153-.116.374-.129.538-.018.23-.01.397.033.624.026.139.088.274.146.401.266.579.789.793 1.309 1.086.454.256.939.485 1.411.706.423.198.848.39 1.274.582l.608-1.358c-1.065-.478-2.137-.951-3.245-1.323l.02.009c-.142-.045-.407-.135-.506-.251-.019-.022-.047-.041-.067-.063-.049-.052-.086-.115-.128-.172-.238-.326-.332-1.123-.275-1.515-.194.181-.352.493-.451.736z"/&gt;&lt;g mask="url(#g)"&gt;&lt;path d="m6.129 11.483c.603.236 1.485-.582 1.968-1.825s.385-2.445-.218-2.681-1.485.582-1.968 1.825-.385 2.445.218 2.681z" fill="#fff" fill-rule="evenodd"/&gt;&lt;/g&gt;&lt;path d="m22.499 24.03h4.501v1.5h-1.501v9.001h-1.5v-1.5h-1.5v-1.501h1.5v-6h-1.5z" fill-opacity=".996078" fill-rule="evenodd"/&gt;&lt;path d="m27 34.531h7.501v-3.001h-1.501v-1.5h-1.5v-1.5h-1.5v-4.5h-1.5v4.5h1.5v1.5h1.5v1.5h1.5v1.501h-6z" fill-opacity=".996078" fill-rule="evenodd"/&gt;&lt;path d="m45.74 15.202-2.422 6.328h-.039c.045-.501.068-1.097.068-1.787v-4.541h-.767v7.138h1.25l2.261-5.888h.039l2.28 5.888h1.241v-7.138h-.831v4.599c0 .528.023 1.101.069 1.719h-.039l-2.442-6.318z"/&gt;&lt;path d="m54.777 15.202-.161.762h-.039c-.267-.336-.533-.563-.798-.681-.266-.119-.597-.179-.994-.179-.53 0-.946.137-1.247.41-.301.274-.452.663-.452 1.167 0 1.081.864 1.648 2.593 1.7l.908.029v.332c0 .42-.09.73-.271.93s-.47.3-.867.3c-.446 0-.95-.136-1.513-.41l-.249.62c.263.144.552.256.866.337.314.082.629.122.945.122.638 0 1.111-.141 1.418-.425.308-.283.462-.737.462-1.362v-3.652zm-1.831.571c.505 0 .901.139 1.189.415.288.277.432.664.432 1.162v.484l-.81-.034c-.645-.023-1.109-.123-1.394-.301-.285-.177-.427-.453-.427-.827 0-.293.088-.516.266-.669.177-.153.425-.23.744-.23z"/&gt;&lt;path d="m59.187 15.104c-.775 0-1.374.239-1.799.716-.425.476-.637 1.151-.637 2.024 0 .895.215 1.586.646 2.075.432.488 1.046.732 1.844.732.257 0 .514-.028.771-.083s.459-.12.606-.195l-.249-.689c-.18.072-.375.131-.586.179-.212.047-.399.07-.562.07-1.087 0-1.631-.693-1.631-2.08 0-.657.133-1.162.398-1.513.266-.352.659-.528 1.179-.528.446 0 .904.096 1.372.288v-.717c-.358-.186-.808-.279-1.352-.279z"/&gt;&lt;g mask="url(#k)"&gt;&lt;path d="m13.279 6.836c-.029 2.198-1.069 4.428-2.532 5.999-1.379 1.481-3.714 2.896-5.914 2.132 1.103.507 2.205 1.014 3.31 1.519.485.222.971.444 1.456.666.62.282 1.207.612 1.898.738 2.498.459 4.839-1.402 5.993-3.36 1.153-1.955 1.656-4.92.005-6.872-.418-.492-1.03-.909-1.522-1.299-.431-.34-.861-.68-1.291-1.021-.954-.754-1.907-1.507-2.861-2.261 1.093.941 1.476 2.41 1.458 3.759z" fill="#b4c7ff" fill-rule="evenodd"/&gt;&lt;/g&gt;&lt;path d="m9.355 2.217c-.758.012-1.582.227-2.428.671-2.668 1.403-4.638 4.647-4.68 7.666-.025 1.912.715 3.346 1.887 4.077l.117.071c-.011.171-.028.386-.046.623-.055.713-.127 1.626-.126 2.142.001.968.178 1.809.669 2.66.467.811 1.168 1.44 2.053 1.77.864.321 1.745.586 2.619.878.757.253 1.258.474 1.935.501.225.009.471-.003.752-.042.91-.13 1.821-.26 2.731-.39 1.823-.261 3.647-.521 5.47-.781l.088.04c.493.224 1.07.589 1.692.476.601-.109 1.09-.55 1.34-1.09l.182-.07c.43-.175.831-.398 1.22-.671 1.201-.844 2.92-1.647 2.92-3.759v-7.04c0-1.408-1.154-2.232-1.488-2.575-.231-.236-.461-.472-.692-.709-.461-.473-.917-.952-1.384-1.42-.533-.533-1.258-.784-1.999-.746-.187.009-.366.039-.543.081-.178.041-.352.093-.528.144-.352.103-.704.205-1.055.306-1.407.409-2.813.818-4.22 1.224l-1.159-.916c-.954-.754-1.907-1.507-2.861-2.261l-.215-.172c-.629-.459-1.398-.702-2.251-.688z" fill="none" stroke="#000" stroke-miterlimit="10" stroke-width="1.488"/&gt;&lt;path d="m16.314 5.658-.968 1.128c.847.718 1.577 1.44 2.132 2.412.331.58.517 1.171.683 1.814.1.388.185.814.238 1.212.608-1.219.693-2.69.096-3.934-.126-.262-.255-.526-.424-.764-.24-.338-.474-.646-.762-.947-.316-.33-.653-.62-.995-.921z"/&gt;&lt;path d="m4.449 13.958-.612 1.356c1.146.518 2.301 1.035 3.463 1.516.347.144.707.273 1.057.412.47.186.942.369 1.427.515.37.112.74.254 1.108.372.416.134.982.098 1.404.008.213-.045.438-.116.644-.189.113-.04.223-.095.338-.133-.602-.039-1.128-.063-1.706-.256-.143-.048-.268-.123-.401-.191l.029.012c-.219-.128-.439-.255-.658-.383-.327-.191-.655-.389-.985-.574-.325-.182-.677-.35-1.009-.522-1.343-.696-2.723-1.316-4.099-1.943z"/&gt;&lt;g mask="url(#n)"&gt;&lt;path d="m5.989 13.1c-.733-.707-.962-1.759-.914-2.714.054-1.037.361-1.906.893-2.784.53-.879 1.158-1.552 2.049-2.078.822-.484 1.857-.764 2.819-.435-.836-1.121-2.202-1.211-3.389-.73-1.155.468-2.118 1.429-2.746 2.47-.628 1.038-1.034 2.338-.916 3.583.122 1.279.829 2.457 2.204 2.688z" fill="#264ab6" fill-rule="evenodd"/&gt;&lt;/g&gt;&lt;/g&gt;&lt;/svg&gt;</light_svg>
               <dark_svg>&lt;?xml version="1.0" standalone="no"?&gt;
@@ -486,30 +517,38 @@
             </icon>
           </icons>
           <macros>
-            <macro guid="80421b7e-2cdf-4b51-aee1-c68c81f4c43c" modified="True" bitmap_guid="53b742dd-0cbc-471f-9f0f-d2e0b965e02e">
+            <macro guid="bfac1506-2819-4cd8-87d1-5524068b3945" modified="True" bitmap_guid="310cad8e-9716-4cbd-abe0-51e3abe38200">
               <text>
-                <locale_1033>reset_database</locale_1033>
+                <locale_1033>test_2</locale_1033>
               </text>
-              <script>!_-RunPythonScript "src/reset_database.py"</script>
+              <button_text>export all db tro Rhino</button_text>
+              <script>!_-RunPythonScript "src/function_2.py"</script>
             </macro>
             <macro guid="de61ca19-e804-4e61-8e94-3e505e8b3aff" modified="True" bitmap_guid="7170b8f2-7acb-4045-898f-02fb1c4365d6">
               <text>
                 <locale_1033>test</locale_1033>
               </text>
-              <script>!_-RunPythonScript "src/function_2.py"</script>
+              <button_text>draw connectivity graph</button_text>
+              <script>!_-RunPythonScript "src/function_1.py"</script>
             </macro>
             <macro guid="56c650a8-7ad6-4ddd-8b3c-a1749276257f" modified="True" bitmap_guid="e43aced9-83c9-4467-b579-91c30cee4e95">
-              <button_text>test_3</button_text>
+              <button_text>replace single element</button_text>
               <menu_text>test_3</menu_text>
               <help_text>test_3</help_text>
               <tooltip>test_3</tooltip>
               <script>!_-RunPythonScript "src/function_3.py"</script>
             </macro>
-            <macro guid="bfac1506-2819-4cd8-87d1-5524068b3945" modified="True" bitmap_guid="310cad8e-9716-4cbd-abe0-51e3abe38200">
+            <macro guid="77a8e19a-4e37-422e-bde8-53d191351a52" modified="True" bitmap_guid="b8467b19-122f-4098-a77d-65c559e2ced9">
               <text>
-                <locale_1033>test_2</locale_1033>
+                <locale_1033>what's in my database ?</locale_1033>
               </text>
-              <script>!_-RunPythonScript "src/function_2.py"</script>
+              <script>!_-RunPythonScript "src/database_recap.py"</script>
+            </macro>
+            <macro guid="80421b7e-2cdf-4b51-aee1-c68c81f4c43c" modified="True" bitmap_guid="53b742dd-0cbc-471f-9f0f-d2e0b965e02e">
+              <text>
+                <locale_1033>reset_database</locale_1033>
+              </text>
+              <script>!_-RunPythonScript "src/reset_database.py"</script>
             </macro>
           </macros>
         </RhinoUI>

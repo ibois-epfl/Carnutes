@@ -33,7 +33,7 @@ The dependencies are nevertheless listed here:
 - [ZODB (6.0)](https://zodb.org/en/latest/) for the database of tree trunks
 
 
-# Change the database and add your own dataset 
+# Change the database and add your own dataset
 To create your own database with another dataset, you can activate the conda environment (assuming you have [Conda](https://docs.conda.io/projects/conda/en/latest/index.html) installed on your computer), by running the following commands from the Carnutes root directory:
 
 ```bash

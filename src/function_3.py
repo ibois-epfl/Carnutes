@@ -59,6 +59,9 @@ def main():
 
     # Create the model
     current_model = interact_with_rhino.create_model_from_rhino_selection()
+    if current_model is None:
+        return
+
     # Ask user which element (s)he wants to replace with a point cloud
     (
         element_geometry,
