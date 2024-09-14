@@ -62,6 +62,8 @@ def main():
     all_rmse = []
 
     for element in elements:
+        if element.type == elem.ElementType.Point:
+            continue
         reference_pc_as_list = []
         element_guid = element.GUID
         target_diameter = element.diameter

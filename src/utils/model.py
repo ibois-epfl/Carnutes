@@ -25,12 +25,13 @@ class Model(object):
     def __init__(self, elements: typing.List[element.Element]):
         self.elements = elements
         self.connectivity_graph = graphs.ConnectivityGraph(elements)
+        print("from line 28 model.py. connectivity graph = ", self.connectivity_graph)
         type_of_model = type(self.elements[0].geometry)
         for i, element in enumerate(self.elements):
-            if type(element.geometry) != type_of_model:
-                raise ValueError(
-                    "All elements in the model should be of the same type."
-                )
+            # if type(element.geometry) != type_of_model:
+            #     raise ValueError(
+            #         "All elements in the model should be of the same type."
+            #     )
             incident_edges_idx = self.connectivity_graph.get_connectivity_of_vertex(i)
             locations = []
             for edge_idx in incident_edges_idx:

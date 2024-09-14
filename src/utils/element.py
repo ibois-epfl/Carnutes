@@ -2,8 +2,20 @@
 module for the Element class. those elements make up the model
 """
 from dataclasses import dataclass
+from enum import Enum
 
+from . import interact_with_rhino
 import Rhino
+
+
+class ElementType(Enum):
+    """
+    Enum for the type of element. Can be Brep, Line or Point.
+    """
+
+    Brep = 1
+    Line = 2
+    Point = 3
 
 
 @dataclass
@@ -33,6 +45,7 @@ class Element(object):
         self.diameter = diameter
         self.degree = None
         self.locations = None
+        self.type = interact_with_rhino.determinate_element_type(self.geometry)
 
     def create_bounding_cylinder(self, radius: int = 1):
         """
@@ -43,7 +56,7 @@ class Element(object):
         :return: Rhino.Geometry.Cylinder
             The bounding cylinder.
         """
-        if isinstance(self.geometry, Rhino.Geometry.NurbsCurve):
+        if self.type == ElementType.Line:
             cylinder = Rhino.Geometry.Brep.CreatePipe(
                 self.geometry,
                 radius,
@@ -53,7 +66,7 @@ class Element(object):
                 0.01,
                 0.01,
             )[0]
-        elif isinstance(self.geometry, Rhino.Geometry.Brep):
+        elif self.type == ElementType.Brep:
             edges = [
                 self.geometry.Edges[i]
                 for i in range(self.geometry.Edges.Count)
@@ -73,4 +86,4 @@ class Element(object):
         return cylinder
 
     def __str__(self):
-        return "Element with GUID {}".format(self.GUID)
+        return f"Element with GUID {self.GUID} and of type {self.type}"
