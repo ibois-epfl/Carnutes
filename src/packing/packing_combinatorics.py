@@ -77,7 +77,7 @@ def compute_best_tree_element_matching(
     return best_model_element, best_skeleton, best_rmse
 
 
-def find_best_tree(
+def find_best_tree_unoptimized(
     model_element: utils.geometry.Pointcloud,
     reference_diameter: float,
     database_path: str,
@@ -86,6 +86,7 @@ def find_best_tree(
     """
     performs icp registrations bewteen the reference skeleton and the list of targets,
     while checking that the diameter is within 10% of the reference value. The skeleton with the best fit is returned.
+    Here there is no optimization basd on the lengths of the elements chosen in the database (to choose the shortest elements first).
     The database is updated by removing from it the part of the best fitting skeleton.
 
     :param reference_skeleton: Pointcloud
@@ -109,6 +110,9 @@ def find_best_tree(
     # unpack the database:
     reader = db_reader.DatabaseReader(database_path)
     n_tree = reader.get_num_trees()
+    print(
+        f"Number of trees in the database: {n_tree}. (degub message from find_best_tree in packing_combinatorics.py)"
+    )
     best_tree = None
     # initiallize the best rmse to infinity before the first iteration
     best_db_level_rmse = np.inf
@@ -129,6 +133,7 @@ def find_best_tree(
             best_skeleton_segment,
             best_tree_level_rmse,
         ) = compute_best_tree_element_matching(model_element, tree.skeleton, np.inf)
+
         if (
             best_tree_level_rmse is not None
             and best_tree_level_rmse < best_db_level_rmse
@@ -139,10 +144,170 @@ def find_best_tree(
             best_reference = best_model_element
             best_skeleton = best_skeleton_segment
 
-    if best_tree is not None:
+        if (
+            best_db_level_rmse < 0.01
+        ):  # if the RMSE is under 1 cm, we can break the loop
+            break
+
+    if best_db_level_rmse is not None:
         # remove the best tree from the database
         print(
-            f"Best tree is {best_tree.id} with rmse {best_db_level_rmse}",
+            f"Best tree is {best_tree.id} with rmse {best_db_level_rmse} and height {best_tree.height}",
+            "and is being trimmed",
+        )
+        selected_tree = copy.deepcopy(best_tree)
+        selected_tree.skeleton = best_skeleton
+        best_tree.trim(best_skeleton)
+
+        # remove the tree from the database if its skeleton is a single point, or empty.
+        if len(best_tree.skeleton.points) < 2:
+            reader.root.trees.pop(best_tree_id)
+            reader.root.n_trees -= 1
+            transaction.commit()
+            reader.close()
+
+        # update the database, as done in https://zodb.org/en/latest/articles/ZODB1.html#a-simple-example
+        else:
+            trees_in_db = reader.root.trees
+            trees_in_db[best_tree_id] = best_tree
+            reader.root.trees = trees_in_db
+            transaction.commit()
+        # close the database
+        reader.close()
+        if return_rmse:
+            return (
+                selected_tree,
+                best_reference,
+                best_skeleton_segment,
+                best_db_level_rmse,
+            )
+        return selected_tree
+    else:
+        reader.close()
+        print("No tree found in find_best_tree, returning None")
+        return None, None, None, None
+
+
+def find_best_tree_optimized(
+    model_element: utils.geometry.Pointcloud,
+    reference_diameter: float,
+    database_path: str,
+    optimisation_basis: int,
+    return_rmse: bool = False,
+):
+    """
+    performs icp registrations bewteen the reference skeleton and the list of targets,
+    while checking that the diameter is within 10% of the reference value. The skeleton with the best fit is returned.
+    Here there is no optimization basd on the lengths of the elements chosen in the database (to choose the shortest elements first).
+    The database is updated by removing from it the part of the best fitting skeleton.
+
+    :param reference_skeleton: Pointcloud
+        The reference skeleton to align to
+    :param reference_diameter: float
+        The diameter of the reference skeleton
+    :param database_path: str
+        The path to the database. The database is updated by removing from it the part of the best fitting skeleton.
+    :param optimisation_basis: int
+        The number of elements to consider for the optimisation
+    :param return_rmse: bool
+        Whether to return the rmse of the best fitting tree. This is for evaluation purposes.
+
+    :return: best_tree: Tree
+        The best fitting tree for which the skeleton was cropped to the best fitting segment
+    :return: best_reference: Pointcloud
+        The best fitting segment of the reference point cloud. Only returned if return_rmse is True.
+    :return: best_target: Pointcloud
+        The best fitting segment of the target point cloud. Only returned if return_rmse is True.
+    :return: rmse: float
+        The rmse of the best fitting tree. Only returned if return_rmse is True.
+    """
+    # unpack the database:
+    reader = db_reader.DatabaseReader(database_path)
+    n_tree = reader.get_num_trees()
+    print(
+        f"Number of trees in the database: {n_tree}. (degub message from find_best_tree in packing_combinatorics.py)"
+    )
+    best_tree = None
+    # initiallize the best rmse to infinity before the first iteration
+    best_db_level_rmse = np.inf
+
+    rmse = []
+    trees = []
+    skeleton_segments = []
+    tree_ids = []
+    model_elements = []
+
+    # iterate over the trees in the database
+    for i in range(n_tree):
+        tree = reader.get_tree(i)
+        if tree is not None:
+            tree = copy.deepcopy(tree)
+        else:
+            continue
+        if (
+            tree.mean_diameter < 0.75 * reference_diameter
+            or tree.mean_diameter > 1.25 * reference_diameter
+        ):
+            continue
+        (
+            best_model_element,
+            best_skeleton_segment,
+            best_tree_level_rmse,
+        ) = compute_best_tree_element_matching(model_element, tree.skeleton, np.inf)
+
+        if best_tree_level_rmse is not None:
+            rmse.append(best_tree_level_rmse)
+            trees.append(tree)
+            skeleton_segments.append(best_skeleton_segment)
+            tree_ids.append(i)
+            model_elements.append(best_model_element)
+
+    (
+        sorted_rmse,
+        sorted_trees,
+        sorted_skeleton_segments,
+        sorted_tree_ids,
+        sorted_model_elements,
+    ) = zip(
+        *sorted(
+            zip(rmse, trees, skeleton_segments, tree_ids, model_elements),
+            key=lambda x: rmse,
+        )
+    )
+    n_best_trees = sorted_trees[:optimisation_basis]
+    n_best_rmse = sorted_rmse[:optimisation_basis]
+    n_best_skeleton = sorted_skeleton_segments[:optimisation_basis]
+    n_best_tree_ids = sorted_tree_ids[:optimisation_basis]
+    n_best_model_elements = sorted_model_elements[:optimisation_basis]
+    (
+        sorted_best_tree,
+        sorted_best_db_level_rmse,
+        sorted_best_skeleton,
+        sorted_best_tree_id,
+        sorted_best_reference,
+    ) = zip(
+        *sorted(
+            zip(
+                n_best_trees,
+                n_best_rmse,
+                n_best_skeleton,
+                n_best_tree_ids,
+                n_best_model_elements,
+            ),
+            key=lambda x: x[0].height,
+        )
+    )  # get the tree with the smallest height among the five best fitting trees
+
+    best_tree = sorted_best_tree[0]
+    best_db_level_rmse = sorted_best_db_level_rmse[0]
+    best_skeleton = sorted_best_skeleton[0]
+    best_tree_id = sorted_best_tree_id[0]
+    best_reference = sorted_best_reference[0]
+
+    if best_db_level_rmse is not None:
+        # remove the best tree from the database
+        print(
+            f"Best tree is {best_tree.id} with rmse {best_db_level_rmse} and height {best_tree.height}",
             "and is being trimmed",
         )
         selected_tree = copy.deepcopy(best_tree)

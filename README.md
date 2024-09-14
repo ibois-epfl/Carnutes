@@ -18,32 +18,31 @@ Lastly, this repository is a quick python experiment, has been swiftly developed
 
  This project must enable the students to:
 - Dispose of a database of simple tree trunks geometries ✅
-- Match the tree trunk geometries with an 3D sketch of an architectural design.
-- Generate architectural drawings with the tree trunk geometries.
+- Match the tree trunk geometries with an 3D sketch of an architectural design. ✅
+- Generate architectural drawings with the tree trunk geometries. ❌
 
 For this, the following functions are planned:
 
 - Practical:
-    - Select trees automatically and orient given cylinder model
-    - Select trees automatically and orient given wireframe model
-    - Select trees manually and orient given cylinder model
-    - Select trees manually and orient given wireframe model ✅
-    - Create locally oriented bounding box of overlap to assist students to experiment with their own joinery
+    - Allocate trees automatically and orient given cylinder model ❌
+    - Allocate trees automatically and orient given wireframe model ✅
+    - Allocate trees manually and orient given cylinder model ❌
+    - Allocate trees manually and orient given wireframe model ✅
+    - Create locally oriented bounding box of overlap to assist students to experiment with their own joinery ❌
     - reset the database to original state ✅
 
 - Graphical:
     - Draw connectivity Graphs of 3D models ✅
     - Joint mapping (must be clarified)
     - Highlight difference between initial model and model with tree trunks (once the right tree trunks are selected):
-        - using wireframe data (must be clarified)
-        - using cylinder data
+        - using wireframe data ❌
+        - using cylinder data ❌
 
 <p align="center">
-    <img src="./assets/images/Capture%20d’écran%202024-07-15%20à%2020.52.48.gif" height="400" />
-    <img src="./assets/images/fit_trees.gif" height="400" />
+    <img src="./assets/images/07_09_2024_demo_Carnutes.gif" height="400" />
 
-
-
+<p align="center">
+    <img src="./assets/images/05_09_2024_Carnutes_eval.png" height="400" >
 
 # Install and use
 This tool is intended to be used in Rhino 8.

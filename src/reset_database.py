@@ -16,8 +16,10 @@ import Rhino
 import os
 import transaction
 import BTrees.OOBTree
+import time
 
 import utils.tree as tree
+import utils.database_reader as database_reader
 
 
 def main():
@@ -25,16 +27,11 @@ def main():
     if not os.path.exists(database_folder):
         os.makedirs(database_folder)
 
-    storage = ZODB.FileStorage.FileStorage(
+    db_reader = database_reader.DatabaseReader(
         os.path.join(WORKING_DIR, "database/tree_database.fs")
     )
-    db = ZODB.DB(storage)
-    connection = db.open()
-    root = connection.root
-    root.trees = BTrees.OOBTree.BTree()
-    i = 0
 
-    for pc_file in os.listdir(os.path.join(WORKING_DIR, "dataset")):
+    for i, pc_file in enumerate(os.listdir(os.path.join(WORKING_DIR, "dataset"))):
 
         if pc_file.endswith(".ply"):
             print(f"Processing {pc_file}")
@@ -64,21 +61,20 @@ def main():
                 )
 
             tree_for_db = tree.Tree(
-                len(root.trees),
+                i,
                 f"tree_{i}",
                 tree.Pointcloud(tree_pc_as_pt_list, tree_colors_as_list),
             )
             tree_for_db.compute_skeleton()
 
-            root.trees[tree_for_db.id] = tree_for_db
-            i += 1
+            db_reader.root.trees[tree_for_db.id] = tree_for_db
 
-    root.n_trees = len(root.trees)
+    db_reader.root.n_trees = len(db_reader.root.trees)
 
     transaction.commit()
-    connection.close()
-    db.close()
-    storage.close()
+    db_reader.pack()  # We dont' want to keep previous revisions. We only want the latest one.
+    db_reader.close()
+    db_reader.delete_old()  # We don't want to keep the fs.old file either.
 
 
 if __name__ == "__main__":
@@ -92,7 +88,7 @@ if __name__ == "__main__":
     gn.Get()
 
     VOXEL_SIZE = gn.Number()
-
+    starting_time = time.time()
     main()
-
+    print(f"Execution time: {time.time() - starting_time}")
     print("Done")

@@ -3,7 +3,7 @@ Main module for reading the database, containing the DatabaseReader class.
 """
 #! python3
 
-import atexit
+import os
 
 import ZODB
 import ZODB.FileStorage
@@ -28,6 +28,7 @@ class DatabaseReader:
     """
 
     def __init__(self, database_path):
+        self.database_path = database_path
         self.storage = ZODB.FileStorage.FileStorage(database_path)
         self.db = ZODB.DB(self.storage)
         self.connection = self.db.open()
@@ -62,10 +63,16 @@ class DatabaseReader:
         self.storage.close()
         self.is_open = False
 
-    # def __del__(self):
-    #     """
-    #     Note: This method is not guaranteed to be called, as it depends on the garbage collector.
-    #     """
-    #     if self.is_open:
-    #         self.close()
-    #     print("DatabaseReader object deleted automatically. \n Ideally it should be done manually asap in the code.")
+    def pack(self):
+        """
+        Pack the database to remove old revisions.
+        """
+        self.db.pack()
+        print("Database packed.")
+
+    def delete_old(self):
+        """
+        Delete the fs.old file containing the old revisions of the database.
+        """
+        os.remove(self.database_path + ".old")
+        print("Old revisions deleted.")

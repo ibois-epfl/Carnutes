@@ -62,6 +62,8 @@ def main():
     all_rmse = []
 
     for element in elements:
+        if element.type == elem.ElementType.Point:
+            continue
         reference_pc_as_list = []
         element_guid = element.GUID
         target_diameter = element.diameter
@@ -75,7 +77,7 @@ def main():
             best_reference,
             best_target,
             best_rmse,
-        ) = packing_combinatorics.find_best_tree(
+        ) = packing_combinatorics.find_best_tree_unoptimized(
             reference_skeleton, target_diameter, db_path, return_rmse=True
         )
         if best_tree is None:

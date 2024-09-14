@@ -2,6 +2,26 @@ from . import model, warnings, geometry, element
 import Rhino
 
 
+def determinate_element_type(geo):
+    """
+    Determine the type of geometry.
+
+    :param geo: Rhino.Geometry.GeometryBase
+        The geometry to determine the type of.
+    :return: element.ElementType
+        The type of geometry.
+    """
+    return (
+        element.ElementType.Brep
+        if isinstance(geo, Rhino.Geometry.Brep)
+        else element.ElementType.Line
+        if isinstance(geo, Rhino.Geometry.Curve)
+        else element.ElementType.Point
+        if isinstance(geo, Rhino.Geometry.Point3d)
+        else None
+    )
+
+
 def create_model_from_rhino_selection(max_elements: int = 100000):
     """
     Create a model from the selected breps or lines in the Rhino scene.
@@ -15,7 +35,9 @@ def create_model_from_rhino_selection(max_elements: int = 100000):
     go = Rhino.Input.Custom.GetObject()
     go.SetCommandPrompt("Select the breps or lines")
     go.GeometryFilter = (
-        Rhino.DocObjects.ObjectType.Brep | Rhino.DocObjects.ObjectType.Curve
+        Rhino.DocObjects.ObjectType.Brep
+        | Rhino.DocObjects.ObjectType.Curve
+        | Rhino.DocObjects.ObjectType.Point
     )
     go.GetMultiple(1, max_elements)
 
@@ -23,19 +45,23 @@ def create_model_from_rhino_selection(max_elements: int = 100000):
         print("No object selected.")
         return
 
+    converted_geometries = []
+
     geometries = [go.Object(i).Geometry() for i in range(go.ObjectCount)]
     if len(geometries) < 2:
         print("At least two geometries are needed to create a graph.")
         return
-    if isinstance(geometries[0], Rhino.Geometry.LineCurve):
-        geometries = [geo.ToNurbsCurve() for geo in geometries]
-        print("LineCurves converted to NurbsCurves")
-    elif isinstance(geometries[0], Rhino.Geometry.Line):
-        geometries = [geo.ToNurbsCurve() for geo in geometries]
-        print("Lines converted to NurbsCurves")
-    elif isinstance(geometries[0], Rhino.Geometry.Curve):
-        geometries = [geo.ToNurbsCurve() for geo in geometries]
-        print("Curves converted to NurbsCurve")
+    for geo in geometries:
+        if isinstance(geo, Rhino.Geometry.Point):
+            converted_geometries.append(geo.Location)
+            print("Point converted to Point3d")
+        elif isinstance(
+            geo, Rhino.Geometry.LineCurve or Rhino.Geometry.Line or Rhino.Geometry.Curve
+        ):
+            converted_geometries.append(geo.ToNurbsCurve())
+            print("Line converted to NurbsCurve")
+        else:
+            converted_geometries.append(geo)
 
     layer_ids = [
         go.Object(i).Object().Attributes.LayerIndex for i in range(go.ObjectCount)
@@ -43,16 +69,20 @@ def create_model_from_rhino_selection(max_elements: int = 100000):
     layer_names = [
         Rhino.RhinoDoc.ActiveDoc.Layers[layer_id].Name for layer_id in layer_ids
     ]
-    try:
-        elements = [
-            model.element.Element(
-                geometries[i], go.Object(i).ObjectId, float(layer_names[i])
-            )
-            for i in range(go.ObjectCount)
-        ]
-    except ValueError:
-        warnings.layer_names_not_numbers()
-        return
+    print(
+        "line 68 interact_with_rhino. list of converted geometries = ",
+        converted_geometries,
+    )
+    elements = [
+        element.Element(
+            converted_geometries[i], go.Object(i).ObjectId, float(layer_names[i])
+        )
+        for i in range(go.ObjectCount)
+    ]
+    print("line 75 interact_with_rhino. elements = ")
+    for elem in elements:
+        print(elem)
+
     return model.Model(elements)
 
 

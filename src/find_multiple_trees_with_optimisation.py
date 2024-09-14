@@ -9,10 +9,10 @@ import copy
 import System
 import time
 
-from utils import model, tree, geometry, interact_with_rhino, database_reader
+from utils import tree, geometry, interact_with_rhino
 from utils import element as elem
 from utils.tree import Tree
-from packing import packing_manipulations, packing_combinatorics
+from packing import packing_combinatorics
 
 import numpy as np
 import Rhino
@@ -75,8 +75,12 @@ def main():
             best_reference,
             best_target,
             best_rmse,
-        ) = packing_combinatorics.find_best_tree(
-            reference_skeleton, target_diameter, db_path, return_rmse=True
+        ) = packing_combinatorics.find_best_tree_optimized(
+            reference_skeleton,
+            target_diameter,
+            db_path,
+            optimisation_basis=3,
+            return_rmse=True,
         )
         if best_tree is None:
             print("No tree found. Skiping this element.")
