@@ -18,25 +18,25 @@ Lastly, this repository is a quick python experiment, has been swiftly developed
 
  This project must enable the students to:
 - Dispose of a database of simple tree trunks geometries ✅
-- Match the tree trunk geometries with an 3D sketch of an architectural design.
-- Generate architectural drawings with the tree trunk geometries.
+- Match the tree trunk geometries with an 3D sketch of an architectural design. ✅
+- Generate architectural drawings with the tree trunk geometries. ❌
 
 For this, the following functions are planned:
 
 - Practical:
-    - Allocate trees automatically and orient given cylinder model
+    - Allocate trees automatically and orient given cylinder model ❌
     - Allocate trees automatically and orient given wireframe model ✅
-    - Allocate trees manually and orient given cylinder model
+    - Allocate trees manually and orient given cylinder model ❌
     - Allocate trees manually and orient given wireframe model ✅
-    - Create locally oriented bounding box of overlap to assist students to experiment with their own joinery
+    - Create locally oriented bounding box of overlap to assist students to experiment with their own joinery ❌
     - reset the database to original state ✅
 
 - Graphical:
     - Draw connectivity Graphs of 3D models ✅
     - Joint mapping (must be clarified)
     - Highlight difference between initial model and model with tree trunks (once the right tree trunks are selected):
-        - using wireframe data (must be clarified)
-        - using cylinder data
+        - using wireframe data ❌
+        - using cylinder data ❌
 
 <p align="center">
     <img src="./assets/images/07_09_2024_demo_Carnutes.gif" height="400" />
