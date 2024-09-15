@@ -262,6 +262,12 @@ def find_best_tree_optimized(
             tree_ids.append(i)
             model_elements.append(best_model_element)
 
+    if len(rmse) == 0:
+        reader.close()
+        print(
+            f"No tree were found in the database, but {optimisation_basis} are required"
+        )
+        return None, None, None, None
     (
         sorted_rmse,
         sorted_trees,

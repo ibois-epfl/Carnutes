@@ -29,6 +29,8 @@ def main():
     n_tree = reader.get_num_trees()
     for i in range(n_tree):
         tree = reader.get_tree(i)
+        if tree is None:
+            continue
         tree = copy.deepcopy(tree)
         rh_pointcloud = Rhino.Geometry.PointCloud()
         rh_skeleton = Rhino.Geometry.PointCloud()
