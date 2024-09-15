@@ -53,7 +53,7 @@ def test_database_reader(get_database):
     my_tree = copy.deepcopy(my_tree)
     reader.close()
     assert my_tree.id == 0
-    assert my_tree.name == "tree_0"
+    assert my_tree.name == "46.590369,6.710846"
 
 
 def test_point_cloud(get_skeleton_length, get_database):
