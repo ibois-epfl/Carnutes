@@ -62,7 +62,7 @@ def main():
 
             tree_for_db = tree.Tree(
                 i,
-                f"tree_{i}",
+                pc_file[:-4],
                 tree.Pointcloud(tree_pc_as_pt_list, tree_colors_as_list),
             )
             tree_for_db.compute_skeleton()
