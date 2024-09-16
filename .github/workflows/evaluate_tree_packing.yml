@@ -1,0 +1,56 @@
+name: unoptimized_tree_packing_usage
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  evaluate_tree_packing_usage:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up conda environment
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          activate-environment: Carnutes
+          environment-file: environment.yml
+
+      - name: activate conda environment
+        run: conda activate Carnutes
+
+      - name: evaluate tree packing usage
+        run: python -m tests.evaluate_unoptimized_tree_selection
+
+      - name: Read RMSE result
+        id: read-rmse
+        run: echo "::set-output name=rmse::$(cat rmse_result.txt)"
+
+      - name: Read tree usage result
+        id: read-tree-usage
+        run: echo "::set-output name=tree-usage::$(cat tree_usage_result.txt)"
+
+      - name: Create badge for RMSE
+        id: create-badge-rmse
+        run: |
+          rmse=${{ steps.read-rmse.outputs.rmse }}
+          echo "![RMSE](https://img.shields.io/badge/RMSE-${rmse}-#c7a8ad)" > badge.md
+
+      - name: Create badge for tree usage
+        id: create-badge-tree-usage
+        run: |
+          tree_usage=${{ steps.read-tree-usage.outputs.tree-usage }}
+          echo "![Tree Usage](https://img.shields.io/badge/Tree_Usage-${tree_usage}-#c7a8ad)" > badge.md
+
+      - name: Update README
+        run: |
+          rmse=${{ steps.read-rmse.outputs.rmse }}
+          tree_usage=${{ steps.read-tree-usage.outputs.tree-usage }}
+          sed -i "s/RMSE: .*/RMSE: ${rmse}/" README.md
+          sed -i "s/Tree Usage: .*/Tree Usage: ${tree_usage}/" README.md
