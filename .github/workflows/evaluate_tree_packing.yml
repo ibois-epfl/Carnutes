@@ -30,23 +30,37 @@ jobs:
 
       - name: Read RMSE result
         id: read-rmse
-        run: echo "rmse=$(cat rmse_result.txt)" >> $GITHUB_ENV
+        shell: bash
+        run: |
+          if [ -f rmse_result.txt ]; then
+            rmse=$(cat rmse_result.txt)
+            echo "rmse=$rmse" >> $GITHUB_ENV
+          else
+            echo "rmse=0" >> $GITHUB_ENV
+          fi
 
       - name: Read tree usage result
         id: read-tree-usage
-        run: echo "tree-usage=$(cat tree_usage_result.txt)" >> $GITHUB_ENV
+        shell: bash
+        run: |
+          if [ -f tree_usage_result.txt ]; then
+            tree_usage=$(cat tree_usage_result.txt)
+            echo "tree_usage=$tree_usage" >> $GITHUB_ENV
+          else
+            echo "tree_usage=0" >> $GITHUB_ENV
+          fi
 
       - name: Create badge for RMSE
         id: create-badge-rmse
         run: |
           rmse=${{ env.rmse }}
-          echo "![RMSE](https://img.shields.io/badge/RMSE-${rmse}-#c7a8ad)" > badge.md
+          echo "![RMSE](https://img.shields.io/badge/RMSE-${rmse}-brightgreen)" > badge.md
 
       - name: Create badge for tree usage
         id: create-badge-tree-usage
         run: |
           tree_usage=${{ env.tree_usage }}
-          echo "![Tree Usage](https://img.shields.io/badge/Tree_Usage-${tree_usage}-#c7a8ad)" > badge.md
+          echo "![Tree Usage](https://img.shields.io/badge/Tree_Usage-${tree_usage}-brightgreen)" > badge.md
 
       - name: Update README
         run: |
