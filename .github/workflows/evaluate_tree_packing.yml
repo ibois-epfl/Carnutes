@@ -69,7 +69,7 @@ jobs:
           # For regular pushes, use the current branch (GITHUB_REF)
           $branch_name = $env:GITHUB_REF -replace 'refs/heads/', ''
           }
-
+          git fetch
           git checkout $branch_name
           git pull origin $branch_name --allow-unrelated-histories
           git add README.md
