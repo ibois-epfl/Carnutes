@@ -62,6 +62,7 @@ jobs:
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
+          git pull origin $branch_name
           git add README.md
           git commit -m "Update badges in README" || echo "No changes to commit"
           if ($env:GITHUB_HEAD_REF) {
@@ -71,5 +72,4 @@ jobs:
           # For regular pushes, use the current branch (GITHUB_REF)
           $branch_name = $env:GITHUB_REF -replace 'refs/heads/', ''
           }
-          git pull origin $branch_name
           git push origin HEAD:$branch_name
