@@ -25,12 +25,6 @@ jobs:
       - name: activate conda environment
         run: conda activate Carnutes
 
-      - name: Add directories to PYTHONPATH
-        run: |
-          echo "PYTHONPATH=$PYTHONPATH:$(pwd)/src" >> $GITHUB_ENV
-          echo "PYTHONPATH=$PYTHONPATH:$(pwd)/tests" >> $GITHUB_ENV
-          echo "PYTHONPATH=$PYTHONPATH:$(pwd)" >> $GITHUB_ENV
-
       - name: evaluate tree packing usage
         run: python -m tests.evaluate_unoptimized_tree_selection
 
