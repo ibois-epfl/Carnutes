@@ -64,4 +64,5 @@ jobs:
           git config --local user.name "github-actions[bot]"
           git add README.md
           git commit -m "Update badges in README"
-          git push
+          branch_name=$(echo "${GITHUB_REF#refs/heads/}")
+          git push origin HEAD:$branch_name
