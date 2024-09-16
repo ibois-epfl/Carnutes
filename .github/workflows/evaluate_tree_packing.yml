@@ -55,11 +55,6 @@ jobs:
         run: |
           $rmse_badge = "![RMSE](https://img.shields.io/badge/RMSE-${{ env.rmse }}-c7a8ad)"
           $tree_usage_badge = "![Tree Usage](https://img.shields.io/badge/Tree_Usage-${{ env.tree_usage }}-c7a8ad)"
-          (Get-Content README.md) -replace '<!-- RMSE BADGE -->', $rmse_badge -replace '<!-- TREE USAGE BADGE -->', $tree_usage_badge | Set-Content README.md
-
-
-      - name: Commit and push changes
-        run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           if ($env:GITHUB_HEAD_REF) {

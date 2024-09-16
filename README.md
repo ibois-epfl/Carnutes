@@ -1,6 +1,6 @@
 ![basic geometry test](https://github.com/ibois-epfl/Carnutes/actions/workflows/test_geo_basics.yml/badge.svg)
-
-
+<!-- RMSE BADGE -->
+<!-- TREE USAGE BADGE -->
 
 # Carnutes🌳
 
