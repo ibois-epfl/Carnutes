@@ -71,4 +71,6 @@ jobs:
           # For regular pushes, use the current branch (GITHUB_REF)
           $branch_name = $env:GITHUB_REF -replace 'refs/heads/', ''
           }
+          git fetch origin
+          git pull origin $branch_name --rebase
           git push origin HEAD:$branch_name
