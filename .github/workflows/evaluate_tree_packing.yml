@@ -53,12 +53,12 @@ jobs:
       - name: Create badge for RMSE
         id: create-badge-rmse
         run: |
-          echo "![RMSE](https://img.shields.io/badge/RMSE-${{ env.rmse }}-#c7a8ad)" > badge_rmse.md
+          echo "![RMSE](https://img.shields.io/badge/RMSE-${{ env.rmse }}-c7a8ad)" > badge_rmse.md
 
       - name: Create badge for tree usage
         id: create-badge-tree-usage
         run: |
-          echo "![Tree Usage](https://img.shields.io/badge/Tree_Usage-${{ env.tree_usage }}-#c7a8ad)" > badge_usage.md
+          echo "![Tree Usage](https://img.shields.io/badge/Tree_Usage-${{ env.tree_usage }}-c7a8ad)" > badge_usage.md
 
       - name: Update README
         run: |
