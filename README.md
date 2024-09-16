@@ -6,7 +6,7 @@
 
 🪵 In Asterix & Obelix, the Carnutes forest is where druids present their latest crazy inventions to their peers 🪵
 
-<p align="center"> <img src="./assets/images/06_09_2024_Carnutes_illustration.png" height="400" />
+<p align="center"> <img src="./assets/images/Carnutes_illustration_17_09_2024.png" height="400" />
 
 This repo contains the code produced as part of the studio Weinand, the architecture studio directed by Prof. Yves Weinand, and Assist. Dr. Agathe Mignon at IBOIS, EPFL (Switzerland), taught to 3rd bachelor and 1st master students.
 
