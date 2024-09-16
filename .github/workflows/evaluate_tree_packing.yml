@@ -73,6 +73,7 @@ jobs:
           git stash
           git checkout $branch_name
           git pull origin $branch_name --allow-unrelated-histories
+          (Get-Content README.md) -replace '<!-- RMSE BADGE -->', $rmse_badge -replace '<!-- TREE USAGE BADGE -->', $tree_usage_badge | Set-Content README.md
           git add README.md
           git add src/database/tree_database.fs.lock
           git commit -m "Update badges in README" || echo "No changes to commit"
