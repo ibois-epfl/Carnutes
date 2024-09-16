@@ -50,17 +50,20 @@ jobs:
             echo "tree_usage=0" >> $GITHUB_ENV
           fi
 
-      - name: Create badge for RMSE
-        id: create-badge-rmse
+      - name: Create badges and update README
         run: |
-          echo "![RMSE](https://img.shields.io/badge/RMSE-${{ env.rmse }}-c7a8ad)" > badge_rmse.md
-
-      - name: Create badge for tree usage
-        id: create-badge-tree-usage
+          # Create badge URLs
+          rmse_badge="![RMSE](https://img.shields.io/badge/RMSE-${{ env.rmse }}-c7a8ad)"
+          tree_usage_badge="![Tree Usage](https://img.shields.io/badge/Tree_Usage-${{ env.tree_usage }}-c7a8ad)"
+          
+          # Replace the placeholder with the actual badges in README.md
+          sed -i "s|<!-- RMSE BADGE -->|$rmse_badge|" README.md
+          sed -i "s|<!-- TREE USAGE BADGE -->|$tree_usage_badge|" README.md
+          
+      - name: Commit and push changes
         run: |
-          echo "![Tree Usage](https://img.shields.io/badge/Tree_Usage-${{ env.tree_usage }}-c7a8ad)" > badge_usage.md
-
-      - name: Update README
-        run: |
-          sed -i "s/RMSE: .*/RMSE:${{ env.rmse }}/" README.md
-          sed -i "s/Tree Usage: .*/Tree Usage: ${{ env.tree_usage }}/" README.md
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add README.md
+          git commit -m "Update badges in README"
+          git push
