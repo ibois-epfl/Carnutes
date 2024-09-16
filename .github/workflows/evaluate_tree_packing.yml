@@ -30,27 +30,27 @@ jobs:
 
       - name: Read RMSE result
         id: read-rmse
-        run: echo "::set-output name=rmse::$(cat rmse_result.txt)"
+        run: echo "rmse=$(cat rmse_result.txt)" >> $GITHUB_ENV
 
       - name: Read tree usage result
         id: read-tree-usage
-        run: echo "::set-output name=tree-usage::$(cat tree_usage_result.txt)"
+        run: echo "tree-usage=$(cat tree_usage_result.txt)" >> $GITHUB_ENV
 
       - name: Create badge for RMSE
         id: create-badge-rmse
         run: |
-          rmse=${{ steps.read-rmse.outputs.rmse }}
+          rmse=${{ env.rmse }}
           echo "![RMSE](https://img.shields.io/badge/RMSE-${rmse}-#c7a8ad)" > badge.md
 
       - name: Create badge for tree usage
         id: create-badge-tree-usage
         run: |
-          tree_usage=${{ steps.read-tree-usage.outputs.tree-usage }}
+          tree_usage=${{ env.tree_usage }}
           echo "![Tree Usage](https://img.shields.io/badge/Tree_Usage-${tree_usage}-#c7a8ad)" > badge.md
 
       - name: Update README
         run: |
-          rmse=${{ steps.read-rmse.outputs.rmse }}
-          tree_usage=${{ steps.read-tree-usage.outputs.tree-usage }}
+          rmse=${{ env.rmse }}
+          tree_usage=${{ env.tree_usage }}
           sed -i "s/RMSE: .*/RMSE: ${rmse}/" README.md
           sed -i "s/Tree Usage: .*/Tree Usage: ${tree_usage}/" README.md
