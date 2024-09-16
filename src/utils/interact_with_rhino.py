@@ -54,12 +54,10 @@ def create_model_from_rhino_selection(max_elements: int = 100000):
     for geo in geometries:
         if isinstance(geo, Rhino.Geometry.Point):
             converted_geometries.append(geo.Location)
-            print("Point converted to Point3d")
         elif isinstance(
             geo, Rhino.Geometry.LineCurve or Rhino.Geometry.Line or Rhino.Geometry.Curve
         ):
             converted_geometries.append(geo.ToNurbsCurve())
-            print("Line converted to NurbsCurve")
         else:
             converted_geometries.append(geo)
 
@@ -69,20 +67,12 @@ def create_model_from_rhino_selection(max_elements: int = 100000):
     layer_names = [
         Rhino.RhinoDoc.ActiveDoc.Layers[layer_id].Name for layer_id in layer_ids
     ]
-    print(
-        "line 68 interact_with_rhino. list of converted geometries = ",
-        converted_geometries,
-    )
     elements = [
         element.Element(
             converted_geometries[i], go.Object(i).ObjectId, float(layer_names[i])
         )
         for i in range(go.ObjectCount)
     ]
-    print("line 75 interact_with_rhino. elements = ")
-    for elem in elements:
-        print(elem)
-
     return model.Model(elements)
 
 

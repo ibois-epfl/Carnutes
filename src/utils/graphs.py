@@ -88,50 +88,58 @@ class ConnectivityGraph(object):
         # igraph stores edge attributes in a dictionary. We want to store the locations of the intersections that the edge ij represents
         locations = []
         guids = []
+        print("debug from line 91 in graphs.py. n_vertices: ", n_vertices)
         for i in range(n_vertices):
             guids.append(elements[i].GUID)
             if elements[i].type == element.ElementType.Point:
+                print("debug from line 95 in graphs.py. Pipopouuuuu <3 ")
                 for j in range(i + 1, n_vertices):
+                    print("debug from line 97 in graphs.py. Ping <3 ")
                     if elements[j].type == element.ElementType.Point:
+                        print("debug from line 98 in graphs.py. passingggggg <3 ")
                         continue
-                    print(
-                        "debug from line 95 in graphs.py. Location of point: ",
-                        [
-                            elements[i].geometry.X,
-                            elements[i].geometry.Y,
-                            elements[i].geometry.Z,
-                        ],
-                    )
-                    test_intersect_1 = elements[j].geometry.GetLocalTangentPoint(
-                        elements[i].geometry, 0
-                    )  # returns a tuple with a boolean and a curve parameter
-                    test_intersect_2 = elements[j].geometry.GetLocalTangentPoint(
-                        elements[i].geometry, 1
-                    )
-                    if test_intersect_1[0]:
-                        print("intersect")
-                        edges.append([i, j])
-                        locations.append(
+                    elif elements[j].type == element.ElementType.Line:
+                        print("debug from line 101 in graphs.py. Pong <3 ")
+                        print(
+                            "debug from line 102 in graphs.py. Location of point: ",
                             [
                                 elements[i].geometry.X,
                                 elements[i].geometry.Y,
                                 elements[i].geometry.Z,
-                            ]
+                            ],
                         )
+                        test_intersect_1 = elements[j].geometry.GetLocalTangentPoint(
+                            elements[i].geometry, 0
+                        )  # returns a tuple with a boolean and a curve parameter
+                        test_intersect_2 = elements[j].geometry.GetLocalTangentPoint(
+                            elements[i].geometry, 1
+                        )
+                        if test_intersect_1[0]:
+                            print("intersect")
+                            edges.append([i, j])
+                            locations.append(
+                                [
+                                    elements[i].geometry.X,
+                                    elements[i].geometry.Y,
+                                    elements[i].geometry.Z,
+                                ]
+                            )
 
-                    elif test_intersect_2[0]:
-                        print("intersect")
-                        edges.append([i, j])
-                        locations.append(
-                            [
-                                elements[i].geometry.X,
-                                elements[i].geometry.Y,
-                                elements[i].geometry.Z,
-                            ]
-                        )
+                        elif test_intersect_2[0]:
+                            print("intersect")
+                            edges.append([i, j])
+                            locations.append(
+                                [
+                                    elements[i].geometry.X,
+                                    elements[i].geometry.Y,
+                                    elements[i].geometry.Z,
+                                ]
+                            )
 
             else:
                 for j in range(i + 1, n_vertices):
+                    if elements[j].type == element.ElementType.Point:
+                        continue
                     result = Rhino.Geometry.Intersect.Intersection.CurveCurve(
                         elements[i].geometry, elements[j].geometry, 5 * ABS_TOL, ABS_TOL
                     )

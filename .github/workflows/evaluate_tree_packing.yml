@@ -1,0 +1,75 @@
+name: unoptimized_tree_packing_usage
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  evaluate_tree_packing_usage:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up conda environment
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          activate-environment: Carnutes
+          environment-file: environment.yml
+
+      - name: activate conda environment
+        run: conda activate Carnutes
+
+      - name: evaluate tree packing usage
+        run: python -m tests.evaluate_unoptimized_tree_selection
+
+      - name: Read RMSE result
+        id: read-rmse
+        shell: bash
+        run: |
+          if [ -f rmse_result.txt ]; then
+            rmse=$(cat rmse_result.txt)
+            echo "rmse=$rmse" >> $GITHUB_ENV
+          else
+            echo "rmse=0" >> $GITHUB_ENV
+          fi
+
+      - name: Read tree usage result
+        id: read-tree-usage
+        shell: bash
+        run: |
+          if [ -f tree_usage_result.txt ]; then
+            tree_usage=$(cat tree_usage_result.txt)
+            echo "tree_usage=$tree_usage" >> $GITHUB_ENV
+          else
+            echo "tree_usage=0" >> $GITHUB_ENV
+          fi
+
+      - name: Create badges and update README
+        shell: pwsh
+        run: |
+          $rmse_badge = "![RMSE](https://img.shields.io/badge/RMSE-${{ env.rmse }}-c7a8ad)"
+          $tree_usage_badge = "![Tree Usage](https://img.shields.io/badge/Tree_Usage-${{ env.tree_usage }}-c7a8ad)"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          if ($env:GITHUB_HEAD_REF) {
+          # For pull requests, use the source branch (GITHUB_HEAD_REF)
+          $branch_name = $env:GITHUB_HEAD_REF
+          } else {
+          # For regular pushes, use the current branch (GITHUB_REF)
+          $branch_name = $env:GITHUB_REF -replace 'refs/heads/', ''
+          }
+          git fetch
+          git stash
+          git checkout $branch_name
+          git pull origin $branch_name --allow-unrelated-histories
+          (Get-Content README.md) -replace '<!-- RMSE BADGE -->', $rmse_badge -replace '<!-- TREE USAGE BADGE -->', $tree_usage_badge | Set-Content README.md
+          git add README.md
+          git add src/database/tree_database.fs.lock
+          git commit -m "Update badges in README" || echo "No changes to commit"
+          git push origin HEAD:$branch_name

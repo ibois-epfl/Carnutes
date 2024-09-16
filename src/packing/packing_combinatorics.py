@@ -43,15 +43,12 @@ def compute_best_tree_element_matching(
     :param minimum_rmse: float
         The minimum rmse to consider the alignment as valid
 
-    :return: best_model_element: Pointcloud
-        The best fitting order of the element point cloud
     :return: best_skeleton: Pointcloud
         The best fitting segment of the skeleton point cloud
     :return: best_rmse: float
         The rmse of the best fitting segment
     """
     best_rmse = minimum_rmse
-    best_model_element = None
     best_skeleton = None
 
     for i in range(2):
@@ -70,11 +67,10 @@ def compute_best_tree_element_matching(
             )
             if result.inlier_rmse < best_rmse:
                 best_rmse = result.inlier_rmse
-                best_model_element = model_element
                 best_skeleton = adapted_skeleton
-    if best_model_element is None:
-        return None, None, None
-    return best_model_element, best_skeleton, best_rmse
+    if best_rmse is None:
+        return None, None
+    return best_skeleton, best_rmse
 
 
 def find_best_tree_unoptimized(
@@ -82,6 +78,7 @@ def find_best_tree_unoptimized(
     reference_diameter: float,
     database_path: str,
     return_rmse: bool = False,
+    update_database: bool = True,
 ):
     """
     performs icp registrations bewteen the reference skeleton and the list of targets,
@@ -97,11 +94,11 @@ def find_best_tree_unoptimized(
         The path to the database. The database is updated by removing from it the part of the best fitting skeleton.
     :param return_rmse: bool
         Whether to return the rmse of the best fitting tree. This is for evaluation purposes.
+    :param update_database: bool
+        Whether to update the database by removing the best fitting tree from it.
 
     :return: best_tree: Tree
         The best fitting tree for which the skeleton was cropped to the best fitting segment
-    :return: best_reference: Pointcloud
-        The best fitting segment of the reference point cloud. Only returned if return_rmse is True.
     :return: best_target: Pointcloud
         The best fitting segment of the target point cloud. Only returned if return_rmse is True.
     :return: rmse: float
@@ -110,10 +107,8 @@ def find_best_tree_unoptimized(
     # unpack the database:
     reader = db_reader.DatabaseReader(database_path)
     n_tree = reader.get_num_trees()
-    print(
-        f"Number of trees in the database: {n_tree}. (degub message from find_best_tree in packing_combinatorics.py)"
-    )
     best_tree = None
+
     # initiallize the best rmse to infinity before the first iteration
     best_db_level_rmse = np.inf
     # iterate over the trees in the database
@@ -129,7 +124,6 @@ def find_best_tree_unoptimized(
         ):
             continue
         (
-            best_model_element,
             best_skeleton_segment,
             best_tree_level_rmse,
         ) = compute_best_tree_element_matching(model_element, tree.skeleton, np.inf)
@@ -141,7 +135,6 @@ def find_best_tree_unoptimized(
             best_tree_id = i
             best_db_level_rmse = best_tree_level_rmse
             best_tree = tree
-            best_reference = best_model_element
             best_skeleton = best_skeleton_segment
 
         if (
@@ -149,35 +142,35 @@ def find_best_tree_unoptimized(
         ):  # if the RMSE is under 1 cm, we can break the loop
             break
 
-    if best_db_level_rmse is not None:
+    if best_tree is not None:
         # remove the best tree from the database
         print(
-            f"Best tree is {best_tree.id} with rmse {best_db_level_rmse} and height {best_tree.height}",
-            "and is being trimmed",
+            f"Best tree is {best_tree.id} with rmse {best_db_level_rmse} and height {best_tree.height}"
         )
+
         selected_tree = copy.deepcopy(best_tree)
         selected_tree.skeleton = best_skeleton
         best_tree.trim(best_skeleton)
 
-        # remove the tree from the database if its skeleton is a single point, or empty.
-        if len(best_tree.skeleton.points) < 2:
-            reader.root.trees.pop(best_tree_id)
-            reader.root.n_trees -= 1
-            transaction.commit()
-            reader.close()
+        if update_database:
+            # remove the tree from the database if its skeleton is a single point, or empty.
+            if len(best_tree.skeleton.points) < 2:
+                reader.root.trees.pop(best_tree_id)
+                reader.root.n_trees -= 1
+                transaction.commit()
+                reader.close()
 
-        # update the database, as done in https://zodb.org/en/latest/articles/ZODB1.html#a-simple-example
-        else:
-            trees_in_db = reader.root.trees
-            trees_in_db[best_tree_id] = best_tree
-            reader.root.trees = trees_in_db
-            transaction.commit()
-        # close the database
-        reader.close()
+            # update the database, as done in https://zodb.org/en/latest/articles/ZODB1.html#a-simple-example
+            else:
+                trees_in_db = reader.root.trees
+                trees_in_db[best_tree_id] = best_tree
+                reader.root.trees = trees_in_db
+                transaction.commit()
+            # close the database
+            reader.close()
         if return_rmse:
             return (
                 selected_tree,
-                best_reference,
                 best_skeleton_segment,
                 best_db_level_rmse,
             )
@@ -185,7 +178,7 @@ def find_best_tree_unoptimized(
     else:
         reader.close()
         print("No tree found in find_best_tree, returning None")
-        return None, None, None, None
+        return None, None, None
 
 
 def find_best_tree_optimized(
@@ -194,6 +187,7 @@ def find_best_tree_optimized(
     database_path: str,
     optimisation_basis: int,
     return_rmse: bool = False,
+    update_database: bool = True,
 ):
     """
     performs icp registrations bewteen the reference skeleton and the list of targets,
@@ -211,6 +205,8 @@ def find_best_tree_optimized(
         The number of elements to consider for the optimisation
     :param return_rmse: bool
         Whether to return the rmse of the best fitting tree. This is for evaluation purposes.
+    :param update_database: bool
+        Whether to update the database by removing the best fitting tree from it.
 
     :return: best_tree: Tree
         The best fitting tree for which the skeleton was cropped to the best fitting segment
@@ -313,28 +309,28 @@ def find_best_tree_optimized(
     if best_db_level_rmse is not None:
         # remove the best tree from the database
         print(
-            f"Best tree is {best_tree.id} with rmse {best_db_level_rmse} and height {best_tree.height}",
-            "and is being trimmed",
+            f"Best tree is {best_tree.id} with rmse {best_db_level_rmse} and height {best_tree.height}"
         )
+
         selected_tree = copy.deepcopy(best_tree)
         selected_tree.skeleton = best_skeleton
         best_tree.trim(best_skeleton)
 
-        # remove the tree from the database if its skeleton is a single point, or empty.
-        if len(best_tree.skeleton.points) < 2:
-            reader.root.trees.pop(best_tree_id)
-            reader.root.n_trees -= 1
-            transaction.commit()
-            reader.close()
+        if update_database:
+            # remove the tree from the database if its skeleton is a single point, or empty.
+            if len(best_tree.skeleton.points) < 2:
+                reader.root.trees.pop(best_tree_id)
+                reader.root.n_trees -= 1
+                transaction.commit()
 
-        # update the database, as done in https://zodb.org/en/latest/articles/ZODB1.html#a-simple-example
-        else:
-            trees_in_db = reader.root.trees
-            trees_in_db[best_tree_id] = best_tree
-            reader.root.trees = trees_in_db
-            transaction.commit()
-        # close the database
-        reader.close()
+            # update the database, as done in https://zodb.org/en/latest/articles/ZODB1.html#a-simple-example
+            else:
+                trees_in_db = reader.root.trees
+                trees_in_db[best_tree_id] = best_tree
+                reader.root.trees = trees_in_db
+                transaction.commit()
+
+            # close the database
         if return_rmse:
             return (
                 selected_tree,
@@ -342,7 +338,9 @@ def find_best_tree_optimized(
                 best_skeleton_segment,
                 best_db_level_rmse,
             )
+        reader.close()
         return selected_tree
+
     else:
         reader.close()
         print("No tree found in find_best_tree, returning None")

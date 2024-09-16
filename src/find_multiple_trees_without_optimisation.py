@@ -12,7 +12,7 @@ import time
 from utils import model, tree, geometry, interact_with_rhino, database_reader
 from utils import element as elem
 from utils.tree import Tree
-from packing import packing_manipulations, packing_combinatorics
+from packing import packing_combinatorics
 
 import numpy as np
 import Rhino
@@ -52,34 +52,18 @@ def main():
     current_model = interact_with_rhino.create_model_from_rhino_selection()
 
     # For each element in the model, replace it with a point cloud. Starting from the elements with the highest degree.
-    elements = current_model.elements
-    elements.sort(key=lambda x: x.degree, reverse=True)
-    for element in elements:
-        print(f"Element {element.GUID} has degree {element.degree}")
-
     db_path = os.path.dirname(os.path.realpath(__file__)) + "/database/tree_database.fs"
 
     all_rmse = []
 
-    for element in elements:
+    for element in current_model.elements:
         if element.type == elem.ElementType.Point:
             continue
-        reference_pc_as_list = []
-        element_guid = element.GUID
-        target_diameter = element.diameter
-        reference_pc_as_list = element.locations
 
         # at this point the reference_pc_as_list should contain the points, but they are not ordered. We need to order them.
-        reference_pc_as_list = geometry.sort_points(reference_pc_as_list)
+        reference_pc_as_list = geometry.sort_points(element.locations)
         reference_skeleton = geometry.Pointcloud(reference_pc_as_list)
-        (
-            best_tree,
-            best_reference,
-            best_target,
-            best_rmse,
-        ) = packing_combinatorics.find_best_tree_unoptimized(
-            reference_skeleton, target_diameter, db_path, return_rmse=True
-        )
+        best_tree, best_rmse = element.allocate_trees(db_path=db_path, optimized=False)
         if best_tree is None:
             print("No tree found. Skiping this element.")
             continue

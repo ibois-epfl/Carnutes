@@ -11,7 +11,8 @@ This function resets the database by overwriting the existing database with a ne
 import ZODB
 import ZODB.FileStorage
 import open3d as o3d
-import Rhino
+
+# import Rhino
 
 import os
 import transaction
@@ -22,23 +23,23 @@ import utils.tree as tree
 import utils.database_reader as database_reader
 
 
-def main():
-    database_folder = os.path.join(WORKING_DIR, "database")
+def main(voxel_size=0.03, working_dir=os.path.dirname(os.path.realpath(__file__))):
+    database_folder = os.path.join(working_dir, "database")
     if not os.path.exists(database_folder):
         os.makedirs(database_folder)
 
     db_reader = database_reader.DatabaseReader(
-        os.path.join(WORKING_DIR, "database/tree_database.fs")
+        os.path.join(working_dir, "database/tree_database.fs")
     )
 
-    for i, pc_file in enumerate(os.listdir(os.path.join(WORKING_DIR, "dataset"))):
+    for i, pc_file in enumerate(os.listdir(os.path.join(working_dir, "dataset"))):
 
         if pc_file.endswith(".ply"):
             print(f"Processing {pc_file}")
             pc = o3d.io.read_point_cloud(
-                os.path.join(WORKING_DIR, f"dataset/{pc_file}")
+                os.path.join(working_dir, f"dataset/{pc_file}")
             )
-            pc = pc.voxel_down_sample(VOXEL_SIZE)
+            pc = pc.voxel_down_sample(voxel_size)
             pc, indexes = pc.remove_statistical_outlier(nb_neighbors=20, std_ratio=2.0)
 
             tree_pc_as_pt_list = []
@@ -79,15 +80,15 @@ def main():
 
 if __name__ == "__main__":
 
-    WORKING_DIR = os.path.dirname(os.path.realpath(__file__))
+    # WORKING_DIR = os.path.dirname(os.path.realpath(__file__))
 
-    # Get from user the voxel size
-    gn = Rhino.Input.Custom.GetNumber()
-    gn.SetCommandPrompt("Enter the voxel size")
-    gn.SetDefaultNumber(0.03)
-    gn.Get()
+    # # Get from user the voxel size
+    # gn = Rhino.Input.Custom.GetNumber()
+    # gn.SetCommandPrompt("Enter the voxel size")
+    # gn.SetDefaultNumber(0.03)
+    # gn.Get()
 
-    VOXEL_SIZE = gn.Number()
+    # VOXEL_SIZE = gn.Number()
     starting_time = time.time()
     main()
     print(f"Execution time: {time.time() - starting_time}")
