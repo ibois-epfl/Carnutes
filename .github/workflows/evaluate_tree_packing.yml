@@ -53,18 +53,14 @@ jobs:
       - name: Create badge for RMSE
         id: create-badge-rmse
         run: |
-          rmse=${{ env.rmse }}
-          echo "![RMSE](https://img.shields.io/badge/RMSE-${rmse}-brightgreen)" > badge.md
+          echo "![RMSE](https://img.shields.io/badge/RMSE-${{ env.rmse }}-brightgreen)" > badge.md
 
       - name: Create badge for tree usage
         id: create-badge-tree-usage
         run: |
-          tree_usage=${{ env.tree_usage }}
-          echo "![Tree Usage](https://img.shields.io/badge/Tree_Usage-${tree_usage}-brightgreen)" > badge.md
+          echo "![Tree Usage](https://img.shields.io/badge/Tree_Usage-${{ env.tree_usage }}-brightgreen)" > badge.md
 
       - name: Update README
         run: |
-          rmse=${{ env.rmse }}
-          tree_usage=${{ env.tree_usage }}
-          sed -i "s/RMSE: .*/RMSE: ${rmse}/" README.md
-          sed -i "s/Tree Usage: .*/Tree Usage: ${tree_usage}/" README.md
+          sed -i "s/RMSE: .*/RMSE:${{ env.rmse }}/" README.md
+          sed -i "s/Tree Usage: .*/Tree Usage: ${{ env.tree_usage }}/" README.md
