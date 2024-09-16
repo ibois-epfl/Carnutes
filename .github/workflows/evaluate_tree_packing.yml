@@ -70,6 +70,7 @@ jobs:
           $branch_name = $env:GITHUB_REF -replace 'refs/heads/', ''
           }
           git fetch
+          git stash
           git checkout $branch_name
           git pull origin $branch_name --allow-unrelated-histories
           git add README.md
