@@ -57,7 +57,7 @@ jobs:
           $tree_usage_badge = "![Tree Usage](https://img.shields.io/badge/Tree_Usage-${{ env.tree_usage }}-c7a8ad)"
           (Get-Content README.md) -replace '<!-- RMSE BADGE -->', $rmse_badge -replace '<!-- TREE USAGE BADGE -->', $tree_usage_badge | Set-Content README.md
 
-          
+
       - name: Commit and push changes
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
@@ -71,7 +71,7 @@ jobs:
           }
 
           git checkout $branch_name
-          git pull origin $branch_name
+          git pull origin $branch_name --allow-unrelated-histories
           git add README.md
           git commit -m "Update badges in README" || echo "No changes to commit"
           git push origin HEAD:$branch_name
