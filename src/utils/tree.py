@@ -128,7 +128,6 @@ class Tree(persistent.Persistent):
         tree_pc = o3d.geometry.PointCloud()
         tree_pc.points = o3d.utility.Vector3dVector(np.array(self.point_cloud.points))
         skeleton_pc = o3d.geometry.PointCloud()
-        print("Skeleton points are ", self.skeleton.points)
         skeleton_pc.points = o3d.utility.Vector3dVector(np.array(self.skeleton.points))
         skeleton_pc.estimate_normals()
         reference_pc = o3d.geometry.PointCloud()
@@ -136,11 +135,6 @@ class Tree(persistent.Persistent):
             np.array(reference_skeleton.points)
         )
 
-        print(
-            "Aligning tree to skeleton using as reference: ",
-            reference_pc,
-            "with points:",
-        )
         # all_points_ref = np.asarray(reference_pc.points)
         # for i in range(len(all_points_ref)):
         #     print(np.asarray(all_points_ref[i]))
@@ -210,13 +204,6 @@ class Tree(persistent.Persistent):
         colors = np.asarray(mesh.vertex_colors)
         self.mesh = Mesh(vertices, faces, colors)
 
-        print(
-            "Mesh created, n° vertices = ",
-            len(self.mesh.vertices),
-            "n° faces = ",
-            len(self.mesh.faces),
-        )
-
     def trim(self, skeleton_to_remove):
         """
         Trim the tree by removing all the that are within the range of the skeleton_to_remove
@@ -273,9 +260,10 @@ class Tree(persistent.Persistent):
         self.point_cloud.colors = new_colors
         self.skeleton.points = new_skeleton
 
-        self.height = max([point[2] for point in self.point_cloud.points]) - min(
-            [point[2] for point in self.point_cloud.points]
-        )
+        if len(self.point_cloud.points) > 1:
+            self.height = max([point[2] for point in self.point_cloud.points]) - min(
+                [point[2] for point in self.point_cloud.points]
+            )
 
     def __str__(self):
         return f"Tree {self.id} - {self.name}"
