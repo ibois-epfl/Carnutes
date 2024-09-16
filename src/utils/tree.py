@@ -273,5 +273,9 @@ class Tree(persistent.Persistent):
         self.point_cloud.colors = new_colors
         self.skeleton.points = new_skeleton
 
+        self.height = max([point[2] for point in self.point_cloud.points]) - min(
+            [point[2] for point in self.point_cloud.points]
+        )
+
     def __str__(self):
         return f"Tree {self.id} - {self.name}"

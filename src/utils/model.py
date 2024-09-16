@@ -25,7 +25,6 @@ class Model(object):
     def __init__(self, elements: typing.List[element.Element]):
         self.elements = elements
         self.connectivity_graph = graphs.ConnectivityGraph(elements)
-        print("from line 28 model.py. connectivity graph = ", self.connectivity_graph)
         type_of_model = type(self.elements[0].geometry)
         for i, element in enumerate(self.elements):
             # if type(element.geometry) != type_of_model:
@@ -45,6 +44,16 @@ class Model(object):
                         break
             element.locations = locations
             element.degree = len(locations)
+        self.elements.sort(
+            key=lambda x: x.degree, reverse=True
+        )  # sort elements by decreasing degree
 
     def __str__(self):
         return "Model with {} elements".format(len(self.elements))
+
+    def unoptimized_tree_allocation(self, remove_trees=False):
+        """
+        Allocate trees to the elements in the model without optimization.
+        """
+        for element in self.elements:
+            element.allocate_trees()

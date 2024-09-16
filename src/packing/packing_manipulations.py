@@ -16,7 +16,7 @@ def match_skeletons(
     model_element: utils.geometry.Pointcloud,
     original_skeleton: utils.geometry.Pointcloud,
 ) -> utils.geometry.Pointcloud:
-    """ "
+    """
     match the two skeletons by adapting the target skeleton to the reference skeleton,
     so the distances between the corresponding points are identical.
     The number of points in the target_skeleton is thus matched to the number of points in the reference_skeleton.
