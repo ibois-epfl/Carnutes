@@ -52,16 +52,13 @@ def main():
     current_model = interact_with_rhino.create_model_from_rhino_selection()
 
     # For each element in the model, replace it with a point cloud. Starting from the elements with the highest degree.
-    elements = current_model.elements
-    elements.sort(key=lambda x: x.degree, reverse=True)
-    for element in elements:
-        print(f"Element {element.GUID} has degree {element.degree}")
-
     db_path = os.path.dirname(os.path.realpath(__file__)) + "/database/tree_database.fs"
 
     all_rmse = []
 
-    for element in elements:
+    for element in current_model.elements:
+        if element.type == elem.ElementType.Point:
+            continue
         reference_pc_as_list = []
         element_guid = element.GUID
         target_diameter = element.diameter
@@ -72,7 +69,6 @@ def main():
         reference_skeleton = geometry.Pointcloud(reference_pc_as_list)
         (
             best_tree,
-            best_reference,
             best_target,
             best_rmse,
         ) = packing_combinatorics.find_best_tree_optimized(

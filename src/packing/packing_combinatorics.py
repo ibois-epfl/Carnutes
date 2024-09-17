@@ -220,18 +220,13 @@ def find_best_tree_optimized(
     # unpack the database:
     reader = db_reader.DatabaseReader(database_path)
     n_tree = reader.get_num_trees()
-    print(
-        f"Number of trees in the database: {n_tree}. (degub message from find_best_tree in packing_combinatorics.py)"
-    )
     best_tree = None
     # initiallize the best rmse to infinity before the first iteration
-    best_db_level_rmse = np.inf
 
     rmse = []
     trees = []
     skeleton_segments = []
     tree_ids = []
-    model_elements = []
 
     # iterate over the trees in the database
     for i in range(n_tree):
@@ -246,33 +241,25 @@ def find_best_tree_optimized(
         ):
             continue
         (
-            best_model_element,
             best_skeleton_segment,
             best_tree_level_rmse,
         ) = compute_best_tree_element_matching(model_element, tree.skeleton, np.inf)
 
-        if best_tree_level_rmse is not None:
+        if best_tree_level_rmse is not None and best_tree_level_rmse is not np.inf:
             rmse.append(best_tree_level_rmse)
             trees.append(tree)
             skeleton_segments.append(best_skeleton_segment)
             tree_ids.append(i)
-            model_elements.append(best_model_element)
 
     if len(rmse) == 0:
         reader.close()
         print(
             f"No tree were found in the database, but {optimisation_basis} are required"
         )
-        return None, None, None, None
-    (
-        sorted_rmse,
-        sorted_trees,
-        sorted_skeleton_segments,
-        sorted_tree_ids,
-        sorted_model_elements,
-    ) = zip(
+        return None, None, None
+    (sorted_rmse, sorted_trees, sorted_skeleton_segments, sorted_tree_ids,) = zip(
         *sorted(
-            zip(rmse, trees, skeleton_segments, tree_ids, model_elements),
+            zip(rmse, trees, skeleton_segments, tree_ids),
             key=lambda x: rmse,
         )
     )
@@ -280,22 +267,15 @@ def find_best_tree_optimized(
     n_best_rmse = sorted_rmse[:optimisation_basis]
     n_best_skeleton = sorted_skeleton_segments[:optimisation_basis]
     n_best_tree_ids = sorted_tree_ids[:optimisation_basis]
-    n_best_model_elements = sorted_model_elements[:optimisation_basis]
+
     (
         sorted_best_tree,
         sorted_best_db_level_rmse,
         sorted_best_skeleton,
         sorted_best_tree_id,
-        sorted_best_reference,
     ) = zip(
         *sorted(
-            zip(
-                n_best_trees,
-                n_best_rmse,
-                n_best_skeleton,
-                n_best_tree_ids,
-                n_best_model_elements,
-            ),
+            zip(n_best_trees, n_best_rmse, n_best_skeleton, n_best_tree_ids),
             key=lambda x: x[0].height,
         )
     )  # get the tree with the smallest height among the five best fitting trees
@@ -304,9 +284,8 @@ def find_best_tree_optimized(
     best_db_level_rmse = sorted_best_db_level_rmse[0]
     best_skeleton = sorted_best_skeleton[0]
     best_tree_id = sorted_best_tree_id[0]
-    best_reference = sorted_best_reference[0]
 
-    if best_db_level_rmse is not None:
+    if best_tree is not None:
         # remove the best tree from the database
         print(
             f"Best tree is {best_tree.id} with rmse {best_db_level_rmse} and height {best_tree.height}"
@@ -331,10 +310,10 @@ def find_best_tree_optimized(
                 transaction.commit()
 
             # close the database
+            reader.close()
         if return_rmse:
             return (
                 selected_tree,
-                best_reference,
                 best_skeleton_segment,
                 best_db_level_rmse,
             )
