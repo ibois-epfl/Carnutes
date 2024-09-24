@@ -99,10 +99,9 @@ def main():
     database_path = os.path.join(current_dir, "database", "tree_database.fs")
     (
         my_tree,
-        best_reference,
         best_target,
         best_db_level_rmse,
-    ) = packing_combinatorics.find_best_tree(
+    ) = packing_combinatorics.find_best_tree_unoptimized(
         reference_skeleton, reference_diameter, database_path, return_rmse=True
     )
 
