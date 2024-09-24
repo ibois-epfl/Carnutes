@@ -44,9 +44,8 @@ class Model(object):
                         break
             element.locations = locations
             element.degree = len(locations)
-        self.elements.sort(
-            key=lambda x: x.degree, reverse=True
-        )  # sort elements by decreasing degree
+        # sort elements by decreasing degree
+        self.elements.sort(key=lambda x: x.degree, reverse=True)
 
     def __str__(self):
         return "Model with {} elements".format(len(self.elements))
