@@ -18,10 +18,9 @@ Lastly, this repository is a quick python experiment, has been swiftly developed
 
 ## Goal
 
- This project must enable the students to:
-- Dispose of a database of simple tree trunks geometries ✅
+ This project enables the students to:
+- Dispose of a database of simple tree trunks geometries. ✅
 - Match the tree trunk geometries with an 3D sketch of an architectural design. ✅
-- Generate architectural drawings with the tree trunk geometries. ❌
 
 For this, the following functions are planned:
 
@@ -49,3 +48,28 @@ For this, the following functions are planned:
 # Install and use
 This tool is intended to be used in Rhino 8.
 See the [INSTALL.md](./INSTALL.md) for installation instructions, and the [CONTRIBUTING.md](./CONTRIBUTING.md) for minimal contribution guidelines. This repo contains a small .3dm to easily test Carnutes.
+ # Timeline
+ ```mermaid
+gantt
+    title Roadmap to publication: first draft milestone is 16 october
+    dateFormat  YY-MM-DD
+    excludes weekends
+    section Patches and improvements
+    Cylinder pipeline finalization                          :a1, 2024-09-30, 3d
+    Create mesh from point cloud                            :a2, after a1, 1d
+    Keep track of volumetric overlaps                       :a3, after a2, 3d
+    section Evaluation
+    Data creation pipeline for evaluation                   :b1, after a1, 3d
+    Creation of final 3d models for evaluation              :b2, after b1, 1d
+    Evaluation of fitting; rmse                             :b3, after b2, 1d
+    Evaluation of tree usage                                :b4, after b3, 2d
+    Evaluation of overlaps                                  :b5, after b3, 2d
+    section Writing
+    First draft                                             :crit, milestone, 2024-10-16,1d
+    Introduction and state of the art finalization          :c1, 2024-09-30, 3d
+    Outline of evaluation pipeline                          :c2, after b1, 2d
+    Evaluation-results                                      :c3, after b4, 1d
+    Evaluation-discussion                                   :c4, after c3, 1d
+    Conclusion                                              :c5, after c4, 1d
+
+ ```
