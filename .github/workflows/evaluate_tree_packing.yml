@@ -53,8 +53,8 @@ jobs:
       - name: Create badges and update README
         shell: pwsh
         run: |
-          $rmse_badge = "![RMSE [m]](https://img.shields.io/badge/RMSE-${{ env.rmse }}-c7a8ad)"
-          $tree_usage_badge = "![Tree Usage [%]](https://img.shields.io/badge/Tree_Usage-${{ env.tree_usage }}-c7a8ad)"
+          $rmse_badge = "![RMSE in meters](https://img.shields.io/badge/RMSE-${{ env.rmse }}-c7a8ad)"
+          $tree_usage_badge = "![Tree Usage in percent ](https://img.shields.io/badge/Tree_Usage-${{ env.tree_usage }}-c7a8ad)"
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           if ($env:GITHUB_HEAD_REF) {
