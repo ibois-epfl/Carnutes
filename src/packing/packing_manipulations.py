@@ -29,6 +29,9 @@ def match_skeletons(
 
     :return: adapted_skeleton: Pointcloud
         The adapted target skeleton
+    :return: number_of_segments: int
+        The number of segments in the original skeleton that are mithin the length of the model element
+
     ```
     ref:           target:      adapted_target:
      p                p              p
@@ -63,7 +66,7 @@ def match_skeletons(
     ]
 
     if np.sum(list_of_target_distances) < np.sum(list_of_reference_distances):
-        return None
+        return None, None
 
     else:
         for i in range(len(list_of_reference_distances)):
@@ -91,7 +94,7 @@ def match_skeletons(
             ]
             new_skeleton_as_list.append(new_point)
         adapted_skeleton = utils.geometry.Pointcloud(new_skeleton_as_list)
-        return utils.geometry.Pointcloud(new_skeleton_as_list)
+        return adapted_skeleton, j
 
 
 def perform_icp_registration(

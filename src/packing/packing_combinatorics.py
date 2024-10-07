@@ -18,7 +18,8 @@ import numpy as np
 
 def compute_best_tree_element_matching(
     model_element: utils.geometry.Pointcloud,
-    skeleton: utils.geometry.Pointcloud,
+    reference_diameter: float,
+    tree: utils.tree.Tree,
     minimum_rmse: float,
 ) -> Tuple[utils.geometry.Pointcloud, utils.geometry.Pointcloud]:
     """
@@ -38,8 +39,10 @@ def compute_best_tree_element_matching(
     ```
     :param model_element: Pointcloud
         The model element point cloud to align to
-    :param skeleton: Pointcloud
-        The skeleton point cloud to align
+    :param reference_diameter: float
+        The diameter of the model element which we want to match to
+    :param tree: Tree
+        the tree whose skeleton we want to match to the model element
     :param minimum_rmse: float
         The minimum rmse to consider the alignment as valid
 
@@ -56,10 +59,25 @@ def compute_best_tree_element_matching(
             model_element.points[::-1] if i % 2 == 1 else model_element.points
         )
         for j in range(2):
-            skeleton.points = skeleton.points[::-1] if j % 2 == 1 else skeleton.points
-            adapted_skeleton = packing_manipulations.match_skeletons(
-                model_element, skeleton
+            tree.skeleton.points = (
+                tree.skeleton.points[::-1] if j % 2 == 1 else tree.skeleton.points
             )
+            tree.skeleton_circles = (
+                tree.skeleton_circles[::-1] if j % 2 == 1 else tree.skeleton_circles
+            )
+            adapted_skeleton, n_segments = packing_manipulations.match_skeletons(
+                model_element, tree.skeleton
+            )
+            if any(
+                circle[1] * 2 < 0.75 * reference_diameter
+                for circle in tree.skeleton_circles[:n_segments]
+            ):
+                continue
+            elif any(
+                circle[1] * 2 > 1.25 * reference_diameter
+                for circle in tree.skeleton_circles[:n_segments]
+            ):
+                continue
             if adapted_skeleton is None:
                 continue
             result = packing_manipulations.perform_icp_registration(
@@ -119,14 +137,18 @@ def find_best_tree_unoptimized(
         else:
             continue
         if (
-            tree.mean_diameter < 0.75 * reference_diameter
-            or tree.mean_diameter > 1.25 * reference_diameter
+            tree.mean_diameter < 0.5 * reference_diameter
+            or tree.mean_diameter
+            > 2
+            * reference_diameter  # we avoid considering trees that are too different in mean diameter from the references
         ):
             continue
         (
             best_skeleton_segment,
             best_tree_level_rmse,
-        ) = compute_best_tree_element_matching(model_element, tree.skeleton, np.inf)
+        ) = compute_best_tree_element_matching(
+            model_element, reference_diameter, tree, np.inf
+        )
 
         if (
             best_tree_level_rmse is not None
