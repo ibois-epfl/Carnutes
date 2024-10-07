@@ -101,9 +101,9 @@ def evaluate_unoptimized_tree_selection(reference_diameter: float = 0.2):
     csv_file_treewise.close()
 
     mean_RMSE = np.mean(RMSEs)
-    np.round(mean_RMSE, 4)
+    mean_RMSE = np.round(mean_RMSE, 4)
     with open("rmse_result.txt", "w") as f:
-        f.write(f"{mean_RMSE} [m]")
+        f.write(f"{mean_RMSE}")
 
     mean_tree_usage = np.mean(
         [
@@ -111,10 +111,10 @@ def evaluate_unoptimized_tree_selection(reference_diameter: float = 0.2):
             for tree_id in tree_number_usage
         ]
     )
-    np.round(mean_tree_usage, 4)
+    mean_tree_usage = np.round(mean_tree_usage, 4)
     mean_tree_usage = mean_tree_usage * 100
     with open("tree_usage_result.txt", "w") as f:
-        f.write(f"{mean_tree_usage} [%]")
+        f.write(f"{mean_tree_usage}")
 
 
 if __name__ == "__main__":
