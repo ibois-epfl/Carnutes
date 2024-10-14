@@ -1,6 +1,6 @@
 ![basic geometry test](https://github.com/ibois-epfl/Carnutes/actions/workflows/test_geo_basics.yml/badge.svg)
-![RMSE in meters](https://img.shields.io/badge/RMSE-0.0173-c7a8ad)
-![Tree Usage in percent ](https://img.shields.io/badge/Tree_Usage-63.31-c7a8ad)
+![RMSE in meters](https://img.shields.io/badge/RMSE_in_meters-0.0123-c7a8ad)
+![Tree Usage in percent ](https://img.shields.io/badge/Tree_Usage_in_percent-54.86-c7a8ad)
 
 # Carnutes🌳
 
