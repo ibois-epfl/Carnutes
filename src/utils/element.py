@@ -119,6 +119,7 @@ class Element(object):
                 best_tree,
                 best_target,
                 best_rmse,
+                best_init_rotation,
             ) = packing_combinatorics.find_best_tree_optimized(
                 reference_skeleton,
                 target_diameter,
@@ -131,6 +132,7 @@ class Element(object):
                 best_tree,
                 best_target,
                 best_rmse,
+                best_init_rotation,
             ) = packing_combinatorics.find_best_tree_unoptimized(
                 reference_skeleton,
                 target_diameter,
@@ -140,6 +142,6 @@ class Element(object):
             )
         if best_tree is None:
             print("No tree found. Skiping this element.")
-            return
+            return None, None, None
         best_tree = copy.deepcopy(best_tree)
-        return best_tree, best_rmse
+        return best_tree, best_rmse, best_init_rotation

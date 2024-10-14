@@ -50,9 +50,12 @@ def compute_best_tree_element_matching(
         The best fitting segment of the skeleton point cloud
     :return: best_rmse: float
         The rmse of the best fitting segment
+    :return: best_init_rotation: np.array
+        The rotation that was applied to the target skeleton to match the reference once both are reset to the origin
     """
     best_rmse = minimum_rmse
     best_skeleton = None
+    best_init_rotation = None
 
     for i in range(2):
         model_element.points = (
@@ -80,15 +83,17 @@ def compute_best_tree_element_matching(
                 continue
             if adapted_skeleton is None:
                 continue
-            result = packing_manipulations.perform_icp_registration(
+            result, init_rotation = packing_manipulations.perform_icp_registration(
                 model_element, adapted_skeleton, 20.0
             )
             if result.inlier_rmse < best_rmse:
                 best_rmse = result.inlier_rmse
                 best_skeleton = adapted_skeleton
-    if best_rmse is None:
-        return None, None
-    return best_skeleton, best_rmse
+                best_init_rotation = init_rotation
+
+    if best_rmse == minimum_rmse:
+        return None, None, None
+    return best_skeleton, best_rmse, best_init_rotation
 
 
 def find_best_tree_unoptimized(
@@ -126,6 +131,7 @@ def find_best_tree_unoptimized(
     reader = db_reader.DatabaseReader(database_path)
     n_tree = reader.get_num_trees()
     best_tree = None
+    best_init_rotation = None
 
     # initiallize the best rmse to infinity before the first iteration
     best_db_level_rmse = np.inf
@@ -146,6 +152,7 @@ def find_best_tree_unoptimized(
         (
             best_skeleton_segment,
             best_tree_level_rmse,
+            init_rotation,
         ) = compute_best_tree_element_matching(
             model_element, reference_diameter, tree, np.inf
         )
@@ -158,6 +165,7 @@ def find_best_tree_unoptimized(
             best_db_level_rmse = best_tree_level_rmse
             best_tree = tree
             best_skeleton = best_skeleton_segment
+            best_init_rotation = init_rotation
 
         if (
             best_db_level_rmse < 0.01
@@ -195,12 +203,13 @@ def find_best_tree_unoptimized(
                 selected_tree,
                 best_skeleton_segment,
                 best_db_level_rmse,
+                best_init_rotation,
             )
         return selected_tree
     else:
         reader.close()
         print("No tree found in find_best_tree, returning None")
-        return None, None, None
+        return None, None, None, None
 
 
 def find_best_tree_optimized(
@@ -238,6 +247,8 @@ def find_best_tree_optimized(
         The best fitting segment of the target point cloud. Only returned if return_rmse is True.
     :return: rmse: float
         The rmse of the best fitting tree. Only returned if return_rmse is True.
+    :return: best_init_rotation: np.array
+        The best initial rotation that was applied to the target skeleton to match the reference once both are reset to the origin
     """
     # unpack the database:
     reader = db_reader.DatabaseReader(database_path)
@@ -249,6 +260,7 @@ def find_best_tree_optimized(
     trees = []
     skeleton_segments = []
     tree_ids = []
+    best_init_rotations = []
 
     # iterate over the trees in the database
     for i in range(n_tree):
@@ -265,12 +277,14 @@ def find_best_tree_optimized(
         (
             best_skeleton_segment,
             best_tree_level_rmse,
+            best_init_rotation,
         ) = compute_best_tree_element_matching(model_element, tree.skeleton, np.inf)
 
         if best_tree_level_rmse is not None and best_tree_level_rmse is not np.inf:
             rmse.append(best_tree_level_rmse)
             trees.append(tree)
             skeleton_segments.append(best_skeleton_segment)
+            best_init_rotations.append(best_init_rotation)
             tree_ids.append(i)
 
     if len(rmse) == 0:
@@ -279,9 +293,15 @@ def find_best_tree_optimized(
             f"No tree were found in the database, but {optimisation_basis} are required"
         )
         return None, None, None
-    (sorted_rmse, sorted_trees, sorted_skeleton_segments, sorted_tree_ids,) = zip(
+    (
+        sorted_rmse,
+        sorted_trees,
+        sorted_skeleton_segments,
+        sorted_tree_ids,
+        sorted_best_init_rotation,
+    ) = zip(
         *sorted(
-            zip(rmse, trees, skeleton_segments, tree_ids),
+            zip(rmse, trees, skeleton_segments, tree_ids, best_init_rotations),
             key=lambda x: rmse,
         )
     )
@@ -289,15 +309,22 @@ def find_best_tree_optimized(
     n_best_rmse = sorted_rmse[:optimisation_basis]
     n_best_skeleton = sorted_skeleton_segments[:optimisation_basis]
     n_best_tree_ids = sorted_tree_ids[:optimisation_basis]
-
+    n_best_init_rotations = sorted_best_init_rotation[:optimisation_basis]
     (
         sorted_best_tree,
         sorted_best_db_level_rmse,
         sorted_best_skeleton,
         sorted_best_tree_id,
+        sorted_best_init_rotation,
     ) = zip(
         *sorted(
-            zip(n_best_trees, n_best_rmse, n_best_skeleton, n_best_tree_ids),
+            zip(
+                n_best_trees,
+                n_best_rmse,
+                n_best_skeleton,
+                n_best_tree_ids,
+                n_best_init_rotations,
+            ),
             key=lambda x: x[0].height,
         )
     )  # get the tree with the smallest height among the five best fitting trees
@@ -306,6 +333,7 @@ def find_best_tree_optimized(
     best_db_level_rmse = sorted_best_db_level_rmse[0]
     best_skeleton = sorted_best_skeleton[0]
     best_tree_id = sorted_best_tree_id[0]
+    best_init_rotation = sorted_best_init_rotation[0]
 
     if best_tree is not None:
         # remove the best tree from the database
@@ -338,6 +366,7 @@ def find_best_tree_optimized(
                 selected_tree,
                 best_skeleton_segment,
                 best_db_level_rmse,
+                best_init_rotation,
             )
         reader.close()
         return selected_tree
@@ -345,7 +374,7 @@ def find_best_tree_optimized(
     else:
         reader.close()
         print("No tree found in find_best_tree, returning None")
-        return None, None, None, None
+        return None, None, None, None, None
 
 
 def tree_based_iterative_matching(

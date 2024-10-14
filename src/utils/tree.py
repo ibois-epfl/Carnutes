@@ -119,11 +119,13 @@ class Tree(persistent.Persistent):
 
         return self.skeleton
 
-    def align_to_skeleton(self, reference_skeleton):
+    def align_to_skeleton(self, reference_skeleton, initial_rotation=None):
         """
         Align the tree to a reference skeleton using ICP
         :param reference_skeleton: Pointcloud
             The reference skeleton to align to
+        :param initial_rotation: np.array (4,4), optional
+            The initial rotation matrix to use for the ICP registration. None by default.
         """
         tree_pc = o3d.geometry.PointCloud()
         tree_pc.points = o3d.utility.Vector3dVector(np.array(self.point_cloud.points))
@@ -134,35 +136,43 @@ class Tree(persistent.Persistent):
         reference_pc.points = o3d.utility.Vector3dVector(
             np.array(reference_skeleton.points)
         )
+        reference_pc.estimate_normals()
 
-        # all_points_ref = np.asarray(reference_pc.points)
-        # for i in range(len(all_points_ref)):
-        #     print(np.asarray(all_points_ref[i]))
-        # print("And using as skeleton: ", skeleton_pc, "with points:")
-        # all_points_skel = np.asarray(skeleton_pc.points)
-        # for i in range(len(all_points_skel)):
-        #     print(np.asarray(all_points_skel[i]))
+        t_origin_to_reference = np.eye(4)
+        t_origin_to_reference[0, 3] = reference_pc.points[0][0]
+        t_origin_to_reference[1, 3] = reference_pc.points[0][1]
+        t_origin_to_reference[2, 3] = reference_pc.points[0][2]
 
-        initial_translation = np.identity(4)
-        initial_translation[:3, 3] = np.mean(
-            np.asarray(reference_pc.points), axis=0
-        ) - np.mean(np.asarray(skeleton_pc.points), axis=0)
-        tree_pc.transform(initial_translation)
+        t_skeleton_to_origin = np.eye(4)
+        t_skeleton_to_origin[0, 3] = -skeleton_pc.points[0][0]
+        t_skeleton_to_origin[1, 3] = -skeleton_pc.points[0][1]
+        t_skeleton_to_origin[2, 3] = -skeleton_pc.points[0][2]
+
+        tree_pc.translate(-skeleton_pc.points[0])
+        skeleton_pc.translate(-skeleton_pc.points[0])
+        reference_pc.translate(-reference_pc.points[0])
+
+        initial_rotation = find_rotation_matrix_between_skeletons(
+            reference_pc, skeleton_pc
+        )
 
         convergence_criteria = o3d.pipelines.registration.ICPConvergenceCriteria(
-            relative_fitness=1.000000e-03, max_iteration=40, relative_rmse=1.000000e-03
+            max_iteration=5, relative_rmse=1.000000e-06
         )
 
         result = o3d.pipelines.registration.registration_icp(
             source=skeleton_pc,
             target=reference_pc,
-            init=initial_translation,
-            max_correspondence_distance=10.0,
+            init=initial_rotation,
+            max_correspondence_distance=20.0,
             criteria=convergence_criteria,
         )
-
-        transformation = result.transformation
-        # print("Transformation matrix is ", transformation)
+        print(
+            f"rmse is {result.inlier_rmse}  and fitness is {result.fitness} after latest icp in tree.py, align skeletons of {len(skeleton_pc.points)} and {len(reference_pc.points)} points"
+        )
+        transformation = np.dot(
+            t_origin_to_reference, np.dot(result.transformation, t_skeleton_to_origin)
+        )
         tree_pc = copy.deepcopy(tree_pc)
 
         # Assuming an affine transformation
@@ -232,6 +242,7 @@ class Tree(persistent.Persistent):
         new_skeleton = []
         new_points = []
         new_colors = []
+        new_circles = []
         if delta_x > delta_y and delta_x > delta_z:  # meaning that the main axis is x
             for i, point in enumerate(self.point_cloud.points):
                 if point[0] < x_min_bounds or x_max_bounds < point[0]:
@@ -240,6 +251,9 @@ class Tree(persistent.Persistent):
             for point in self.skeleton.points:
                 if point[0] < x_min_bounds or x_max_bounds < point[0]:
                     new_skeleton.append(point)
+            for circle in self.skeleton_circles:
+                if circle[0][0] < x_min_bounds or x_max_bounds < circle[0][0]:
+                    new_circles.append(circle)
         elif delta_y > delta_x and delta_y > delta_z:  # meaning that the main axis is y
             for i, point in enumerate(self.point_cloud.points):
                 if point[1] < y_min_bounds or y_max_bounds < point[1]:
@@ -248,6 +262,9 @@ class Tree(persistent.Persistent):
             for point in self.skeleton.points:
                 if point[1] < y_min_bounds or y_max_bounds < point[1]:
                     new_skeleton.append(point)
+            for circle in self.skeleton_circles:
+                if circle[0][1] < y_min_bounds or y_max_bounds < circle[0][1]:
+                    new_circles.append(circle)
         elif delta_z > delta_x and delta_z > delta_y:  # meaning that the main axis is z
             for i, point in enumerate(self.point_cloud.points):
                 if point[2] < z_min_bounds or z_max_bounds < point[2]:
@@ -256,9 +273,13 @@ class Tree(persistent.Persistent):
             for point in self.skeleton.points:
                 if point[2] < z_min_bounds or z_max_bounds < point[2]:
                     new_skeleton.append(point)
+            for circle in self.skeleton_circles:
+                if circle[0][2] < z_min_bounds or z_max_bounds < circle[0][2]:
+                    new_circles.append(circle)
         self.point_cloud.points = new_points
         self.point_cloud.colors = new_colors
         self.skeleton.points = new_skeleton
+        self.skeleton_circles = new_circles
 
         if len(self.point_cloud.points) > 1:
             self.height = max([point[2] for point in self.point_cloud.points]) - min(

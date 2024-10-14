@@ -6,6 +6,7 @@ import copy
 
 import utils.database_reader as db_reader
 import utils.geometry
+import utils.geometrical_operations
 import utils.tree
 
 import open3d as o3d
@@ -113,6 +114,8 @@ def perform_icp_registration(
 
     :return: result: o3d.pipelines.registration.RegistrationResult
         The result of the icp registration
+    :return: initial_rotation: np.array
+        The initial rotation matrix used for the icp registration. It aligns the skeleton to the reference once both have been re-located to the origin.
     """
     source_pc = o3d.geometry.PointCloud()
     source_pc.points = o3d.utility.Vector3dVector(np.array(source_skeleton.points))
@@ -122,25 +125,27 @@ def perform_icp_registration(
     target_pc.points = o3d.utility.Vector3dVector(np.array(target_skeleton.points))
     target_pc.estimate_normals()
 
-    # initial translation
-    initial_translation = np.identity(4)
-    translation_vector = np.mean(target_skeleton.points, axis=0) - np.mean(
-        source_skeleton.points, axis=0
+    # translation to origin
+    source_pc.translate(-source_pc.points[0])
+    target_pc.translate(-target_pc.points[0])
+
+    # initial rotation
+    initial_rotation = (
+        utils.geometrical_operations.find_rotation_matrix_between_skeletons(
+            target_pc, source_pc
+        )
     )
-    initial_translation[0, 3] = translation_vector[0]
-    initial_translation[1, 3] = translation_vector[1]
-    initial_translation[2, 3] = translation_vector[2]
 
     convergence_criteria = o3d.pipelines.registration.ICPConvergenceCriteria(
         max_iteration=5,
-        relative_rmse=1e-3,
+        relative_rmse=1e-6,
     )
 
     result = o3d.pipelines.registration.registration_icp(
         source=source_pc,
         target=target_pc,
         max_correspondence_distance=max_correspondence_distance,
-        init=initial_translation,
+        init=initial_rotation,
         criteria=convergence_criteria,
     )
-    return result
+    return result, result.transformation
