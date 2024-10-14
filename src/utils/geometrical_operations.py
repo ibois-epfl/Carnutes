@@ -83,3 +83,62 @@ def fit_circle_with_open3d(
     center_3d = centroid + center_2d[0] * vh[0, :3] + center_2d[1] * vh[1, :3]
 
     return center_3d, radius
+
+
+def find_rotation_matrix_between_skeletons(first_skeleton, second_skeleton) -> int:
+    """
+    Find the rotation angle between two skeletons
+
+    :param first_skeleton: Pointcloud
+        The first skeleton
+    :param second_skeleton: Pointcloud
+        The second skeleton
+
+    :return: rotation matrix
+        The 4x4 rotation matrix from the first to the second skeleton
+    """
+    rotation_matrix = np.identity(4)
+
+    vector_for_angle_calculation_1 = np.array(first_skeleton.points[-1]) - np.array(
+        first_skeleton.points[0]
+    )
+    vector_for_angle_calculation_2 = np.array(second_skeleton.points[-1]) - np.array(
+        second_skeleton.points[0]
+    )
+    angle = -np.arccos(
+        np.dot(vector_for_angle_calculation_1, vector_for_angle_calculation_2)
+        / (
+            np.linalg.norm(vector_for_angle_calculation_1)
+            * np.linalg.norm(vector_for_angle_calculation_2)
+        )
+    )
+
+    rotation_axis = np.cross(
+        vector_for_angle_calculation_1, vector_for_angle_calculation_2
+    )
+    rotation_axis = rotation_axis / np.linalg.norm(rotation_axis)
+
+    # https://en.wikipedia.org/wiki/Rotation_matrix#Rotation_matrix_from_axis_and_angle
+    rotation_matrix[0, 0] = rotation_axis[0] ** 2 * (1 - np.cos(angle)) + np.cos(angle)
+    rotation_matrix[0, 1] = rotation_axis[0] * rotation_axis[1] * (
+        1 - np.cos(angle)
+    ) - rotation_axis[2] * np.sin(angle)
+    rotation_matrix[0, 2] = rotation_axis[0] * rotation_axis[2] * (
+        1 - np.cos(angle)
+    ) + rotation_axis[1] * np.sin(angle)
+    rotation_matrix[1, 0] = rotation_axis[1] * rotation_axis[0] * (
+        1 - np.cos(angle)
+    ) + rotation_axis[2] * np.sin(angle)
+    rotation_matrix[1, 1] = rotation_axis[1] ** 2 * (1 - np.cos(angle)) + np.cos(angle)
+    rotation_matrix[1, 2] = rotation_axis[1] * rotation_axis[2] * (
+        1 - np.cos(angle)
+    ) - rotation_axis[0] * np.sin(angle)
+    rotation_matrix[2, 0] = rotation_axis[2] * rotation_axis[0] * (
+        1 - np.cos(angle)
+    ) - rotation_axis[1] * np.sin(angle)
+    rotation_matrix[2, 1] = rotation_axis[2] * rotation_axis[1] * (
+        1 - np.cos(angle)
+    ) + rotation_axis[0] * np.sin(angle)
+    rotation_matrix[2, 2] = rotation_axis[2] ** 2 * (1 - np.cos(angle)) + np.cos(angle)
+
+    return rotation_matrix
