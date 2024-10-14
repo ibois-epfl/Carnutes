@@ -63,7 +63,9 @@ def main():
         # at this point the reference_pc_as_list should contain the points, but they are not ordered. We need to order them.
         reference_pc_as_list = geometry.sort_points(element.locations)
         reference_skeleton = geometry.Pointcloud(reference_pc_as_list)
-        best_tree, best_rmse = element.allocate_trees(db_path=db_path, optimized=False)
+        best_tree, best_rmse, init_rotation = element.allocate_trees(
+            db_path=db_path, optimized=False
+        )
         if best_tree is None:
             print("No tree found. Skiping this element.")
             continue
@@ -71,7 +73,7 @@ def main():
         all_rmse.append(best_rmse)
         best_tree = copy.deepcopy(best_tree)
 
-        best_tree.align_to_skeleton(reference_skeleton)
+        best_tree.align_to_skeleton(reference_skeleton, init_rotation)
 
         # Create a bounding volume for the element
         bounding_volume = element.create_bounding_cylinder(radius=1)
