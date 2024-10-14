@@ -61,6 +61,7 @@ def evaluate_unoptimized_tree_selection(reference_diameter: float = 0.2):
             best_tree,
             best_target,
             best_rmse,
+            best_init_rotation,
         ) = packing_combinatorics.find_best_tree_unoptimized(
             element_pc,
             reference_diameter=reference_diameter,
