@@ -16,17 +16,16 @@ Lastly, this repository is a quick python experiment, has been swiftly developed
 
 ## What is Carnutes ?
 
+Carnutes is an ensemble of commands for Rhino 8 CAD software that make roundwood design easier.
+
 This project enables the user to:
 - Dispose of a database of simple tree trunks geometries.
 - Match the tree trunk geometries with an 3D sketch of an architectural design.
 
-Check out this repo's wiki for the documentation of individual commands
+Check out [this repo's wiki](./wiki) for the documentation of individual commands
 
 <p align="center">
     <img src="./assets/images/07_09_2024_demo_Carnutes.gif" height="400" />
-
-<p align="center">
-    <img src="./assets/images/05_09_2024_Carnutes_eval.png" height="400" >
 
 # Install and use
 This tool is intended to be used in Rhino 8.
