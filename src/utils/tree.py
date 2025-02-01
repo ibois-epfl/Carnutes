@@ -1,6 +1,7 @@
 """
 Module storing the Tree class and the geometry classes
 """
+
 #! python3
 
 import persistent

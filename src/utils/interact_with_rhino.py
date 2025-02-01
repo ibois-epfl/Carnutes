@@ -14,11 +14,15 @@ def determinate_element_type(geo):
     return (
         element.ElementType.Brep
         if isinstance(geo, Rhino.Geometry.Brep)
-        else element.ElementType.Line
-        if isinstance(geo, Rhino.Geometry.Curve)
-        else element.ElementType.Point
-        if isinstance(geo, Rhino.Geometry.Point3d)
-        else None
+        else (
+            element.ElementType.Line
+            if isinstance(geo, Rhino.Geometry.Curve)
+            else (
+                element.ElementType.Point
+                if isinstance(geo, Rhino.Geometry.Point3d)
+                else None
+            )
+        )
     )
 
 

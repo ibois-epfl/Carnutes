@@ -1,6 +1,7 @@
 """
 This is a dummy function, to test out the bones of the project.
 """
+
 #! python3
 
 # r: numpy==1.26.4

@@ -1,6 +1,7 @@
 """
 This module contains the tree manipulation code for tree combinatorics.
 """
+
 import os
 import copy
 
