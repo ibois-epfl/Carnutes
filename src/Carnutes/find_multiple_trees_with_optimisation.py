@@ -48,6 +48,16 @@ def crop(tree: tree, bounding_volume: Rhino.Geometry.Brep):
 
 
 def main():
+    # ask the user for the optimisation basis:
+    optimisation_basis = 3
+    optimisation_basis = Rhino.Input.RhinoGet.GetInteger(
+        "please provide the basis for the optimisation. The higher the number, the longer the calculation, but potentially the tree consumption will be lower\n default = 3",
+        True,
+        optimisation_basis,
+        0,
+        30,
+    )
+
     # Create the model
     current_model = interact_with_rhino.create_model_from_rhino_selection()
 
