@@ -7,7 +7,7 @@ import numpy as np
 
 current_dir = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(current_dir + "/..")
-sys.path.append(current_dir + "/../src")
+sys.path.append(current_dir + "/../src/Carnutes")
 
 from src.utils import geometry as geo
 from src.utils import database_reader
