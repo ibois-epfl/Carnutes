@@ -279,7 +279,9 @@ def find_best_tree_optimized(
             best_skeleton_segment,
             best_tree_level_rmse,
             best_init_rotation,
-        ) = compute_best_tree_element_matching(model_element, tree.skeleton, np.inf)
+        ) = compute_best_tree_element_matching(
+            model_element, reference_diameter, tree, np.inf
+        )
 
         if best_tree_level_rmse is not None and best_tree_level_rmse is not np.inf:
             rmse.append(best_tree_level_rmse)

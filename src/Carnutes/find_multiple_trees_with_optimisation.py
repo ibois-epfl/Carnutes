@@ -67,16 +67,14 @@ def main():
         # at this point the reference_pc_as_list should contain the points, but they are not ordered. We need to order them.
         reference_pc_as_list = geometry.sort_points(reference_pc_as_list)
         reference_skeleton = geometry.Pointcloud(reference_pc_as_list)
-        (
-            best_tree,
-            best_target,
-            best_rmse,
-        ) = packing_combinatorics.find_best_tree_optimized(
-            reference_skeleton,
-            target_diameter,
-            db_path,
-            optimisation_basis=3,
-            return_rmse=True,
+        (best_tree, best_target, best_rmse, best_init_rotation) = (
+            packing_combinatorics.find_best_tree_optimized(
+                reference_skeleton,
+                target_diameter,
+                db_path,
+                optimisation_basis=3,
+                return_rmse=True,
+            )
         )
         if best_tree is None:
             print("No tree found. Skiping this element.")
