@@ -48,7 +48,7 @@ def evaluate_unoptimized_tree_selection(reference_diameter: float = 0.2):
 
     db_path = (
         os.path.dirname(os.path.realpath(__file__))
-        + "/../src/database/tree_database.fs"
+        + "/../src/Carnutes/database/tree_database.fs"
     )
     list_of_elements_locations = generate_elements.generate_simple_frame(5)
     for element_locations in list_of_elements_locations:
@@ -122,6 +122,6 @@ if __name__ == "__main__":
 
     reset_database(
         voxel_size=0.03,
-        working_dir=os.path.dirname(os.path.realpath(__file__)) + "/../src",
+        working_dir=os.path.dirname(os.path.realpath(__file__)) + "/../src/Carnutes",
     )
     evaluate_unoptimized_tree_selection()
