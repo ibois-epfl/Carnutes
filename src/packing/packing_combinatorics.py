@@ -105,7 +105,7 @@ def find_best_tree_unoptimized(
 ):
     """
     performs icp registrations bewteen the reference skeleton and the list of targets,
-    while checking that the diameter is within 10% of the reference value. The skeleton with the best fit is returned.
+    while checking that the diameter is within 25% of the reference value. The skeleton with the best fit is returned.
     Here there is no optimization basd on the lengths of the elements chosen in the database (to choose the shortest elements first).
     The database is updated by removing from it the part of the best fitting skeleton.
 
@@ -143,9 +143,9 @@ def find_best_tree_unoptimized(
         else:
             continue
         if (
-            tree.mean_diameter < 0.5 * reference_diameter
+            tree.mean_diameter < 0.75 * reference_diameter
             or tree.mean_diameter
-            > 2
+            > 1.25
             * reference_diameter  # we avoid considering trees that are too different in mean diameter from the references
         ):
             continue
@@ -222,8 +222,9 @@ def find_best_tree_optimized(
 ):
     """
     performs icp registrations bewteen the reference skeleton and the list of targets,
-    while checking that the diameter is within 10% of the reference value. The skeleton with the best fit is returned.
-    Here there is no optimization basd on the lengths of the elements chosen in the database (to choose the shortest elements first).
+    while checking that the diameter is within 25% of the reference value. The skeleton with the best fit is returned.
+    Here there is an optimization made, based on the lengths of the elements chosen in the database.
+    The @optimisation_basis best fitting trees are considered, and the one leaving the least leftover is selected.
     The database is updated by removing from it the part of the best fitting skeleton.
 
     :param reference_skeleton: Pointcloud
