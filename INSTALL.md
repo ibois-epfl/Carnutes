@@ -1,7 +1,8 @@
 To use this tool (we avoid the term plugin, as it isn't a proper plugin), you need to follow those two steps. This solution is not very elegant but is adapted to the time available for this project 🏃‍♀️‍➡️.
 
 # 2-step install:
-1) Add the src folder with the codes to the "scripts" folder of Rhino. (At every new release, the old files must be deleted). Please note that the Library (MacOS) and AppData (Windows) folders are "hidden folders". On MacOS press command+shift+. to reveal the hidden folders. On Windows 10 or 11, [see this link](https://support.microsoft.com/en-us/windows/view-hidden-files-and-folders-in-windows-97fbc472-c603-9d90-91d0-1166d1d9f4b5#WindowsVersion=Windows_11)
+1) Copy-paste the Carnutes folder inside ``./src`` to the "scripts" folder of Rhino, whose path is one of the two hereunder (depending on your platform). . Please note that the Library (MacOS) and AppData (Windows) folders, where the folder destination are located, are "hidden folders". On MacOS press command+shift+. to reveal the hidden folders. On Windows 10 or 11, [see this link](https://support.microsoft.com/en-us/windows/view-hidden-files-and-folders-in-windows-97fbc472-c603-9d90-91d0-1166d1d9f4b5#WindowsVersion=Windows_11)
+(At every new release, the Carnutes folder should be manually replaced)
 
 MacOS path:
 ```
