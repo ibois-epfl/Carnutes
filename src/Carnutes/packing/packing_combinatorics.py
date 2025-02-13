@@ -380,23 +380,6 @@ def find_best_tree_optimized(
         return None, None, None, None, None
 
 
-def tree_based_iterative_matching(
-    model_elements: List[utils.geometry.Pointcloud], database_path: str
-):
-    """
-    Iterating tree per tree, we find the best reference skeleton (element in the model) that matches the tree skeleton.
-
-    :param model_elements: List[Pointcloud]
-        The list of elements to match to
-    :param database_path: str
-        The path to the database. The database is updated by removing from it the part of the best fitting skeleton.
-
-    :return: best_tree_parts: List[Tree]
-        The list of best fitting tree parts, in the same order as the reference_skeletons.
-    """
-    pass
-
-
 def element_based_iterative_matching(
     model_elements: List[utils.geometry.Pointcloud], database_path: str
 ):
