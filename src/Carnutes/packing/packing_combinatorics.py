@@ -398,11 +398,3 @@ def element_based_iterative_matching(
         list_of_rmse.append(rmse)
         list_of_best_trees.append(best_tree)
     return list_of_best_trees, list_of_rmse
-
-
-def combinatorics_matching():
-    """
-    Smart matching of elements and trees.
-    The method is still TBD.
-    """
-    pass
