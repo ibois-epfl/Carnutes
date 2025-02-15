@@ -76,6 +76,7 @@ def mesh_from_rhino_pointcloud(
 ) -> Rhino.Geometry.Mesh:
     """
     Mesh a Rhino.Geometry.PointCloud object using 3 different meshing methods.
+    Note that by experience, the alpha method is the most reliable with my pointclouds.
 
     :param tree: rhino_pointcloud
         The Rhino point cloud to mesh.
@@ -92,12 +93,14 @@ def mesh_from_rhino_pointcloud(
         [[point.X, point.Y, point.Z] for point in rhino_pointcloud]
     )
     if meshing_method == MeshingMethod.POISSON:
+        pcd.estimate_normals()
         o3d_mesh, densities = o3d.geometry.TriangleMesh.create_from_point_cloud_poisson(
-            pcd, depth=9, width=0, scale=1.1, linear_fit=False
+            pcd, depth=3, width=0, scale=1.1, linear_fit=False
         )
     elif meshing_method == MeshingMethod.BALL_PIVOT:
+        pcd.estimate_normals()
         o3d_mesh = o3d.geometry.TriangleMesh.create_from_point_cloud_ball_pivoting(
-            pcd, o3d.utility.DoubleVector([0.01, 0.1])
+            pcd, o3d.utility.DoubleVector([0.09, 0.25])
         )
     elif meshing_method == MeshingMethod.ALPHA:
         o3d_mesh = o3d.geometry.TriangleMesh.create_from_point_cloud_alpha_shape(
