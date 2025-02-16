@@ -125,3 +125,24 @@ def generic_object_getter(
         print("No object selected.")
         return
     return [go.Object(i) for i in range(go.ObjectCount)]
+
+
+def get_number(message: str, default: float):
+    """
+    Get a number from the user.
+
+    :param message: str
+        The message to show to the user.
+    :param default: float
+        The default value to show to the user.
+    :return: float
+        The number entered by the user.
+    """
+    number = Rhino.Input.Custom.GetNumber()
+    number.SetCommandPrompt(message)
+    number.SetDefaultNumber(default)
+    number.Get()
+    if number.CommandResult() != Rhino.Commands.Result.Success:
+        print("No number entered.")
+        return
+    return number.Number

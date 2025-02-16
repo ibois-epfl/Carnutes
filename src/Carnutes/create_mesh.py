@@ -21,9 +21,15 @@ def main():
         .Object()
         .Geometry
     )
+
+    # Get alpha value from user
+    alpha = interact_with_rhino.get_number(
+        "Enter the alpha value for the meshing algorithm", 2.0
+    )
+
     # Create mesh
     mesh = meshing.mesh_from_rhino_pointcloud(
-        pointcloud, meshing.MeshingMethod.ALPHA, to_rhino=True
+        pointcloud, meshing.MeshingMethod.ALPHA, to_rhino=True, alpha=alpha
     )
 
     # Add mesh to Rhino

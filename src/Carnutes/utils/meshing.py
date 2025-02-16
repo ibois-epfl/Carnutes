@@ -72,6 +72,7 @@ def mesh_from_tree_pointcloud(
 def mesh_from_rhino_pointcloud(
     rhino_pointcloud: Rhino.Geometry.PointCloud,
     meshing_method: MeshingMethod,
+    alpha: float = 2,
     to_rhino: bool = False,
 ) -> Rhino.Geometry.Mesh:
     """
