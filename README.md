@@ -22,7 +22,7 @@ This project enables the user to:
 - Dispose of a database of simple tree trunks geometries.
 - Match the tree trunk geometries with an 3D sketch of an architectural design.
 
-Check out [this repo's wiki](./wiki) for the documentation of individual commands
+Check out [this repo's wiki](https://github.com/ibois-epfl/Carnutes/wiki) for the documentation of individual commands
 
 <p align="center">
     <img src="./assets/images/07_09_2024_demo_Carnutes.gif" height="400" />
