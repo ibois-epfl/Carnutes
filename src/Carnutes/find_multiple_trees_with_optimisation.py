@@ -9,10 +9,10 @@ import copy
 import System
 import time
 
-from utils import model, tree, geometry, interact_with_rhino, database_reader
+from utils import tree, geometry, interact_with_rhino, conversions
 from utils import element as elem
 from utils.tree import Tree
-from packing import packing_manipulations, packing_combinatorics
+from packing import packing_combinatorics
 
 import numpy as np
 import Rhino
@@ -48,20 +48,27 @@ def crop(tree: tree, bounding_volume: Rhino.Geometry.Brep):
 
 
 def main():
+    # ask the user for the optimisation basis:
+    optimisation_basis = 3
+    optimisation_basis = Rhino.Input.RhinoGet.GetInteger(
+        "please provide the basis for the optimisation. The higher the number, the longer the calculation, but potentially the tree consumption will be lower\n default = 3",
+        True,
+        optimisation_basis,
+        0,
+        30,
+    )
+
     # Create the model
     current_model = interact_with_rhino.create_model_from_rhino_selection()
 
     # For each element in the model, replace it with a point cloud. Starting from the elements with the highest degree.
-    elements = current_model.elements
-    elements.sort(key=lambda x: x.degree, reverse=True)
-    for element in elements:
-        print(f"Element {element.GUID} has degree {element.degree}")
-
     db_path = os.path.dirname(os.path.realpath(__file__)) + "/database/tree_database.fs"
 
     all_rmse = []
 
-    for element in elements:
+    for element in current_model.elements:
+        if element.type == elem.ElementType.Point:
+            continue
         reference_pc_as_list = []
         element_guid = element.GUID
         target_diameter = element.diameter
@@ -70,13 +77,14 @@ def main():
         # at this point the reference_pc_as_list should contain the points, but they are not ordered. We need to order them.
         reference_pc_as_list = geometry.sort_points(reference_pc_as_list)
         reference_skeleton = geometry.Pointcloud(reference_pc_as_list)
-        (
-            best_tree,
-            best_reference,
-            best_target,
-            best_rmse,
-        ) = packing_combinatorics.find_best_tree(
-            reference_skeleton, target_diameter, db_path, return_rmse=True
+        (best_tree, best_target, best_rmse, best_init_rotation) = (
+            packing_combinatorics.find_best_tree_optimized(
+                reference_skeleton,
+                target_diameter,
+                db_path,
+                optimisation_basis=3,
+                return_rmse=True,
+            )
         )
         if best_tree is None:
             print("No tree found. Skiping this element.")
@@ -92,27 +100,7 @@ def main():
         crop(best_tree, bounding_volume)
         best_tree.create_mesh()
 
-        tree_mesh = Rhino.Geometry.Mesh()
-        for i in range(len(best_tree.mesh.vertices)):
-            tree_mesh.Vertices.Add(
-                best_tree.mesh.vertices[i][0],
-                best_tree.mesh.vertices[i][1],
-                best_tree.mesh.vertices[i][2],
-            )
-        for i in range(len(best_tree.mesh.faces)):
-            tree_mesh.Faces.AddFace(
-                int(best_tree.mesh.faces[i][0]),
-                int(best_tree.mesh.faces[i][1]),
-                int(best_tree.mesh.faces[i][2]),
-            )
-        for i in range(len(best_tree.mesh.colors)):
-            tree_mesh.VertexColors.Add(
-                System.Drawing.Color.FromArgb(
-                    int(best_tree.mesh.colors[i][0] * 255),
-                    int(best_tree.mesh.colors[i][1] * 255),
-                    int(best_tree.mesh.colors[i][2] * 255),
-                )
-            )
+        tree_mesh = conversions.convert_carnutes_mesh_to_rhino_mesh(best_tree.mesh)
         scriptcontext.doc.Objects.AddMesh(tree_mesh)
 
     return all_rmse

@@ -1,6 +1,7 @@
 """
 module for the Element class. those elements make up the model
 """
+
 from dataclasses import dataclass
 from enum import Enum
 import copy

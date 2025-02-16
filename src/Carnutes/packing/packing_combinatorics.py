@@ -105,7 +105,7 @@ def find_best_tree_unoptimized(
 ):
     """
     performs icp registrations bewteen the reference skeleton and the list of targets,
-    while checking that the diameter is within 10% of the reference value. The skeleton with the best fit is returned.
+    while checking that the diameter is within 25% of the reference value. The skeleton with the best fit is returned.
     Here there is no optimization basd on the lengths of the elements chosen in the database (to choose the shortest elements first).
     The database is updated by removing from it the part of the best fitting skeleton.
 
@@ -143,9 +143,9 @@ def find_best_tree_unoptimized(
         else:
             continue
         if (
-            tree.mean_diameter < 0.5 * reference_diameter
+            tree.mean_diameter < 0.75 * reference_diameter
             or tree.mean_diameter
-            > 2
+            > 1.25
             * reference_diameter  # we avoid considering trees that are too different in mean diameter from the references
         ):
             continue
@@ -222,8 +222,9 @@ def find_best_tree_optimized(
 ):
     """
     performs icp registrations bewteen the reference skeleton and the list of targets,
-    while checking that the diameter is within 10% of the reference value. The skeleton with the best fit is returned.
-    Here there is no optimization basd on the lengths of the elements chosen in the database (to choose the shortest elements first).
+    while checking that the diameter is within 25% of the reference value. The skeleton with the best fit is returned.
+    Here there is an optimization made, based on the lengths of the elements chosen in the database.
+    The @optimisation_basis best fitting trees are considered, and the one leaving the least leftover is selected.
     The database is updated by removing from it the part of the best fitting skeleton.
 
     :param reference_skeleton: Pointcloud
@@ -278,7 +279,9 @@ def find_best_tree_optimized(
             best_skeleton_segment,
             best_tree_level_rmse,
             best_init_rotation,
-        ) = compute_best_tree_element_matching(model_element, tree.skeleton, np.inf)
+        ) = compute_best_tree_element_matching(
+            model_element, reference_diameter, tree, np.inf
+        )
 
         if best_tree_level_rmse is not None and best_tree_level_rmse is not np.inf:
             rmse.append(best_tree_level_rmse)
@@ -377,23 +380,6 @@ def find_best_tree_optimized(
         return None, None, None, None, None
 
 
-def tree_based_iterative_matching(
-    model_elements: List[utils.geometry.Pointcloud], database_path: str
-):
-    """
-    Iterating tree per tree, we find the best reference skeleton (element in the model) that matches the tree skeleton.
-
-    :param model_elements: List[Pointcloud]
-        The list of elements to match to
-    :param database_path: str
-        The path to the database. The database is updated by removing from it the part of the best fitting skeleton.
-
-    :return: best_tree_parts: List[Tree]
-        The list of best fitting tree parts, in the same order as the reference_skeletons.
-    """
-    pass
-
-
 def element_based_iterative_matching(
     model_elements: List[utils.geometry.Pointcloud], database_path: str
 ):
@@ -412,11 +398,3 @@ def element_based_iterative_matching(
         list_of_rmse.append(rmse)
         list_of_best_trees.append(best_tree)
     return list_of_best_trees, list_of_rmse
-
-
-def combinatorics_matching():
-    """
-    Smart matching of elements and trees.
-    The method is still TBD.
-    """
-    pass

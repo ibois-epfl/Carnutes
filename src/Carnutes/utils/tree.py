@@ -1,6 +1,7 @@
 """
 Module storing the Tree class and the geometry classes
 """
+
 #! python3
 
 import persistent
@@ -9,6 +10,7 @@ import copy
 
 from utils.geometry import Pointcloud, Mesh
 from utils.geometrical_operations import *
+import utils.meshing as meshing
 
 import numpy as np
 import open3d as o3d
@@ -195,24 +197,15 @@ class Tree(persistent.Persistent):
 
         self.skeleton = Pointcloud(new_skeleton_as_list)
 
-    def create_mesh(self, radius=0.25):
+    def create_mesh(self, alpha=2):
         """
         Create a mesh from the point cloud and adds it to the tree instance
 
         :param radius: float, optional. The radius of the ball pivoting algorithm. The default is 0.25.
         """
-        pcd = o3d.geometry.PointCloud()
-        pcd.points = o3d.utility.Vector3dVector(self.point_cloud.points)
-        pcd.estimate_normals()
-        # mesh = o3d.geometry.TriangleMesh.create_from_point_cloud_ball_pivoting(pcd, o3d.utility.DoubleVector([radius, radius * 2]))
-        mesh = o3d.geometry.TriangleMesh.create_from_point_cloud_alpha_shape(pcd, 2)
-        mesh.compute_vertex_normals()
-        mesh.compute_triangle_normals()
-
-        vertices = np.asarray(mesh.vertices)
-        faces = np.asarray(mesh.triangles)
-        colors = np.asarray(mesh.vertex_colors)
-        self.mesh = Mesh(vertices, faces, colors)
+        self.mesh = meshing.mesh_from_tree_pointcloud(
+            self.point_cloud, meshing.MeshingMethod.ALPHA, alpha=alpha
+        )
 
     def trim(self, skeleton_to_remove):
         """

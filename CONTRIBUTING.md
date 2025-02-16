@@ -5,17 +5,10 @@ To contribute to this repo, open a new branch, create a pull request, push your 
 
 The commit message guidelines are:
 ```bash
-git commit -m "ADD:<description>"         <--- for adding new elements
-git commit -m "FIX:<description>"         <--- for fixing (errors, typos)
-git commit -m "FLASH:<description>"       <--- quick checkpoint before refactoring
-git commit -m "MILESTONE:<description>"   <--- for capping moment in development
-git commit -m "CAP:<description>"         <--- for for less important milestones
-git commit -m "UPDATE:<description>"      <--- for moddification to the same file
-git commit -m "MISC:<description>"        <--- for any other reasons to be described
-git commit -m "WIP:<description>"         <--- for not finished work
-git commit -m "REFACTOR:<description>"    <--- for refactored code
-git commit -m "MERGE:<description>"       <--- for merging operations
+git commit -m "feat:<description>"        <--- for adding new elements, real improvements...
+git commit -m "fix:<description>"         <--- for fixing (errors, typos)
 ```
+Additionally, the `<description>` should start with "wip" if the changes commited are work in progress.
 
 The description of the pull request should ideally contain:
 - An explicit name. e.g. "improvement of registration of tree skeleton using pcl ICP registration" , and not "registration icp pcl"
@@ -23,6 +16,18 @@ The description of the pull request should ideally contain:
 - A check if a test was adapted or created
 - If it is linked to an issue, mark it as such in the Developmement section of the PR.
 - As long as it is under development, mark it as Draft
+
+## Pre-commits
+We recommand the usage of pre-commits to make sure the code is consistently formatted:
+Activate the conda environment provided with Carnutes, then hook pre-commit to git:
+```bash
+cd your/installation/path/to/Carnutes
+conda env create -f ./environment.yml
+conda activate Carnutes
+
+pre-commit install
+pre-commit run --all-files # This is simply make sure everything is well formatted, not only the files you commited to
+```
 
 # Naming convention
 All code is in python

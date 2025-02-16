@@ -1,6 +1,7 @@
 """
-This is a dummy function, to test out the bones of the project.
+This command outputs the full database's pointclouds to the Rhino Workspace, along with their skeletons, for visual inspection.
 """
+
 #! python3
 
 # r: numpy==1.26.4

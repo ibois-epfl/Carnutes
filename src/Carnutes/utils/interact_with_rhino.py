@@ -1,4 +1,5 @@
-from . import model, warnings, geometry, element
+from utils import model, warnings, geometry, element
+from utils.element import Element
 import Rhino
 
 
@@ -14,11 +15,15 @@ def determinate_element_type(geo):
     return (
         element.ElementType.Brep
         if isinstance(geo, Rhino.Geometry.Brep)
-        else element.ElementType.Line
-        if isinstance(geo, Rhino.Geometry.Curve)
-        else element.ElementType.Point
-        if isinstance(geo, Rhino.Geometry.Point3d)
-        else None
+        else (
+            element.ElementType.Line
+            if isinstance(geo, Rhino.Geometry.Curve)
+            else (
+                element.ElementType.Point
+                if isinstance(geo, Rhino.Geometry.Point3d)
+                else None
+            )
+        )
     )
 
 
@@ -68,9 +73,7 @@ def create_model_from_rhino_selection(max_elements: int = 100000):
         Rhino.RhinoDoc.ActiveDoc.Layers[layer_id].Name for layer_id in layer_ids
     ]
     elements = [
-        element.Element(
-            converted_geometries[i], go.Object(i).ObjectId, float(layer_names[i])
-        )
+        Element(converted_geometries[i], go.Object(i).ObjectId, float(layer_names[i]))
         for i in range(go.ObjectCount)
     ]
     return model.Model(elements)
@@ -97,3 +100,49 @@ def select_single_element_to_replace():
         print("No object selected.")
         return
     return element_geometry, element_guid
+
+
+def generic_object_getter(
+    n_objects: int, message: str, object_type: Rhino.DocObjects.ObjectType
+):
+    """
+    Get a number of objects from the Rhino scene.
+
+    :param n_objects: int
+        The number of objects to get.
+    :param message: str
+        The message to show to the user.
+    :param object_type: Rhino.DocObjects.ObjectType
+        The type of object to get.
+    :return: list[Rhino.DocObjects.RhinoObject]
+        The objects retrieved.
+    """
+    go = Rhino.Input.Custom.GetObject()
+    go.SetCommandPrompt(message)
+    go.GeometryFilter = object_type
+    go.GetMultiple(1, n_objects)
+    if go.CommandResult() != Rhino.Commands.Result.Success:
+        print("No object selected.")
+        return
+    return [go.Object(i) for i in range(go.ObjectCount)]
+
+
+def get_number(message: str, default: float):
+    """
+    Get a number from the user.
+
+    :param message: str
+        The message to show to the user.
+    :param default: float
+        The default value to show to the user.
+    :return: float
+        The number entered by the user.
+    """
+    number = Rhino.Input.Custom.GetNumber()
+    number.SetCommandPrompt(message)
+    number.SetDefaultNumber(default)
+    number.Get()
+    if number.CommandResult() != Rhino.Commands.Result.Success:
+        print("No number entered.")
+        return
+    return number.Number

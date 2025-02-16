@@ -1,6 +1,7 @@
 """
 This function displays a pop-up window with a summary of the database's contents.
 """
+
 #! python3
 # r: numpy==1.26.4
 # r: open3d==0.18.0

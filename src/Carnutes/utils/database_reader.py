@@ -1,6 +1,7 @@
 """
 Main module for reading the database, containing the DatabaseReader class.
 """
+
 #! python3
 
 import os

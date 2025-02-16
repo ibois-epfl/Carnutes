@@ -7,12 +7,10 @@ import numpy as np
 
 current_dir = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(current_dir + "/..")
-sys.path.append(current_dir + "/../src")
+sys.path.append(current_dir + "/../src/Carnutes")
 
-from src.utils import geometry as geo
-from src.utils import database_reader
-from src.utils import tree
-from utils import geometrical_operations
+from utils import geometry as geo
+from utils import database_reader, tree, geometrical_operations
 
 
 @pytest.fixture
@@ -23,7 +21,7 @@ def get_skeleton_length():
 @pytest.fixture
 def get_database():
     reader = database_reader.DatabaseReader(
-        current_dir + "/../src/database/tree_database.fs"
+        current_dir + "/../src/Carnutes/database/tree_database.fs"
     )
     yield reader
     reader.close()

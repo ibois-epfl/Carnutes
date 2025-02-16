@@ -2,11 +2,12 @@
 This module generates wireframe geometries to evaluate the performance of carnutes, using the database.
 """
 
+
 def generate_simple_frame(n_frames: int = 10) -> list[list[list[float]]]:
     """
     Generate a simple frame with n_frames.
     it is 8m wide, 4m high.
-    ```	
+    ```
 
        /\
       /__\
@@ -21,11 +22,11 @@ def generate_simple_frame(n_frames: int = 10) -> list[list[list[float]]]:
     elements_as_lists_of_connections = []
     for i in range(n_frames):
         base_point_left = [i, 0, 0]
-        base_point_right = [i , 8, 0]
+        base_point_right = [i, 8, 0]
         top_point = [i, 4, 4]
         middle_left = [i, 2, 2]
         middle_right = [i, 6, 2]
-        element_1 =  [base_point_left, middle_left, top_point]
+        element_1 = [base_point_left, middle_left, top_point]
         element_2 = [base_point_right, middle_right, top_point]
         element_3 = [middle_left, middle_right]
 
@@ -33,6 +34,7 @@ def generate_simple_frame(n_frames: int = 10) -> list[list[list[float]]]:
         elements_as_lists_of_connections.append(element_2)
         elements_as_lists_of_connections.append(element_3)
     return elements_as_lists_of_connections
+
 
 def generate_slightly_curved_frame(n_frames: int = 10) -> list[list[list[float]]]:
     """
@@ -54,11 +56,11 @@ def generate_slightly_curved_frame(n_frames: int = 10) -> list[list[list[float]]
     elements_as_lists_of_connections = []
     for i in range(n_frames):
         base_point_left = [i, 0, 0]
-        base_point_right = [i , 8, 0]
+        base_point_right = [i, 8, 0]
         top_point = [i, 4, 4]
         middle_left = [i, 1.5, 2]
         middle_right = [i, 6.5, 2]
-        element_1 =  [base_point_left, middle_left, top_point]
+        element_1 = [base_point_left, middle_left, top_point]
         element_2 = [base_point_right, middle_right, top_point]
         element_3 = [middle_left, middle_right]
 
@@ -66,6 +68,7 @@ def generate_slightly_curved_frame(n_frames: int = 10) -> list[list[list[float]]
         elements_as_lists_of_connections.append(element_2)
         elements_as_lists_of_connections.append(element_3)
     return elements_as_lists_of_connections
+
 
 def generate_tower(n_floors: int = 10) -> list[list[list[float]]]:
     """

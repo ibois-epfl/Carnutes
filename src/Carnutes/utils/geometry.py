@@ -1,6 +1,7 @@
 """
 module for geometry classes
 """
+
 from dataclasses import dataclass
 import typing
 
