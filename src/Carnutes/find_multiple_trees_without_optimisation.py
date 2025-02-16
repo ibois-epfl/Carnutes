@@ -9,10 +9,9 @@ import copy
 import System
 import time
 
-from utils import model, tree, geometry, interact_with_rhino, database_reader
+from utils import tree, geometry, interact_with_rhino
 from utils import element as elem
 from utils.tree import Tree
-from packing import packing_combinatorics
 
 import numpy as np
 import Rhino
