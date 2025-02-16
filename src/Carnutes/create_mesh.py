@@ -6,8 +6,7 @@
 
 import Rhino
 
-from utils import meshing
-from utils import interact_with_rhino
+from utils import meshing, conversions, interact_with_rhino
 
 
 def main():
@@ -28,9 +27,12 @@ def main():
     )
 
     # Create mesh
-    mesh = meshing.mesh_from_rhino_pointcloud(
-        pointcloud, meshing.MeshingMethod.ALPHA, to_rhino=True, alpha=alpha
+    carnutes_mesh = meshing.mesh_from_rhino_pointcloud(
+        pointcloud, meshing.MeshingMethod.ALPHA, alpha=alpha
     )
+
+    # Convert Carnutes mesh to Rhino mesh
+    mesh = conversions.convert_carnutes_mesh_to_rhino_mesh(carnutes_mesh)
 
     # Add mesh to Rhino
     Rhino.RhinoDoc.ActiveDoc.Objects.AddMesh(mesh)

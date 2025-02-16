@@ -12,7 +12,7 @@ import os
 import copy
 import System
 
-from utils import model, tree, geometry, interact_with_rhino
+from utils import model, tree, geometry, interact_with_rhino, conversions
 from utils import element as elem
 from utils.tree import Tree
 from packing import packing_combinatorics
@@ -116,51 +116,8 @@ def main():
     crop(my_tree, cylinder)
     my_tree.create_mesh()
 
-    tree_mesh = Rhino.Geometry.Mesh()
-    for i in range(len(my_tree.mesh.vertices)):
-        tree_mesh.Vertices.Add(
-            my_tree.mesh.vertices[i][0],
-            my_tree.mesh.vertices[i][1],
-            my_tree.mesh.vertices[i][2],
-        )
-    for i in range(len(my_tree.mesh.faces)):
-        tree_mesh.Faces.AddFace(
-            int(my_tree.mesh.faces[i][0]),
-            int(my_tree.mesh.faces[i][1]),
-            int(my_tree.mesh.faces[i][2]),
-        )
-    for i in range(len(my_tree.mesh.colors)):
-        tree_mesh.VertexColors.Add(
-            System.Drawing.Color.FromArgb(
-                int(my_tree.mesh.colors[i][0] * 255),
-                int(my_tree.mesh.colors[i][1] * 255),
-                int(my_tree.mesh.colors[i][2] * 255),
-            )
-        )
+    tree_mesh = conversions.convert_carnutes_mesh_to_rhino_mesh(my_tree.mesh)
     scriptcontext.doc.Objects.AddMesh(tree_mesh)
-
-    # Create the point cloud
-    my_tree_pc_rh = Rhino.Geometry.PointCloud()
-    for j in range(len(my_tree.point_cloud.points)):
-        my_tree_pc_rh.Add(
-            Rhino.Geometry.Point3d(
-                my_tree.point_cloud.points[j][0],
-                my_tree.point_cloud.points[j][1],
-                my_tree.point_cloud.points[j][2],
-            ),
-            System.Drawing.Color.FromArgb(
-                255,
-                int(my_tree.point_cloud.colors[j][0] * 255),
-                int(my_tree.point_cloud.colors[j][1] * 255),
-                int(my_tree.point_cloud.colors[j][2] * 255),
-            ),
-        )
-    scriptcontext.doc.Objects.AddPointCloud(my_tree_pc_rh)
-
-    my_tree_skeleton_rh = Rhino.Geometry.PointCloud()
-    for point in my_tree.skeleton.points:
-        my_tree_skeleton_rh.Add(Rhino.Geometry.Point3d(point[0], point[1], point[2]))
-    scriptcontext.doc.Objects.AddPointCloud(my_tree_skeleton_rh)
 
 
 if __name__ == "__main__":

@@ -19,6 +19,7 @@ class MeshingMethod(enum.Enum):
 def mesh_from_tree_pointcloud(
     tree_pointcloud: geometry.Pointcloud,
     meshing_method: MeshingMethod,
+    alpha: float = 2,
 ):
     """
     Mesh the point cloud of a tree object using Poisson reconstruction.
@@ -45,7 +46,7 @@ def mesh_from_tree_pointcloud(
     elif meshing_method == MeshingMethod.ALPHA:
         pcd.points = o3d.utility.Vector3dVector(tree_pointcloud.points)
         o3d_mesh = o3d.geometry.TriangleMesh.create_from_point_cloud_alpha_shape(
-            pcd, alpha=2
+            pcd, alpha=alpha
         )
         mesh = geometry.Mesh(
             np.asarray(o3d_mesh.vertices),

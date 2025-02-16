@@ -197,14 +197,14 @@ class Tree(persistent.Persistent):
 
         self.skeleton = Pointcloud(new_skeleton_as_list)
 
-    def create_mesh(self, radius=0.25):
+    def create_mesh(self, alpha=2):
         """
         Create a mesh from the point cloud and adds it to the tree instance
 
         :param radius: float, optional. The radius of the ball pivoting algorithm. The default is 0.25.
         """
         self.mesh = meshing.mesh_from_tree_pointcloud(
-            self.point_cloud, meshing.MeshingMethod.ALPHA, False
+            self.point_cloud, meshing.MeshingMethod.ALPHA, alpha=alpha
         )
 
     def trim(self, skeleton_to_remove):

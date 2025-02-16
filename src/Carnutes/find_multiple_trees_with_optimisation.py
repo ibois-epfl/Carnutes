@@ -9,7 +9,7 @@ import copy
 import System
 import time
 
-from utils import tree, geometry, interact_with_rhino
+from utils import tree, geometry, interact_with_rhino, conversions
 from utils import element as elem
 from utils.tree import Tree
 from packing import packing_combinatorics
@@ -100,27 +100,7 @@ def main():
         crop(best_tree, bounding_volume)
         best_tree.create_mesh()
 
-        tree_mesh = Rhino.Geometry.Mesh()
-        for i in range(len(best_tree.mesh.vertices)):
-            tree_mesh.Vertices.Add(
-                best_tree.mesh.vertices[i][0],
-                best_tree.mesh.vertices[i][1],
-                best_tree.mesh.vertices[i][2],
-            )
-        for i in range(len(best_tree.mesh.faces)):
-            tree_mesh.Faces.AddFace(
-                int(best_tree.mesh.faces[i][0]),
-                int(best_tree.mesh.faces[i][1]),
-                int(best_tree.mesh.faces[i][2]),
-            )
-        for i in range(len(best_tree.mesh.colors)):
-            tree_mesh.VertexColors.Add(
-                System.Drawing.Color.FromArgb(
-                    int(best_tree.mesh.colors[i][0] * 255),
-                    int(best_tree.mesh.colors[i][1] * 255),
-                    int(best_tree.mesh.colors[i][2] * 255),
-                )
-            )
+        tree_mesh = conversions.convert_carnutes_mesh_to_rhino_mesh(best_tree.mesh)
         scriptcontext.doc.Objects.AddMesh(tree_mesh)
 
     return all_rmse
