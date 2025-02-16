@@ -9,8 +9,6 @@ import numpy as np
 import utils.geometry as geometry
 import enum
 
-import Rhino
-
 
 class MeshingMethod(enum.Enum):
     POISSON = 1
@@ -21,8 +19,7 @@ class MeshingMethod(enum.Enum):
 def mesh_from_tree_pointcloud(
     tree_pointcloud: geometry.Pointcloud,
     meshing_method: MeshingMethod,
-    to_rhino: bool = False,
-) -> Rhino.Geometry.Mesh:
+):
     """
     Mesh the point cloud of a tree object using Poisson reconstruction.
 
@@ -32,8 +29,6 @@ def mesh_from_tree_pointcloud(
     :param meshing_method: MeshingMethod
         The meshing method to use.
 
-    :param to_rhino: bool
-        Whether to create a Rhino mesh or a Carnutes mesh.
 
     """
     pcd = o3d.geometry.PointCloud()
@@ -52,15 +47,6 @@ def mesh_from_tree_pointcloud(
         o3d_mesh = o3d.geometry.TriangleMesh.create_from_point_cloud_alpha_shape(
             pcd, alpha=2
         )
-
-    if to_rhino:
-        mesh = Rhino.Geometry.Mesh()
-        for i in range(len(o3d_mesh.vertices)):
-            mesh.Vertices.Add(o3d_mesh.vertices[i])
-        for i in range(len(o3d_mesh.triangles)):
-            mesh.Faces.AddFace(o3d_mesh.triangles[i])
-        return mesh
-    elif not to_rhino:
         mesh = geometry.Mesh(
             np.asarray(o3d_mesh.vertices),
             np.asarray(o3d_mesh.triangles),
@@ -70,13 +56,12 @@ def mesh_from_tree_pointcloud(
 
 
 def mesh_from_rhino_pointcloud(
-    rhino_pointcloud: Rhino.Geometry.PointCloud,
+    rhino_pointcloud: geometry.PointCloud,
     meshing_method: MeshingMethod,
     alpha: float = 2,
-    to_rhino: bool = False,
-) -> Rhino.Geometry.Mesh:
+):
     """
-    Mesh a Rhino.Geometry.PointCloud object using 3 different meshing methods.
+    Mesh a geometry.PointCloud object using 3 different meshing methods.
     Note that by experience, the alpha method is the most reliable with my pointclouds.
 
     :param tree: rhino_pointcloud
@@ -84,9 +69,6 @@ def mesh_from_rhino_pointcloud(
 
     :param meshing_method: MeshingMethod
         The meshing method to use.
-
-    :param to_rhino: bool
-        Whether to create a Rhino mesh or a Carnutes mesh.
 
     """
     pcd = o3d.geometry.PointCloud()
@@ -108,27 +90,9 @@ def mesh_from_rhino_pointcloud(
             pcd, alpha=2
         )
 
-    if to_rhino:
-        mesh = Rhino.Geometry.Mesh()
-        for i in range(len(o3d_mesh.vertices)):
-            mesh.Vertices.Add(
-                Rhino.Geometry.Point3f(
-                    o3d_mesh.vertices[i][0],
-                    o3d_mesh.vertices[i][1],
-                    o3d_mesh.vertices[i][2],
-                )
-            )
-        for i in range(len(o3d_mesh.triangles)):
-            mesh.Faces.AddFace(
-                int(o3d_mesh.triangles[i][0]),
-                int(o3d_mesh.triangles[i][1]),
-                int(o3d_mesh.triangles[i][2]),
-            )
-        return mesh
-    elif not to_rhino:
-        mesh = geometry.Mesh(
-            np.asarray(o3d_mesh.vertices),
-            np.asarray(o3d_mesh.triangles),
-            np.asarray(o3d_mesh.vertex_colors),
-        )
-        return mesh
+    mesh = geometry.Mesh(
+        np.asarray(o3d_mesh.vertices),
+        np.asarray(o3d_mesh.triangles),
+        np.asarray(o3d_mesh.vertex_colors),
+    )
+    return mesh
