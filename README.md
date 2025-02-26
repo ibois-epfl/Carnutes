@@ -1,6 +1,6 @@
 ![basic geometry test](https://github.com/ibois-epfl/Carnutes/actions/workflows/test_geo_basics.yml/badge.svg)
-![RMSE in meters](https://img.shields.io/badge/RMSE_in_meters-0.0183-c7a8ad)
-![Tree Usage in percent ](https://img.shields.io/badge/Tree_Usage_in_percent-59.78-c7a8ad)
+![RMSE in meters](https://img.shields.io/badge/RMSE_in_meters-0.0039-c7a8ad)
+![Tree Usage in percent ](https://img.shields.io/badge/Tree_Usage_in_percent-43.11-c7a8ad)
 
 # Carnutes🌳
 
@@ -30,3 +30,7 @@ Check out [this repo's wiki](https://github.com/ibois-epfl/Carnutes/wiki) for th
 # Install and use
 This tool is intended to be used in Rhino 8.
 See the [INSTALL.md](./INSTALL.md) for installation instructions, and the [CONTRIBUTING.md](./CONTRIBUTING.md) for minimal contribution guidelines. This repo contains a small .3dm to easily test Carnutes.
+
+
+# Evaluation results
+Evaluation results can be computed from the test code, in the `./tests` folder of this repo. Check the [reproduce results](reproduce_results.md) page for more details on that.
