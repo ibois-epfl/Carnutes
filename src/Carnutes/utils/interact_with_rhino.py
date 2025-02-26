@@ -29,7 +29,7 @@ def determinate_element_type(geo):
 
 def create_model_from_rhino_selection(max_elements: int = 100000):
     """
-    Create a model from the selected breps or lines in the Rhino scene.
+    Create a model from the selected lines in the Rhino scene.
 
     :param max_elements: int
         The maximum number of elements that can be selected. Default is 100000.
@@ -38,7 +38,7 @@ def create_model_from_rhino_selection(max_elements: int = 100000):
     """
 
     go = Rhino.Input.Custom.GetObject()
-    go.SetCommandPrompt("Select the breps or lines")
+    go.SetCommandPrompt("Select the  lines")
     go.GeometryFilter = (
         Rhino.DocObjects.ObjectType.Brep
         | Rhino.DocObjects.ObjectType.Curve
