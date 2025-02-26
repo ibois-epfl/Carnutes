@@ -30,3 +30,7 @@ Check out [this repo's wiki](./wiki) for the documentation of individual command
 # Install and use
 This tool is intended to be used in Rhino 8.
 See the [INSTALL.md](./INSTALL.md) for installation instructions, and the [CONTRIBUTING.md](./CONTRIBUTING.md) for minimal contribution guidelines. This repo contains a small .3dm to easily test Carnutes.
+
+
+# Evaluation results
+Evaluation results can be computed from the test code, in the `./tests` folder of this repo. Check the [reproduce results](reproduce_results.md) page for more details on that.
