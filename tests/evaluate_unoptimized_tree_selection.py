@@ -5,7 +5,7 @@
 # r: ZODB==6.0
 # r: igraph==0.11.6
 
-import os, sys, csv
+import os, sys, csv, argparse
 
 current_dir = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(current_dir + "/..")
@@ -20,7 +20,9 @@ from reset_database import main as reset_database
 import numpy as np
 
 
-def evaluate_unoptimized_tree_selection(reference_diameter: float = 0.2):
+def evaluate_unoptimized_tree_selection(
+    type: str, n_frames: int, reference_diameter: float
+):
     """
     we generate a number of frames, apply the tree selection, and evaluate the performance according to two metrics:
     - The number of trees used and their degree of use (% of the tree that is used)
@@ -50,7 +52,25 @@ def evaluate_unoptimized_tree_selection(reference_diameter: float = 0.2):
         os.path.dirname(os.path.realpath(__file__))
         + "/../src/Carnutes/database/tree_database.fs"
     )
-    list_of_elements_locations = generate_elements.generate_simple_frame(5)
+    if type == "simple_frame":
+        list_of_elements_locations = generate_elements.generate_simple_frame(
+            n_frames=n_frames
+        )
+    elif type == "scissor_truss":
+        list_of_elements_locations = generate_elements.generate_scissor_truss(
+            n_frames=n_frames
+        )
+    elif type == "symmetrical_portal":
+        list_of_elements_locations = generate_elements.generate_symmetrical_portal(
+            n_frames=n_frames
+        )
+    elif type == "asymmetrical_portal":
+        list_of_elements_locations = generate_elements.generate_asymmetrical_portal(
+            n_frames=n_frames
+        )
+    elif type == "tower":
+        list_of_elements_locations = generate_elements.generate_tower(n_floors=n_frames)
+
     for element_locations in list_of_elements_locations:
         element_length = np.linalg.norm(
             np.asarray(element_locations[0]) - np.asarray(element_locations[-1])
@@ -120,8 +140,52 @@ def evaluate_unoptimized_tree_selection(reference_diameter: float = 0.2):
 
 if __name__ == "__main__":
 
+    parser = argparse.ArgumentParser(
+        description="Evaluate the unoptimized tree selection algorithm."
+    )
+    parser.add_argument(
+        "--reference_diameter",
+        "-d",
+        type=float,
+        default=0.3,
+        help="The reference diameter of the trees, expressed in meters.",
+    )
+    parser.add_argument(
+        "--type",
+        "-t",
+        type=str,
+        default="simple_frame",
+        help="The type of frame to generate. Choose between simple_frame, scissor_truss, symmetrical_portal, asymmetrical_portal, tower.",
+    )
+    parser.add_argument(
+        "--n_frames",
+        "-n",
+        type=int,
+        default=1,
+        help="The number of frames to generate.",
+    )
+
+    args = parser.parse_args()
+    reference_diameter = args.reference_diameter
+    type = args.type
+    n_frames = args.n_frames
+
+    if (
+        type != "simple_frame"
+        and type != "scissor_truss"
+        and type != "symmetrical_portal"
+        and type != "asymmetrical_portal"
+        and type != "tower"
+    ):
+        print(
+            "Invalid type. Please choose between simple_frame, scissor_truss, symmetrical_portal, asymmetrical_portal, tower"
+        )
+        sys.exit(1)
+
     reset_database(
         voxel_size=0.03,
         working_dir=os.path.dirname(os.path.realpath(__file__)) + "/../src/Carnutes",
     )
-    evaluate_unoptimized_tree_selection()
+    evaluate_unoptimized_tree_selection(type, n_frames, reference_diameter)
+    print("Evaluation done.")
+    sys.exit(0)
