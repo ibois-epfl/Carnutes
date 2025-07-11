@@ -34,3 +34,6 @@ See the [INSTALL.md](./INSTALL.md) for installation instructions, and the [CONTR
 
 # Evaluation results
 Evaluation results can be computed from the test code, in the `./tests` folder of this repo. Check the [reproduce results](reproduce_results.md) page for more details on that.
+
+# Publication 
+Carnutes was published in the ICSA2025 conference: http://dx.doi.org/10.1201/9781003658641-211
