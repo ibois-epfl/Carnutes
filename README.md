@@ -1,7 +1,7 @@
 ![basic geometry test](https://github.com/ibois-epfl/Carnutes/actions/workflows/test_geo_basics.yml/badge.svg)
 ![RMSE in meters](https://img.shields.io/badge/RMSE_in_meters-0.0039-c7a8ad)
 ![Tree Usage in percent ](https://img.shields.io/badge/Tree_Usage_in_percent-43.11-c7a8ad)
-
+![conference article](http://dx.doi.org/10.1201/9781003658641-211)
 # Carnutes🌳
 
 🪵 In Asterix & Obelix, the Carnutes forest is where druids present their latest crazy inventions to their peers 🪵
@@ -34,3 +34,6 @@ See the [INSTALL.md](./INSTALL.md) for installation instructions, and the [CONTR
 
 # Evaluation results
 Evaluation results can be computed from the test code, in the `./tests` folder of this repo. Check the [reproduce results](reproduce_results.md) page for more details on that.
+
+# publication 
+Carnutes was published in the ICSA2025 conference: http://dx.doi.org/10.1201/9781003658641-211
