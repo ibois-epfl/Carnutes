@@ -74,10 +74,22 @@ def main():
     for i, element in enumerate(current_model.elements):
         if element.type == elem.ElementType.Point:
             continue
-        reference_pc_as_list = []
+        reference_pc_as_list = [
+            [
+                element.geometry.PointAtStart.X,
+                element.geometry.PointAtStart.Y,
+                element.geometry.PointAtStart.Z,
+            ],
+            [
+                element.geometry.PointAtEnd.X,
+                element.geometry.PointAtEnd.Y,
+                element.geometry.PointAtEnd.Z,
+            ],
+        ]
         element_guid = element.GUID
         target_diameter = element.diameter
-        reference_pc_as_list = element.locations
+        for location in element.locations:
+            reference_pc_as_list.append(location)
 
         # at this point the reference_pc_as_list should contain the points, but they are not ordered. We need to order them.
         reference_pc_as_list = geometry.sort_points(reference_pc_as_list)

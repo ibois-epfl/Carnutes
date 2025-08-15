@@ -77,7 +77,18 @@ def main():
             reference_diameter = element.diameter
             break
 
-    reference_pc_as_list = []
+    reference_pc_as_list = [
+        [
+            target.geometry.PointAtStart.X,
+            target.geometry.PointAtStart.Y,
+            target.geometry.PointAtStart.Z,
+        ],
+        [
+            target.geometry.PointAtEnd.X,
+            target.geometry.PointAtEnd.Y,
+            target.geometry.PointAtEnd.Z,
+        ],
+    ]
     # if isinstance(target.geometry, Rhino.Geometry.NurbsCurve):
     for vertex in current_model.connectivity_graph.graph.vs:
         if vertex["guid"] == target.GUID:

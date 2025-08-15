@@ -65,7 +65,22 @@ def main():
             continue
 
         # at this point the reference_pc_as_list should contain the points, but they are not ordered. We need to order them.
-        reference_pc_as_list = geometry.sort_points(element.locations)
+        reference_pc_as_list = [
+            [
+                element.geometry.PointAtStart.X,
+                element.geometry.PointAtStart.Y,
+                element.geometry.PointAtStart.Z,
+            ],
+            [
+                element.geometry.PointAtEnd.X,
+                element.geometry.PointAtEnd.Y,
+                element.geometry.PointAtEnd.Z,
+            ],
+        ]
+        for location in element.locations:
+            reference_pc_as_list.append(location)
+        reference_pc_as_list = geometry.sort_points(reference_pc_as_list)
+        print(reference_pc_as_list)
         reference_skeleton = geometry.Pointcloud(reference_pc_as_list)
         best_tree, best_rmse, init_rotation = element.allocate_trees(
             db_path=db_path, optimized=False
