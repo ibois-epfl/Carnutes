@@ -1,5 +1,4 @@
 from utils import model, warnings, geometry, element
-from utils.element import Element
 import Rhino
 
 
@@ -35,6 +34,8 @@ def create_model_from_rhino_selection(max_elements: int = 100000):
         The maximum number of elements that can be selected. Default is 100000.
     :return: model.Model
         The model created from the selected geometries.
+    :return: Rhino.DocObjects.Layer.LayerIndex
+        The layer index of the selected geometries.
     """
 
     go = Rhino.Input.Custom.GetObject()
@@ -73,10 +74,12 @@ def create_model_from_rhino_selection(max_elements: int = 100000):
         Rhino.RhinoDoc.ActiveDoc.Layers[layer_id].Name for layer_id in layer_ids
     ]
     elements = [
-        Element(converted_geometries[i], go.Object(i).ObjectId, float(layer_names[i]))
+        element.Element(
+            converted_geometries[i], go.Object(i).ObjectId, float(layer_names[i])
+        )
         for i in range(go.ObjectCount)
     ]
-    return model.Model(elements)
+    return model.Model(elements), layer_ids
 
 
 def select_single_element_to_replace():
@@ -87,6 +90,8 @@ def select_single_element_to_replace():
         The geometry of the selected element.
     :return: str
         The GUID of the selected element.
+    :return: int
+        The layer index of the selected element.
     """
     go = Rhino.Input.Custom.GetObject()
     go.SetCommandPrompt("Select the element to replace with a point cloud")
@@ -96,10 +101,11 @@ def select_single_element_to_replace():
     go.GetMultiple(1, 1)
     element_geometry = go.Object(0).Geometry()
     element_guid = go.Object(0).ObjectId
+    layer_index = go.Object(0).Object().Attributes.LayerIndex
     if go.CommandResult() != Rhino.Commands.Result.Success:
         print("No object selected.")
         return
-    return element_geometry, element_guid
+    return element_geometry, element_guid, layer_index
 
 
 def generic_object_getter(

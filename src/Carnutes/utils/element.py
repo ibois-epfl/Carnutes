@@ -113,7 +113,21 @@ class Element(object):
                 "The diameter of the element is not set. Check the layer name of the element in Rhino."
             )
         target_diameter = self.diameter
-        reference_pc_as_list = geometry.sort_points(self.locations)
+        reference_pc_as_list = [
+            [
+                self.geometry.PointAtStart.X,
+                self.geometry.PointAtStart.Y,
+                self.geometry.PointAtStart.Z,
+            ],
+            [
+                self.geometry.PointAtEnd.X,
+                self.geometry.PointAtEnd.Y,
+                self.geometry.PointAtEnd.Z,
+            ],
+        ]
+        for location in self.locations:
+            reference_pc_as_list.append(location)
+        reference_pc_as_list = geometry.sort_points(reference_pc_as_list)
         reference_skeleton = geometry.Pointcloud(reference_pc_as_list)
         if optimized:
             (

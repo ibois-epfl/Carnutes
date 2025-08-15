@@ -1,10 +1,11 @@
 """
-This is a dummy function, to test out the bones of the project.
+This function finds a single tree in the database that best fits the given element.
 """
 
 #! python3
-# r: numpy==1.26.4
-# r: open3d==0.18.0
+
+# r: numpy==2.0.2
+# r: open3d==0.19.0
 # r: ZODB==6.0
 # r: igraph==0.11.6
 
@@ -59,7 +60,7 @@ def main():
     """
 
     # Create the model
-    current_model = interact_with_rhino.create_model_from_rhino_selection()
+    current_model, layer_ids = interact_with_rhino.create_model_from_rhino_selection()
     if current_model is None:
         return
 
@@ -67,6 +68,7 @@ def main():
     (
         element_geometry,
         element_guid,
+        layer_index,
     ) = interact_with_rhino.select_single_element_to_replace()
 
     for element in current_model.elements:
@@ -75,7 +77,18 @@ def main():
             reference_diameter = element.diameter
             break
 
-    reference_pc_as_list = []
+    reference_pc_as_list = [
+        [
+            target.geometry.PointAtStart.X,
+            target.geometry.PointAtStart.Y,
+            target.geometry.PointAtStart.Z,
+        ],
+        [
+            target.geometry.PointAtEnd.X,
+            target.geometry.PointAtEnd.Y,
+            target.geometry.PointAtEnd.Z,
+        ],
+    ]
     # if isinstance(target.geometry, Rhino.Geometry.NurbsCurve):
     for vertex in current_model.connectivity_graph.graph.vs:
         if vertex["guid"] == target.GUID:
@@ -117,7 +130,9 @@ def main():
     my_tree.create_mesh()
 
     tree_mesh = conversions.convert_carnutes_mesh_to_rhino_mesh(my_tree.mesh)
-    scriptcontext.doc.Objects.AddMesh(tree_mesh)
+    attributes = Rhino.DocObjects.ObjectAttributes()
+    attributes.LayerIndex = layer_index
+    scriptcontext.doc.Objects.AddMesh(tree_mesh, attributes)
 
 
 if __name__ == "__main__":

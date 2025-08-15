@@ -3,20 +3,18 @@ This function resets the database by overwriting the existing database with a ne
 """
 
 #! python3
-# r: numpy==1.26.4
-# r: open3d==0.18.0
+
+# r: numpy==2.0.2
+# r: open3d==0.19.0
 # r: ZODB==6.0
 # r: igraph==0.11.6
 
-import ZODB
-import ZODB.FileStorage
 import open3d as o3d
 
 # import Rhino
 
 import os
 import transaction
-import BTrees.OOBTree
 import time
 
 import utils.tree as tree
