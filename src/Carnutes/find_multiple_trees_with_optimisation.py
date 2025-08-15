@@ -64,14 +64,14 @@ def main():
     )
 
     # Create the model
-    current_model = interact_with_rhino.create_model_from_rhino_selection()
+    current_model, layer_ids = interact_with_rhino.create_model_from_rhino_selection()
 
     # For each element in the model, replace it with a point cloud. Starting from the elements with the highest degree.
     db_path = os.path.dirname(os.path.realpath(__file__)) + "/database/tree_database.fs"
 
     all_rmse = []
 
-    for element in current_model.elements:
+    for i, element in enumerate(current_model.elements):
         if element.type == elem.ElementType.Point:
             continue
         reference_pc_as_list = []
@@ -106,7 +106,9 @@ def main():
         best_tree.create_mesh()
 
         tree_mesh = conversions.convert_carnutes_mesh_to_rhino_mesh(best_tree.mesh)
-        scriptcontext.doc.Objects.AddMesh(tree_mesh)
+        attributes = Rhino.DocObjects.ObjectAttributes()
+        attributes.LayerIndex = layer_ids[i]
+        scriptcontext.doc.Objects.AddMesh(tree_mesh, attributes)
 
     return all_rmse
 

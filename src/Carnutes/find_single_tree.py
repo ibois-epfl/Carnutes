@@ -60,7 +60,7 @@ def main():
     """
 
     # Create the model
-    current_model = interact_with_rhino.create_model_from_rhino_selection()
+    current_model, layer_ids = interact_with_rhino.create_model_from_rhino_selection()
     if current_model is None:
         return
 
@@ -68,6 +68,7 @@ def main():
     (
         element_geometry,
         element_guid,
+        layer_index,
     ) = interact_with_rhino.select_single_element_to_replace()
 
     for element in current_model.elements:
@@ -118,7 +119,9 @@ def main():
     my_tree.create_mesh()
 
     tree_mesh = conversions.convert_carnutes_mesh_to_rhino_mesh(my_tree.mesh)
-    scriptcontext.doc.Objects.AddMesh(tree_mesh)
+    attributes = Rhino.DocObjects.ObjectAttributes()
+    attributes.LayerIndex = layer_index
+    scriptcontext.doc.Objects.AddMesh(tree_mesh, attributes)
 
 
 if __name__ == "__main__":
