@@ -1,6 +1,11 @@
+"""
+This function finds multiple trees in the database that best fit the given element, starting by the element that has the most connections to make. It does not optimize for the tree usage.
+"""
+
 #! python3
-# r: numpy==1.26.4
-# r: open3d==0.18.0
+
+# r: numpy==2.0.2
+# r: open3d==0.19.0
 # r: ZODB==6.0
 # r: igraph==0.11.6
 
@@ -48,14 +53,14 @@ def crop(tree: tree, bounding_volume: Rhino.Geometry.Brep):
 
 def main():
     # Create the model
-    current_model = interact_with_rhino.create_model_from_rhino_selection()
+    current_model, layer_ids = interact_with_rhino.create_model_from_rhino_selection()
 
     # For each element in the model, replace it with a point cloud. Starting from the elements with the highest degree.
     db_path = os.path.dirname(os.path.realpath(__file__)) + "/database/tree_database.fs"
 
     all_rmse = []
 
-    for element in current_model.elements:
+    for i, element in enumerate(current_model.elements):
         if element.type == elem.ElementType.Point:
             continue
 
@@ -80,7 +85,9 @@ def main():
         best_tree.create_mesh()
 
         tree_mesh = conversions.convert_carnutes_mesh_to_rhino_mesh(best_tree.mesh)
-        scriptcontext.doc.Objects.AddMesh(tree_mesh)
+        attributes = Rhino.DocObjects.ObjectAttributes()
+        attributes.LayerIndex = layer_ids[i]
+        scriptcontext.doc.Objects.AddMesh(tree_mesh, attributes)
 
     return all_rmse
 

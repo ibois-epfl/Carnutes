@@ -4,8 +4,8 @@ this function creates a graph from the selected breps or lines and draws a graph
 
 #! python3
 
-# r: numpy==1.26.4
-# r: open3d==0.18.0
+# r: numpy==2.0.2
+# r: open3d==0.19.0
 # r: ZODB==6.0
 # r: igraph==0.11.6
 
